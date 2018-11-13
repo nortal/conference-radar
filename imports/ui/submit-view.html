@@ -7,21 +7,19 @@
 
             <div class="grid-main">
                 <div>
-                    <p>
-                        This document visualizes technologies or techniques on a radar graph. Each placement on a radar is called a blip. On a radar, these blips are divided into four quadrants: Tools, Languages and Frameworks, Platforms, Techniques. Each quadrant is divided into four rings which represent the stage of where the technology is assumed to be currently. The four stages are: Avoid, Assess, Trial, Adopt respectively.
-                    </p>
+                    <p>Each placement on a radar is called a blip that is positioned in a quadrant: 'Tools', 'Languages and Frameworks', 'Platforms' or 'Techniques'. Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
+                    <p>Share your point of view and vote for an existing placement or add a new one.</p>
                 </div>
             </div>
 
             <div class="grid-right">
                 <div>
-                    <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Keyword" />
+                    <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Blip" />
                 </div>
 
-                <p>...is a...</p>
                 <div>
                     <select id="sectionDropdown" name="section" class="styled-select">
-                        <option value='0' disabled selected>--Select Section--</option>
+                        <option value='0' disabled selected>-- Quadrant --</option>
                         <option value='Tools'>Tool</option>
                         <option value='Techniques'>Technique</option>
                         <option value='Platforms'>Platform</option>
@@ -29,10 +27,9 @@
                     </select>
                 </div>
 
-                <p>...that's in the stage of...</p>
                 <div>
                     <select id="stageDropdown" name="stage" class="styled-select">
-                        <option value='0' disabled selected>--Select Stage--</option>
+                        <option value='0' disabled selected>-- Ring --</option>
                         <option value='Adopt'>Adopt</option>
                         <option value='Trial'>Trial</option>
                         <option value='Assess'>Assess</option>
@@ -47,20 +44,22 @@
                     <input class="styled-input" id="emailText" type="email" name="emailText" placeholder="Your e-mail (optional)" />
                 </div>
 
-
-
-
                 <div>
-                    <button id="submitButton" type="button" class="btn submit-button">Submit</button>
-                </div>
-
-                <div>
+                    <label>
                     <input type="checkbox" id="participateCheck">
-                    <label for="participateCheck">I want to participate in composing the final TechRadar</label>
+                    I want to be notified, when final Technology Radar is published
+                    </label>
                 </div>
+
                 <div>
-                    <input type="checkbox" id="recruitmentCheck">
-                    <label for="recruitmentCheck">Nortal can contact me about future job opportunities for up to 3 years</label>
+                    <label>
+                    <input type="checkbox" id="recruitmentCheck" />
+                     Nortal can contact me about future job opportunities for up to 3 years
+                    </label>
+                </div>
+
+                <div style="text-align: right;">
+                    <button id="submitButton" type="button" class="btn submit-button">Submit</button>
                 </div>
 
             </div>
