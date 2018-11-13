@@ -87,6 +87,16 @@ label {
     font-size: 20px;
 }
 
+a {
+    color: #009639;
+    text-decoration: none;
+    font-size: 16px
+}
+
+.privacy-policy {
+    font-size: 16px;
+}
+
 input[type=checkbox] {
     /* Double-sized Checkboxes */
     -ms-transform: scale(2); /* IE */
@@ -111,7 +121,7 @@ input[type=checkbox] {
 
 .submit-button {
     border-radius: 25px;
-    background: #005C37;
+    background: #009639;
     padding: 5px;
     width: 150px;
     height: 50px;
