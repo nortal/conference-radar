@@ -1,0 +1,74 @@
+<template name="submit">
+    <form class="new-keyword">
+        <div class="grid-container">
+            <div class="grid-header">
+
+            </div>
+
+            <div class="grid-main">
+                <div>
+                    <p>
+                        This document visualizes technologies or techniques on a radar graph. Each placement on a radar is called a blip. On a radar, these blips are divided into four quadrants: Tools, Languages and Frameworks, Platforms, Techniques. Each quadrant is divided into four rings which represent the stage of where the technology is assumed to be currently. The four stages are: Avoid, Assess, Trial, Adopt respectively.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-right">
+                <div>
+                    <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Keyword" />
+                </div>
+
+                <p>...is a...</p>
+                <div>
+                    <select id="sectionDropdown" name="section" class="styled-select">
+                        <option value='0' disabled selected>--Select Section--</option>
+                        <option value='Tools'>Tool</option>
+                        <option value='Techniques'>Technique</option>
+                        <option value='Platforms'>Platform</option>
+                        <option value='Frameworks'>Framework/Language</option>
+                    </select>
+                </div>
+
+                <p>...that's in the stage of...</p>
+                <div>
+                    <select id="stageDropdown" name="stage" class="styled-select">
+                        <option value='0' disabled selected>--Select Stage--</option>
+                        <option value='Adopt'>Adopt</option>
+                        <option value='Trial'>Trial</option>
+                        <option value='Assess'>Assess</option>
+                        <option value='Avoid'>Avoid</option>
+                    </select>
+                </div>
+
+                <div>
+                    <input class="styled-input" id="nameText" type="text" name="nameText" placeholder="Your name (optional)" />
+                </div>
+                <div>
+                    <input class="styled-input" id="emailText" type="email" name="emailText" placeholder="Your e-mail (optional)" />
+                </div>
+
+
+
+
+                <div>
+                    <button id="submitButton" type="button" class="btn submit-button">Submit</button>
+                </div>
+
+                <div>
+                    <input type="checkbox" id="participateCheck">
+                    <label for="participateCheck">I want to participate in composing the final TechRadar</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="recruitmentCheck">
+                    <label for="recruitmentCheck">Nortal can contact me about future job opportunities for up to 3 years</label>
+                </div>
+
+            </div>
+            <div class="grid-footer">
+
+            </div>
+        </div>
+
+
+    </form>
+</template>
