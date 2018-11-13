@@ -57,7 +57,6 @@ Template.submit.events({
                 var voteString = 'votes';
                 var action = {};
                 action[voteString] = 1;
-                console.log("Keyword update");
                 Keywords.update(
                     { _id: keyword[0]._id },
                     { $inc: action });
@@ -68,7 +67,7 @@ Template.submit.events({
                     section: chosenSection,
                     votes: 1,
                 };
-                console.log("Keyword add");
+
                 Keywords.insert(newKeyword);
             }
             
