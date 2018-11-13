@@ -47,9 +47,9 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        var newKeyword = makeid();
-        var chosenStage = getRandomStage();
-        var chosenSection = getRandomSection();
+        var newKeyword = template.$("#keywordText").val();
+        var chosenStage = template.$("#stageDropdown").val();
+        var chosenSection = template.$("#sectionDropdown").val();
 
         var keyword = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
         if (chosenStage !== null && chosenSection !== null) {
