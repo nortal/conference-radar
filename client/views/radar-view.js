@@ -96,7 +96,7 @@ function draw() {
             label: value.keyword,
             quadrant: getQuadrant(value),   // 0, 1, 2, 3 (clockwise, starting from bottom right)
             ring: getRing(value),        // 0, 1, 2, 3 (inside -> out)
-            size: mapRange(value.votes, 1, 7, 1.0, 3.5),
+            size: mapRange(value.votes, 1, 50, 1.0, 3.5),
             votes: value.votes,
             stage: value.stage,
             section: value.section
