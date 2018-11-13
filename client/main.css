@@ -98,6 +98,18 @@ input[type=checkbox] {
     display: inline-block;
 }
 
+svg {
+    display: block;
+    margin: auto;
+}
+
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .submit-button {
     border-radius: 25px;
     background: #005C37;
