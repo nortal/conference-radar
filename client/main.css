@@ -144,6 +144,11 @@ svg {
     border: 0;
 }
 
+.fader {
+    opacity: 0;
+    transition: 1s opacity;
+}
+
 .styled-select {
     height: 50px;
     overflow: hidden;

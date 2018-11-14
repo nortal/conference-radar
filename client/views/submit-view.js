@@ -64,7 +64,7 @@ Template.submit.events({
             }
         }
 
-        if (chosenStage !== null && chosenSection !== null) {
+        if (newKeyword && newKeyword !== "" && chosenStage !== null && chosenSection !== null) {
             if (keyword) {
                 var voteString = 'votes';
                 var action = {};
@@ -87,6 +87,15 @@ Template.submit.events({
             template.$('#keywordText').val("");
             template.$("#stageDropdown").val("0");
             template.$("#sectionDropdown").val("0");
+
+            document.getElementById('faderContainer').style.opacity = '1';
+
+            function fadeout() {
+                document.getElementById('faderContainer').style.opacity = '0';
+            }
+
+            window.setTimeout(fadeout, 4000);
+
         }
 
 
@@ -110,6 +119,9 @@ Template.submit.events({
             template.$('#recruitmentCheck').prop('checked', false);
             template.$('#participateCheck').prop('checked', false);
         }
+
+
+
 
     },
 });
