@@ -96,7 +96,7 @@ function draw() {
             label: value.keyword,
             quadrant: getQuadrant(value),   // 0, 1, 2, 3 (clockwise, starting from bottom right)
             ring: getRing(value),        // 0, 1, 2, 3 (inside -> out)
-            size: mapRange(value.votes, 1, 50, 1.0, 3.5),
+            size: mapRange(value.votes, 1, 50, 0.85, 3.5),
             votes: value.votes,
             stage: value.stage,
             section: value.section
@@ -178,10 +178,10 @@ function radar_visualization(config) {
 
     // radial_min / radial_max are multiples of PI
     const quadrants = [
-        { radial_min: 0.0, radial_max: 0.5, factor_x: 3.5, factor_y: 3.5 },
-        { radial_min: 0.5, radial_max: 1.0, factor_x: -3.5, factor_y: 3.5 },
-        { radial_min: -1.0, radial_max: -0.5, factor_x: -3.5, factor_y: -3.5 },
-        { radial_min: -0.5, radial_max: -0.0, factor_x: 3.5, factor_y: -3.5 }
+        { radial_min: 0.0, radial_max: 0.5, factor_x: 3.3, factor_y: 3.3 },
+        { radial_min: 0.5, radial_max: 1.0, factor_x: -3.3, factor_y: 3.3 },
+        { radial_min: -1.0, radial_max: -0.5, factor_x: -3.3, factor_y: -3.3 },
+        { radial_min: -0.5, radial_max: -0.0, factor_x: 3.3, factor_y: -3.3 }
     ];
 
     const rings = [
@@ -263,13 +263,13 @@ function radar_visualization(config) {
         return {
             clipx: function (d) {
                 var c = bounded_box(d, cartesian_min, cartesian_max);
-                var p = bounded_ring(polar(c), polar_min.r + 0, polar_max.r - 0);
+                var p = bounded_ring(polar(c), polar_min.r + 2, polar_max.r - 2);
                 d.x = cartesian(p).x; // adjust data too!
                 return d.x;
             },
             clipy: function (d) {
                 var c = bounded_box(d, cartesian_min, cartesian_max);
-                var p = bounded_ring(polar(c), polar_min.r + 0, polar_max.r - 0);
+                var p = bounded_ring(polar(c), polar_min.r + 2, polar_max.r - 2);
                 d.y = cartesian(p).y; // adjust data too!
                 return d.y;
             },
@@ -458,8 +458,8 @@ function radar_visualization(config) {
 
     function legend_transform(quadrant, ring, index = null) {
         console.log("legend: quadrant" + quadrant + " ring " + ring + " index " + index)
-        var dx = 120 * (Math.floor(index / 22));
-        var dy = 16 * (index % 22);
+        var dx = 120 * (Math.floor(index / 21));
+        var dy = 16 * (index % 21);
         return translate(
             legend_offset[quadrant].x + dx,
             legend_offset[quadrant].y + dy
@@ -574,7 +574,7 @@ function radar_visualization(config) {
                 .attr("text-anchor", "middle")
                 .style("fill", "#FFFFFF")
                 .style("font-family", "Roboto, sans-serif")
-                .style("font-size", function (d) { return blip_text.length > 2 ? "12" : "13"; })
+                .style("font-size", function (d) { return blip_text.length > 2 ? "11" : "12"; })
                 .style("font-weight", "light")
                 .style("pointer-events", "none")
                 .style("user-select", "none");

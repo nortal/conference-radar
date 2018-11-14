@@ -51,14 +51,26 @@ Template.submit.events({
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionDropdown").val();
 
-        var keyword = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
+        var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
+        var allKeywords = Keywords.find().fetch();
+
+        // case insensitive search
+        for (i = 0; i < allKeywords.length; ++i) {
+            if (allKeywords[i].keyword.toLowerCase() === newKeyword.toLowerCase() &&
+                allKeywords[i].stage === chosenStage &&
+                allKeywords[i].section === chosenSection) {
+                keyword = allKeywords[i];
+                break;
+            }
+        }
+
         if (chosenStage !== null && chosenSection !== null) {
-            if (keyword.length > 0) {
+            if (keyword) {
                 var voteString = 'votes';
                 var action = {};
                 action[voteString] = 1;
                 Keywords.update(
-                    { _id: keyword[0]._id },
+                    { _id: keyword._id },
                     { $inc: action });
             } else {
                 var newKeyword = {
