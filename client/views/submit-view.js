@@ -6,10 +6,15 @@ function makeid() {
     var text = "";
     var possible = "AB";
 
-    for (var i = 0; i < 4; i++)
+    for (var i = 0; i < getRandom(4, 7); i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+function makerealid() {
+    var possible = ["React", "Angular", "Docker", "Lombok", "Techradar", "Intellij", "Unity", "LAMP", "MEAN", "Meteor", "Ruby", "C#", "Java", "Kotlin", "PHP", "Apache", "Graphite", "Avro", "Hadoop", "YARN", "Azure", ".net", "Gradle", "Swift", "Blaze"];
+    return possible[Math.floor(Math.random() * possible.length)];
 }
 
 function getRandom(start, max) {
@@ -51,76 +56,82 @@ Template.submit.events({
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionDropdown").val();
 
-        var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
-        var allKeywords = Keywords.find().fetch();
+        // test data generation, uncomment to spam test data into database
+        //for (count = 0; count < 250; count++) {
+            //var newKeyword = makerealid();
+            //var chosenStage = getRandomStage();
+            //var chosenSection = getRandomSection();
 
-        // case insensitive search
-        for (i = 0; i < allKeywords.length; ++i) {
-            if (allKeywords[i].keyword.toLowerCase() === newKeyword.toLowerCase() &&
-                allKeywords[i].stage === chosenStage &&
-                allKeywords[i].section === chosenSection) {
-                keyword = allKeywords[i];
-                break;
+            var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
+            var allKeywords = Keywords.find().fetch();
+
+            // case insensitive search
+            for (i = 0; i < allKeywords.length; ++i) {
+                if (allKeywords[i].keyword.toLowerCase() === newKeyword.toLowerCase() &&
+                    allKeywords[i].stage === chosenStage &&
+                    allKeywords[i].section === chosenSection) {
+                    keyword = allKeywords[i];
+                    break;
+                }
             }
-        }
 
-        if (newKeyword && newKeyword !== "" && chosenStage !== null && chosenSection !== null) {
-            if (keyword) {
-                var voteString = 'votes';
-                var action = {};
-                action[voteString] = 1;
-                Keywords.update(
-                    { _id: keyword._id },
-                    { $inc: action });
-            } else {
-                var newKeyword = {
-                    keyword: newKeyword,
-                    stage: chosenStage,
-                    section: chosenSection,
-                    votes: 1,
+            if (newKeyword && newKeyword !== "" && chosenStage !== null && chosenSection !== null) {
+                if (keyword) {
+                    var voteString = 'votes';
+                    var action = {};
+                    action[voteString] = 1;
+                    Keywords.update(
+                        { _id: keyword._id },
+                        { $inc: action });
+                } else {
+                    var newKeyword = {
+                        keyword: newKeyword,
+                        stage: chosenStage,
+                        section: chosenSection,
+                        votes: 1,
+                    };
+
+                    Keywords.insert(newKeyword);
+                }
+
+                // Clear form
+                template.$('#keywordText').val("");
+                template.$("#stageDropdown").val("0");
+                template.$("#sectionDropdown").val("0");
+
+                document.getElementById('faderContainer').style.opacity = '1';
+
+                function fadeout() {
+                    document.getElementById('faderContainer').style.opacity = '0';
+                }
+
+                window.setTimeout(fadeout, 4000);
+
+            }
+
+
+            var submitName = template.$('#nameText').val();
+            var submitEmail = template.$('#emailText').val();
+            var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
+            var participateChecked = template.$('#participateCheck').is(':checked');
+
+            if (submitEmail) {
+                var newGuest = {
+                    name: submitName,
+                    email: submitEmail,
+                    wantsRecruitment: recruitmentChecked,
+                    wantsParticipation: participateChecked,
                 };
 
-                Keywords.insert(newKeyword);
-            }
-            
-            // Clear form
-            template.$('#keywordText').val("");
-            template.$("#stageDropdown").val("0");
-            template.$("#sectionDropdown").val("0");
+                Guests.insert(newGuest);
 
-            document.getElementById('faderContainer').style.opacity = '1';
-
-            function fadeout() {
-                document.getElementById('faderContainer').style.opacity = '0';
+                template.$('#nameText').val("");
+                template.$('#emailText').val("");
+                template.$('#recruitmentCheck').prop('checked', false);
+                template.$('#participateCheck').prop('checked', false);
             }
 
-            window.setTimeout(fadeout, 4000);
-
-        }
-
-
-        var submitName = template.$('#nameText').val();
-        var submitEmail = template.$('#emailText').val();
-        var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
-        var participateChecked = template.$('#participateCheck').is(':checked');
-
-        if (submitEmail) {
-            var newGuest = {
-                name: submitName,
-                email: submitEmail,
-                wantsRecruitment: recruitmentChecked,
-                wantsParticipation: participateChecked,
-            };
-
-            Guests.insert(newGuest);
-
-            template.$('#nameText').val("");
-            template.$('#emailText').val("");
-            template.$('#recruitmentCheck').prop('checked', false);
-            template.$('#participateCheck').prop('checked', false);
-        }
-
-
+        //}
 
 
     },

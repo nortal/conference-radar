@@ -6,6 +6,7 @@ import d3 from 'd3v4';
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
+    this.legends = new ReactiveVar();
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
@@ -88,19 +89,53 @@ function draw() {
 
     var keywords = Keywords.find().fetch();
     var entries = [];
+    var legendEntries = [];
 
     keywords.forEach(pushEntry);
 
     function pushEntry(value, index, array) {
+
         entries.push({
             label: value.keyword,
             quadrant: getQuadrant(value),   // 0, 1, 2, 3 (clockwise, starting from bottom right)
             ring: getRing(value),        // 0, 1, 2, 3 (inside -> out)
-            size: mapRange(value.votes, 1, 50, 0.85, 3.5),
+            size: mapRange(value.votes, 1, 50, 0.85, 3.25),
             votes: value.votes,
             stage: value.stage,
             section: value.section
         });
+
+        let existingEntry = legendEntries.find(e => (e.label === value.keyword && e.quadrant === getQuadrant(value)));
+
+        if (existingEntry) {
+            foundStage = existingEntry.stages.find(s => s === value.stage);
+            if (!foundStage) {
+                existingEntry.stages.push(value.stage);
+            }
+        } else {
+            legendEntries.push({
+                label: value.keyword,
+                quadrant: getQuadrant(value),   // 0, 1, 2, 3 (clockwise, starting from bottom right)
+                ring: getRing(value),        // 0, 1, 2, 3 (inside -> out)
+                votes: value.votes,
+                stages: [value.stage],
+                section: value.section
+            });
+        }
+
+        
+    }
+
+    for (j = 0; j < legendEntries.length; ++j) {
+        legendEntries[j].legendID = j + 1;
+    }
+    for (i = 0; i < entries.length; ++i) {
+        for (j = 0; j < legendEntries.length; ++j) {
+            if (legendEntries[j].label === entries[i].label && legendEntries[j].quadrant === entries[i].quadrant) {
+                entries[i].legendID = j + 1;
+                legendEntries[j].legendID = j + 1;
+            }
+        }
     }
 
     d3.selectAll("svg > *").remove();
@@ -130,6 +165,7 @@ function draw() {
         ],
         print_layout: true,
         entries: entries,
+        legendEntries: legendEntries,
     });
 }
 
@@ -295,12 +331,21 @@ function radar_visualization(config) {
 
     // partition entries according to segments
     var segmented = new Array(4);
+    var segmentedLegend = new Array(4);
     for (var quadrant = 0; quadrant < 4; quadrant++) {
         segmented[quadrant] = [];
+        segmentedLegend[quadrant] = [];
         //for (var ring = 0; ring < 4; ring++) {
         //    segmented[quadrant][ring] = [];
         //}
     }
+
+    for (var i = 0; i < config.legendEntries.length; i++) {
+        var legendEntry = config.legendEntries[i];
+        legendEntry.color = config.quadrants[legendEntry.quadrant].color;
+        segmentedLegend[legendEntry.quadrant].push(legendEntry);
+    }
+
     for (var i = 0; i < config.entries.length; i++) {
         var entry = config.entries[i];
         segmented[entry.quadrant].push(entry);
@@ -312,7 +357,16 @@ function radar_visualization(config) {
         var entries = segmented[quadrant];
         entries.sort(function (a, b) { return a.label.localeCompare(b.label); })
         for (var i = 0; i < entries.length; i++) {
-            entries[i].id = "" + id++;
+            entries[i].id = "" + entries[i].legendID;
+        }
+    }
+
+    id = 1;
+    for (var quadrant of [2, 3, 1, 0]) {
+        var legendEntries = segmentedLegend[quadrant];
+        //legendEntries.sort(function (a, b) { return a.label.localeCompare(b.label); })
+        for (var i = 0; i < legendEntries.length; i++) {
+            legendEntries[i].id = "" + legendEntries[i].legendID;
         }
     }
 
@@ -456,10 +510,27 @@ function radar_visualization(config) {
         }
     }
 
-    function legend_transform(quadrant, ring, index = null) {
-        console.log("legend: quadrant" + quadrant + " ring " + ring + " index " + index)
+    function legend_transform(quadrant, index = null) {
+        //console.log("legend: quadrant" + quadrant + " ring " + ring + " index " + index)
         var dx = 120 * (Math.floor(index / 21));
         var dy = 16 * (index % 21);
+        return translate(
+            legend_offset[quadrant].x + dx,
+            legend_offset[quadrant].y + dy
+        );
+    }
+
+    function legend_transform_bliperino(quadrant, ring, index = null) {
+        //console.log("legend: quadrant" + quadrant + " ring " + ring + " index " + index)
+        var dx = 120 * (Math.floor(index / 21)) - 10;
+        var dy = 16 * (index % 21) - 8;
+        if (ring === 1 || ring === 2) {
+            dx = dx + 6;
+        }
+        if (ring === 2 || ring === 3) {
+            dy = dy + 6;
+        }
+
         return translate(
             legend_offset[quadrant].x + dx,
             legend_offset[quadrant].y + dy
@@ -479,6 +550,7 @@ function radar_visualization(config) {
     }
 
     // draw title and legend (only in print layout)
+    var legends = [];
     if (config.print_layout) {
 
         radar.append("svg:image")
@@ -490,34 +562,56 @@ function radar_visualization(config) {
         // legend
         var legend = radar.append("g");
         for (var quadrant = 0; quadrant < 4; quadrant++) {
-            var counter = 0;
 
-            legend.append("text")
-                .attr("transform", translate(
-                    legend_offset[quadrant].x,
-                    legend_offset[quadrant].y - 45
-                ))
-                .text(config.quadrants[quadrant].name)
-                .style("font-family", "Roboto, sans-serif")
-                .style("font-weight", "bold")
+        legend.append("text")
+            .attr("transform", translate(
+                legend_offset[quadrant].x,
+                legend_offset[quadrant].y - 45
+            ))
+            .text(config.quadrants[quadrant].name)
+            .style("font-family", "Roboto, sans-serif")
+            .style("font-weight", "bold")
                 .style("font-size", "24");
-            for (var ring = 1; ring < 5; ring++) {
-                counter = counter + 1;
-                var ringIndex = ring - 1;
-                legend.selectAll(".legend" + quadrant)
-                    .data(segmented[quadrant])
-                    .enter()
-                    .append("text")
-                    .attr("transform", function (d, i) { return legend_transform(quadrant, ringIndex, i); })
-                    .attr("class", "legend" + quadrant)
-                    .attr("id", function (d, i) { return "legendItem" + d.id; })
-                    .text(function (d, i) { return d.id + ". " + d.label; })
-                    .style("font-family", "Roboto, sans-serif")
-                    .style("font-size", "12")
-                    .style("fill", "#616A73")
-                    .on("mouseover", function (d) { highlightLegendItem(d); })
-                    .on("mouseout", function (d) { dehighlightLegendItem(d); });
+
+
+            function getStageByRingIndex(ringIndex) {
+                if (ringIndex === 0 ) {
+                    return "Adopt";
+                } else if (ringIndex === 1) {
+                    return "Trial";
+                } else if (ringIndex === 2) {
+                    return "Assess";
+                } else if (ringIndex === 3) {
+                    return "Avoid";
+                }
             }
+
+            for (ring = 1; ring < 5; ring++) {
+                legend.selectAll(".legend" + quadrant)
+                    .data(segmentedLegend[quadrant])
+                    .enter()
+                    .append("circle")
+                    .attr("r", 3)
+                    .attr("fill", function (d, i) { return d.stages.includes(getStageByRingIndex(ring-1)) ? config.rings[ring].color : "#00000000" ; })
+                    .attr("transform", function (d, i) { return legend_transform_bliperino(quadrant, ring-1, i); });
+            }
+
+            var quadrantLegend = legend.selectAll(".legend" + quadrant)
+                .data(segmentedLegend[quadrant])
+                .enter()
+                .append("text")
+                .attr("transform", function (d, i) { return legend_transform(quadrant, i); })
+                .attr("class", "legend" + quadrant)
+                .attr("id", function (d, i) { return "legendItem" + d.id; })
+                .text(function (d, i) { return d.id + ". " + d.label; })
+                .style("font-family", "Roboto, sans-serif")
+                .style("font-size", "12")
+                .style("fill", "#616A73");
+
+
+            
+
+            legends.push(quadrantLegend);
         }
     }
 
@@ -525,29 +619,15 @@ function radar_visualization(config) {
     var entries = radar.append("g")
         .attr("id", "entries");
 
-    function highlightLegendItem(d) {
-        var legendItem = document.getElementById("legendItem" + d.id);
-        legendItem.setAttribute("class", "legend-text-highlight");
-        legendItem.setAttribute("style", "fill: black; font-size: 12;");
-    }
-
-    function dehighlightLegendItem(d) {
-        var legendItem = document.getElementById("legendItem" + d.id);
-        legendItem.setAttribute("class", "legend-text");
-        legendItem.setAttribute("style", "fill: #616A73; font-size: 12;");
-    }
-
     // draw blips on radar
     var blips = entries.selectAll(".blip")
         .data(config.entries)
         .enter()
         .append("g")
         .attr("class", "blip")
-        .attr("transform", function (d, i) { return legend_transform_blip(d.quadrant, d.ring, i); })
-        .on("mouseover", function (d) { highlightLegendItem(d); })
-        .on("mouseout", function (d) { dehighlightLegendItem(d); });
-
+        .attr("transform", function (d, i) { return legend_transform_blip(d.quadrant, d.ring, i); });
     this.blips = blips;
+    this.legends = legends;
 
     // configure each blip
     blips.each(function (d) {
@@ -567,7 +647,7 @@ function radar_visualization(config) {
 
         // blip text
         if (d.active || config.print_layout) {
-            var blip_text = config.print_layout ? d.id : d.label.match(/[a-z]/i);
+            var blip_text = d.legendID; // config.print_layout ? d.id : d.label.match(/[a-z]/i);
             blip.append("text")
                 .text(blip_text)
                 .attr("y", 3)
@@ -625,7 +705,6 @@ function highlightBlips() {
     }
 
     Session.set("currentKeyword", getNextKeywordInQuadrant());
-    //var highlightedBlipsPerQuadrant = [{ quadrant: 0, blips: [] }, { quadrant: 1, blips: [] }, { quadrant: 2, blips: [] }, { quadrant: 3, blips: [] }];
 
     // highlight blips if available
     if (this.blips) {
@@ -635,33 +714,40 @@ function highlightBlips() {
             var circle = blip.select("circle");
             var text = blip.select("text");
             var data = circle.datum();
-            //highlightedBlipsPerQuadrant[data.quadrant].blips.push(blip);
 
             // highlight all matching blips
             if (Session.get("currentKeyword") && data.label === Session.get("currentKeyword").keyword) {
                 var color = data.color + "FF";
                 circle.style("fill", color);
                 circle.style("stroke", "white");
-                var e = document.createEvent('UIEvents');
-                e.initUIEvent('mouseover', true, true, /* ... */);
-                circle.node().dispatchEvent(e);
             } else {
                 var color = data.color + "2A";
                 circle.style("fill", color);
                 circle.style("stroke", "white");
-                var e = document.createEvent('UIEvents');
-                e.initUIEvent('mouseout', true, true, /* ... */);
-                circle.node().dispatchEvent(e);
             }
         });
 
-        //highlightedBlipsPerQuadrant.forEach(sortBlips);
+    }
 
-        //function sortBlips(item, index) {
-        //    item.blips.sort(function (a, b) {
-        //        return a.select("circle").datum().ring - b.select("circle").datum().ring;
-        //    })
-        //}
+    if (this.legends) {
+        for (i = 0; i < this.legends.length; ++i) {
+            this.legends[i].each(function (d) {
+                var legend = d3.select(this);
+                var text = legend.select("text");
+                var data = legend.datum();
+                // highlight all matching legend items
+
+                if (Session.get("currentKeyword") && data.label === Session.get("currentKeyword").keyword) {
+                    legend.attr("class", "legend-text-highlight");
+                    legend.style("fill: black;");
+                    legend.style("font-size: 12;");
+                } else {
+                    legend.attr("class", "legend-text");
+                    legend.style("fill: #616A73;");
+                    legend.style("font-size: 12;");
+                }
+            });
+        }
 
     }
 }
