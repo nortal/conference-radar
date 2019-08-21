@@ -7,13 +7,29 @@ body {
     background-color: #EEF2F5;
 }
 
+h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
 .grid-header { 
     grid-area: header; 
 }
-.grid-main {
-    grid-area: main;
-    text-align: left;
-    padding: 18px;
+
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 600px;
+    height: 600px;
+    padding-bottom: 100%;
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .legend-text-highlight {
@@ -37,15 +53,6 @@ body {
     margin: auto;
 }
 
-.grid-right {
-    grid-area: right;
-    text-align: left;
-    padding: 40px;
-    min-width: 360px;
-    min-height: 560px;
-    float: left;
-}
-
 label {
     display: block;
     padding-left: 15px;
@@ -58,8 +65,8 @@ label {
 
 .grid-container {
     display: grid;
-    grid-template-areas: 'header header header header header' 'main main main right right' 'footer footer footer footer footer';
-    grid-gap: 20px;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 10px;
     background-color: #EEF2F5;
     padding: 20px;
     margin: auto;
@@ -68,23 +75,14 @@ label {
     max-width: 960px;
 }
 
-.grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 20px 0;
-  font-size: 20px;
-}
-
-.grid-main > div {
-    padding: 40px;
+.grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
     font-size: 20px;
-}
+  }
 
-.grid-right > div {
-    padding-top: 10px;
-    padding-right: 40px;
-    padding-bottom: 5px;
-    padding-left: 40px;
-    font-size: 20px;
+.position-marker {
+    fill: #009639;
 }
 
 a {
@@ -121,6 +119,8 @@ input[type=checkbox] {
 
 svg {
     display: block;
+    height: 100%; 
+    width:100%;
     margin: auto;
 }
 
