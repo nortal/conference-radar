@@ -1,6 +1,3 @@
-import { Template } from 'meteor/templating';
-import { Keywords } from '../imports/api/keywords.js';
-
 import './main.html';
 import '../imports/ui/login-view.html';
 import '../imports/ui/confirm-view.html';
@@ -21,7 +18,7 @@ Router.route('/login', function () {
 });
 
 Router.route('/confirm', function () {
-    if (Session.get("isLoggedIn")) {
+    if (Session.get("isLoggingIn")) {
         this.render('confirm');
     } else {
         Router.go("/");

@@ -3,7 +3,7 @@ import {Users} from '../../imports/api/keywords.js';
 
 Template.confirm.events({
     'click #nextButton': function (event, template) {
-        
+
         event.preventDefault();
 
         var submitEmail = Session.get('email') || template.$("#emailText").val();
@@ -11,21 +11,29 @@ Template.confirm.events({
         var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
         var participateChecked = template.$('#participateCheck').is(':checked');
 
-        //todo: valid email + name check
-        if (submitEmail) {
-            var userPayload = {
-                name: submitName,
-                email: submitEmail,
-                wantsRecruitment: recruitmentChecked,
-                wantsParticipation: participateChecked,
-            };
-
-            Users.insert(userPayload);
-            Router.go('/submit');
-        } else {
-            //todo: invalid input warning
-            console.log('invalid input')
+        //todo: valid email + name check & invalid input warning
+        if (!submitEmail || !submitName) {
+            console.log('invalid input');
+            return;
         }
+
+        var userPayload = {
+            name: submitName,
+            email: submitEmail,
+            wantsRecruitment: recruitmentChecked,
+            wantsParticipation: participateChecked,
+        };
+
+        var foundUsers = Users.find({email: submitEmail}).fetch();
+        if (foundUsers.length === 0) {
+            Users.insert(userPayload);
+        }
+
+        Session.set('isLoggedIn', true);
+        Session.set('email', submitEmail);
+        Session.set('name', submitName);
+
+        Router.go('/submit');
     }
 
 });

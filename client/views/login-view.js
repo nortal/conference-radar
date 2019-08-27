@@ -1,5 +1,4 @@
 import {Template} from 'meteor/templating';
-import {Users} from '../../imports/api/keywords.js';
 
 function loadJsSdk(id, src, onLoad) {
     var fjs = document.getElementsByTagName('script')[0];
@@ -12,18 +11,10 @@ function loadJsSdk(id, src, onLoad) {
 }
 
 function loginOrSignUp(email, name) {
-    var payload = {email: email};
-    var foundUsers = Users.find(payload).fetch();
-
-    if (foundUsers.length === 0) {
-        payload.name = name;
-        Users.insert(payload);
-    }
-
-    console.log('Logged in with email: ' + email + ', name: ' + name);
-    Session.set('isLoggedIn', true);
+    Session.set('isLoggingIn', true);
     Session.set('email', email);
     Session.set('name', name);
+
     Router.go('/confirm');
 }
 
@@ -77,7 +68,7 @@ Template.login.onCreated(function () {
             version: Meteor.settings.public.auth.facebook.apiVersion
         });
 
-        FB.getLoginStatus(function(response) {
+        FB.getLoginStatus(function (response) {
             console.log('facebook signed in: ' + (response.status === 'connected'));
         });
     });
