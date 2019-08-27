@@ -1,0 +1,13 @@
+{
+  "public": {
+    "auth": {
+      "google": {
+        "clientId": ""
+      },
+      "facebook": {
+        "appId": "",
+        "apiVersion": ""
+      }
+    }
+  }
+}
