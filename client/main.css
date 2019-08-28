@@ -1,30 +1,26 @@
+html,body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    font-family: "aktiv-grotesk-std",sans-serif;
+    font-family: "Roboto",Arial,sans-serif;
     font-style: normal;
     font-weight: 200;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    background-color: #EEF2F5;
-}
-
-h3 {
-    margin-top: 0;
-    margin-bottom: 5px;
-}
-
-.grid-header { 
-    grid-area: header; 
+    background-color: #EEF2F5 !important;
 }
 
 .svg-container {
     display: inline-block;
     position: relative;
-    width: 600px;
-    height: 600px;
     padding-bottom: 100%;
     vertical-align: top;
     overflow: hidden;
+    width: 100%;
 }
+
 .svg-content {
     display: inline-block;
     position: absolute;
@@ -32,103 +28,50 @@ h3 {
     left: 0;
 }
 
-.legend-text-highlight {
-    text-decoration: underline;
-    font-weight: bold;
-}
-
-.legend-text {
-    text-decoration: none;
-    font-weight: normal;
-}
-
-.login-container {
-    grid-area: right;
-    text-align: center;
-    padding: 40px;
-    min-width: 360px;
-    min-height: 560px;
-    max-width: 450px;
-    max-height: 600px;
-    margin: auto;
-}
-
 label {
     display: block;
     padding-left: 15px;
     text-indent: -15px;
-  }
-
-.grid-footer {
-    grid-area: footer;
 }
 
 .grid-container {
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 10px;
     background-color: #EEF2F5;
     padding: 20px;
     margin: auto;
-    font-family: "Roboto",Arial,sans-serif;
     font-size: 20px;
-    max-width: 960px;
 }
 
 .grid-item {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 10px;
     font-size: 20px;
-  }
+    overflow: hidden;
+}
 
 .position-marker {
     fill: #009639;
 }
 
-a {
+.styled-link {
     color: #009639;
     text-decoration: none;
     font-size: 16px
 }
 
-.privacy-policy {
-    font-size: 16px;
-}
-
-input[type=checkbox] {
-    /* Double-sized Checkboxes */
-    -ms-transform: scale(2); /* IE */
-    -moz-transform: scale(2); /* FF */
-    -webkit-transform: scale(2); /* Safari and Chrome */
-    -o-transform: scale(2); /* Opera */
-    width: 13px;
-    height: 13px;
-    vertical-align: bottom;
-    position: relative;
-    top: -1px;
-}
-
-
-.radio-container {
-
-}
-
-.radio-element {
-    display: inline-block;
-}
-
 svg {
     display: block;
-    height: 100%; 
+    height: 100%;
     width:100%;
     margin: auto;
 }
 
-.centered {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+/* todo: All styles below are used only in submit page. Remove these once replaced by bootstrap. */
+
+.grid-footer {
+    grid-area: footer;
 }
 
 .submit-button {
@@ -174,9 +117,4 @@ svg {
     color: #009639;
 }
 
-.rounded {
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    border-radius: 20px;
-}
-
+/* todo: All styles above are used only in submit page. Remove these once replaced by bootstrap. */

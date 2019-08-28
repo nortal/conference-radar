@@ -12,6 +12,10 @@ import './views/radar-view.js';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
+Router.configure({
+    layoutTemplate: 'mainLayout'
+});
+
 Router.route('/', function () {
     Router.go('/login');
 });
@@ -37,5 +41,6 @@ Router.route('/submit', function () {
 });
 
 Router.route('/radar', function () {
+    this.layout('radarLayout');
     this.render('radar');
 });

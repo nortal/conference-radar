@@ -1,18 +1,21 @@
 <template name="login">
 
+    <div class="d-flex justify-content-center">
+        <div style="width: 24rem">
+            <div class="text-center">Sign in using</div>
+            <hr/>
 
-    <div class="login-container">
-        <div>
-            <button class="btn submit-button" id="googleLogin" style="margin-bottom: 40px;">Google</button>
-        </div>
-        <div>
-            <button class="btn submit-button" id="facebookLogin" style="margin-bottom: 40px;">Facebook</button>
-        </div>
-        <div>{{!-- todo: remove me --}}
-            <button class="btn submit-button" id="skipLogin">Skip</button>
+            <div class="mb-3">
+                <button class="btn btn-block btn-primary" id="googleLogin">Google</button>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-block btn-primary" id="facebookLogin">Facebook</button>
+            </div>
+            <div>
+                <button class="btn btn-block btn-secondary" id="skipLogin">Skip</button>
+            </div>
         </div>
     </div>
-
 
 </template>
 
