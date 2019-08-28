@@ -52,6 +52,7 @@ function getRandomSection() {
 
 Template.submit.onCreated(function() {
     this.matches = new ReactiveVar([]);
+    this.selectWidth = new ReactiveVar();
 });
 
 Template.submit.helpers({
@@ -66,7 +67,8 @@ Template.submit.helpers({
     },
     matches: () => {
         return Template.instance().matches.get();
-    }
+    },
+    getSelectWidth: () => { return Template.instance().selectWidth.get(); }
 });
 
 Template.submit.events({
@@ -164,6 +166,9 @@ Template.submit.events({
 
     'keyup #keywordText': _.debounce((event, template) => {
         event.preventDefault();
+
+        template.selectWidth.set(event.target.getBoundingClientRect().width);
+
 
         template.matches.set([]);
         if (!event || !event.target || !event.target.value) {

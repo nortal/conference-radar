@@ -1,6 +1,7 @@
 <template name="submit">
     <form class="new-keyword" autocomplete="off">
         <div class="row">
+
             <div class="col-6">
                 <div>
                     <p>Build Stuff Tech Radar</p>
@@ -15,7 +16,7 @@
                             Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
                     <p>Share your point of view and vote for an existing placement or add a new one.</p>
                     <p>
-                        <a href="www.nortal.com">nortal.com</a>
+                        <a class="styled-link" href="www.nortal.com">nortal.com</a>
                     </p>
                 </div>
             </div>
@@ -50,7 +51,7 @@
                 <div>
                     <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Enter Here" />
                     <input hidden id="sectionDropdown" type="text" name="sectionDropdown" />
-                    <div class="typeahead">
+                    <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
                             {{#each match in matches}}
                                 <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
@@ -60,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="mb-3">
                     <select id="stageDropdown" name="stage" class="styled-select">
                         <option value='0' disabled selected>Ring</option>
                         <option value='Adopt'>Adopt</option>
@@ -70,20 +71,12 @@
                     </select>
                 </div>
 
-                <div style="text-align: right;">
-                    <button id="submitButton" type="button" class="btn btn-success submit-button">Submit</button>
-                </div>
-
-                <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="faderContainer">
-                    <p>Thank you!</p>
-                    <p>Your opinion has been saved.</p>
+                <div class="text-right">
+                    <button id="submitButton" type="button" class="submit-button">Submit</button>
                 </div>
             </div>
-            <div class="grid-footer">
 
-            </div>
+
         </div>
-
-
     </form>
 </template>
