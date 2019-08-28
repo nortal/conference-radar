@@ -1,6 +1,6 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Guests, Keywords} from '../../imports/api/keywords.js';
+import {Keywords} from '../../imports/api/keywords.js';
 import _ from 'underscore';
 
 const keywordClassifier = require('/public/keywords.json');
@@ -57,7 +57,7 @@ Template.submit.onCreated(function() {
 
 Template.submit.helpers({
     submittedKeywords: () => {
-        return Keywords.find({ emails: "test@nortal.com" }).fetch();
+        return Keywords.find({ emails: Session.get("email") }).fetch();
     },
     stages: () => {
         return ["Adopt", "Trial", "Assess", "Avoid"];
@@ -76,10 +76,10 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        var newKeyword = template.$("#keywordText").val();
+        var keywordName = template.$("#keywordText").val();
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionDropdown").val();
-        var email = "test@nortal.com"; // FIXME
+        var email = Session.get("email");
 
         // test data generation, uncomment to spam test data into database
         //for (count = 0; count < 250; count++) {
@@ -87,41 +87,68 @@ Template.submit.events({
             //var chosenStage = getRandomStage();
             //var chosenSection = getRandomSection();
 
-            var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
-            var allKeywords = Keywords.find().fetch();
+            if (keywordName && keywordName.length && chosenStage != null && chosenSection != null) {
+                var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
+                var allKeywords = Keywords.find().fetch();
 
-            // case insensitive search
-            for (i = 0; i < allKeywords.length; ++i) {
-                if (allKeywords[i].keyword.toLowerCase() === newKeyword.toLowerCase() &&
-                    allKeywords[i].stage === chosenStage &&
-                    allKeywords[i].section === chosenSection) {
-                    keyword = allKeywords[i];
-                    break;
+                // case insensitive search
+                for (i = 0; i < allKeywords.length; ++i) {
+                    if (allKeywords[i].keyword.toLowerCase() === keywordName.toLowerCase() &&
+                        allKeywords[i].stage === chosenStage &&
+                        allKeywords[i].section === chosenSection) {
+                        keyword = allKeywords[i];
+                        break;
+                    }
                 }
-            }
 
-            if (newKeyword && newKeyword !== "" && chosenStage !== null && chosenSection !== null) {
+                if (keyword && keyword.emails && keyword.emails.indexOf(email) >= 0) {
+                    template.$('#keywordText').val("");
+                    template.$("#stageDropdown").val("0");
+                    template.$("#sectionDropdown").val("0");
+                    document.getElementById('alreadyVotedContainer').style.opacity = '1';
+                    window.setTimeout(() => {
+                        document.getElementById('alreadyVotedContainer').style.opacity = '0'
+                    }, 4000);
+                    return;
+                }
+
                 if (keyword) {
-                        var voteString = 'votes';
-                        var action = {};
-                        action[voteString] = 1;
-                        var addEmail = {emails: email};
-                        Keywords.update(
-                            { _id: keyword._id },
-                            {
-                                $addToSet: addEmail,
-                                $inc: action
-                            });
+                    var voteString = 'votes';
+                    var action = {};
+                    action[voteString] = 1;
+                    var addEmail = {emails: email};
+                    Keywords.update(
+                        { _id: keyword._id },
+                        {
+                            $addToSet: addEmail,
+                            $inc: action
+                        });
                 } else {
                     var newKeyword = {
-                        keyword: newKeyword,
+                        keyword: keywordName,
                         stage: chosenStage,
                         section: chosenSection,
                         emails: [email],
                         votes: 1,
                     };
-
                     Keywords.insert(newKeyword);
+                }
+
+                var oldVote = allKeywords.find((kw) => {
+                    console.log(kw);
+                    return kw.emails.indexOf(email) >= 0 &&
+                        kw.keyword === keywordName &&
+                        kw.section === chosenSection &&
+                        kw.stage !== chosenStage;
+                });
+
+                if (oldVote) {
+                    Keywords.update(
+                        { _id: oldVote._id },
+                        {
+                            $pull: {emails: email},
+                            $inc: {votes: -1}
+                        });
                 }
 
                 // Clear form
@@ -138,29 +165,6 @@ Template.submit.events({
                 window.setTimeout(fadeout, 4000);
 
             }
-
-
-            var submitName = template.$('#nameText').val();
-            var submitEmail = template.$('#emailText').val();
-            var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
-            var participateChecked = template.$('#participateCheck').is(':checked');
-
-            if (submitEmail) {
-                var newGuest = {
-                    name: submitName,
-                    email: submitEmail,
-                    wantsRecruitment: recruitmentChecked,
-                    wantsParticipation: participateChecked,
-                };
-
-                Guests.insert(newGuest);
-
-                template.$('#nameText').val("");
-                template.$('#emailText').val("");
-                template.$('#recruitmentCheck').prop('checked', false);
-                template.$('#participateCheck').prop('checked', false);
-            }
-
         //}
     },
 

@@ -30,18 +30,18 @@
                             <p class="col font-weight-bold">Votes:</p>
                         </div>
                         {{#each stage in stages}}
+                            {{#if getByStage this stage}}
                             <div class="row pb-2">
-                                {{#if getByStage this stage}}
-                                    <div class="vote-group-title col-lg-3 col-md-4 col-sm-12">
-                                        {{stage}}:
-                                    </div>
-                                    <div class="vote-group-votes col-lg-9 col-md-8 col-sm-12">
-                                        {{#each keyword in getByStage this stage}}
-                                            {{keyword.keyword}}<br>
-                                        {{/each}}
-                                    </div>
-                                {{/if}}
+                                <div class="vote-group-title col-lg-3 col-md-4 col-sm-12">
+                                    {{stage}}:
+                                </div>
+                                <div class="vote-group-votes col-lg-9 col-md-8 col-sm-12">
+                                    {{#each keyword in getByStage this stage}}
+                                        {{keyword.keyword}}<br>
+                                    {{/each}}
+                                </div>
                             </div>
+                            {{/if}}
                         {{/each}}
                         <div>
 
@@ -75,6 +75,13 @@
 
                 <div class="text-right">
                     <button id="submitButton" type="button" class="submit-button">Submit</button>
+                </div>
+                <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="faderContainer">
+                    <p>Thank you!</p>
+                    <p>Your opinion has been saved.</p>
+                </div>
+                <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="alreadyVotedContainer">
+                    <p>You have already voted for this option!</p>
                 </div>
             </div>
 
