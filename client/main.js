@@ -9,6 +9,9 @@ import './views/login-view.js';
 import './views/submit-view.js';
 import './views/radar-view.js';
 
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
+
 Router.route('/', function () {
     Router.go('/login');
 });
