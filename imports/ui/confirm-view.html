@@ -16,6 +16,11 @@
         </div>
 
         <div class="col-6">
+            {{#if getInvalidInput}}
+                <div class="alert alert-danger" role="alert">
+                    {{getInvalidInput}}
+                </div>
+            {{/if}}
 
             <input class="styled-input mb-3" id="nameText" type="text" name="nameText" placeholder="Your name"
                    value="{{getSessionVal 'name'}}" {{isDisabled 'name'}}/>

@@ -1,6 +1,10 @@
 import {Template} from 'meteor/templating';
 import {Users} from '../../imports/api/keywords.js';
 
+Template.confirm.onCreated(function () {
+    this.invalidInput = new ReactiveVar();
+});
+
 Template.confirm.events({
     'click #nextButton': function (event, template) {
 
@@ -11,9 +15,13 @@ Template.confirm.events({
         var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
         var participateChecked = template.$('#participateCheck').is(':checked');
 
-        //todo: valid email + name check & invalid input warning
-        if (!submitEmail || !submitName) {
-            console.log('invalid input');
+        if (!submitEmail || !validateEmail(submitEmail)) {
+            template.invalidInput.set("Invalid email");
+            return;
+        }
+
+        if (!submitName || !validateName(submitName)) {
+            template.invalidInput.set("Invalid name");
             return;
         }
 
@@ -44,6 +52,18 @@ Template.confirm.helpers({
     },
     getSessionVal: function (key) {
         return Session.get(key);
+    },
+    getInvalidInput: function () {
+        return Template.instance().invalidInput.get();
     }
 });
 
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function validateName(name) {
+    return name.length >= 3;
+}
