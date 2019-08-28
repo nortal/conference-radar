@@ -1,38 +1,50 @@
 <template name="radar">
-    <div class="grid-container">
-        <div class="grid-item">
-            <h3 class="mt-0 mb-2">Tools</h3>
-            <div class="svg-container">
-                <svg id="tools" class="svg-content" viewBox="0 0 600 600" preserveAspectRatio="xMinYMin meet">
-                </svg>
+
+    <div class="row no-gutters rounded">
+        <div class="col-3">
+            <div class="bg-white p-3">
+                <h3 class="mt-0 mb-2">Tools</h3>
+                <div>
+                    <svg id="tools"></svg>
+                </div>
             </div>
         </div>
-        <div class="grid-item">
-            <h3 class="mt-0 mb-2">Frameworks</h3>
-            <div class="svg-container">
-                <svg id="frameworks" class="svg-content" viewBox="0 0 600 600" preserveAspectRatio="xMinYMin meet">
-                </svg>
+        <div class="col-3 border-left">
+            <div class="bg-white p-3">
+                <h3 class="mt-0 mb-2">Frameworks</h3>
+                <div>
+                    <svg id="frameworks"></svg>
+                </div>
             </div>
         </div>
-        <div class="grid-item">
-            <h3 class="mt-0 mb-2">Techniques</h3>
-            <div class="svg-container">
-                <svg id="techniques" class="svg-content" viewBox="0 0 600 600" preserveAspectRatio="xMinYMin meet">
-                </svg>
+
+        <div class="col-3 border-left">
+            <div class="bg-white p-3">
+                <h3 class="mt-0 mb-2">Techniques</h3>
+                <div>
+                    <svg id="techniques"></svg>
+                </div>
             </div>
         </div>
-        <div class="grid-item">
-            <h3 class="mt-0 mb-2">Platforms</h3>
-            <div class="svg-container">
-                <svg id="platforms" class="svg-content" viewBox="0 0 600 600" preserveAspectRatio="xMinYMin meet">
-                </svg>
+        <div class="col-3 border-left">
+            <div class="bg-white p-3">
+                <h3 class="mt-0 mb-2">Platforms</h3>
+                <div>
+                    <svg id="platforms"></svg>
+                </div>
             </div>
         </div>
     </div>
+
+
 </template>
 
 <template name="radarLayout">
 
-    {{> yield}}
+    <div class="container p-3 pt-2">
+
+        {{> yield}}
+
+    </div>
 
 </template>

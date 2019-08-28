@@ -4,7 +4,7 @@ html,body {
 }
 
 body {
-    font-family: "Roboto",Arial,sans-serif;
+    font-family: "Roboto",Arial,sans-serif !important;
     font-style: normal;
     font-weight: 200;
     text-rendering: optimizeLegibility;
@@ -12,47 +12,15 @@ body {
     background-color: #EEF2F5 !important;
 }
 
-.svg-container {
-    display: inline-block;
-    position: relative;
-    padding-bottom: 100%;
-    vertical-align: top;
-    overflow: hidden;
-    width: 100%;
-}
-
-.svg-content {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-label {
-    display: block;
-    padding-left: 15px;
-    text-indent: -15px;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 10px;
-    background-color: #EEF2F5;
-    padding: 20px;
-    margin: auto;
-    font-size: 20px;
-}
-
-.grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    font-size: 20px;
-    overflow: hidden;
-}
-
 .position-marker {
     fill: #009639;
+}
+
+.dotted-line {
+    stroke: #000;
+    stroke-opacity: 0.3;
+    stroke-width: 1.5;
+    stroke-dasharray: 2;
 }
 
 .styled-link {
@@ -77,10 +45,19 @@ svg {
 .submit-button {
     border-radius: 25px;
     background: #009639;
-    font-family: "Roboto",Arial,sans-serif;
+    padding: 5px;
+    width: 150px;
+    height: 50px;
     font-weight: 100;
-    font-size: 1.5rem;
-    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+    border: 0;
+    transition: 0.3s;
+}
+
+.submit-button:hover {
+    background: #007d31;
+    transition: 0.3s;
 }
 
 .fader {
@@ -111,6 +88,11 @@ svg {
     padding: 10px;
     background: transparent;
     color: #009639;
+}
+
+.styled-input:disabled {
+    background-color: #EEE;
+    color: #649685;
 }
 
 .rounded {
@@ -147,6 +129,10 @@ svg {
     padding: 10px;
     background: transparent;
     color: #009639;
+}
+
+.typeahead-result:last-of-type {
+    border-bottom: 1px solid #d4d4d4;
 }
 
 .typeahead-result:hover {
