@@ -135,7 +135,6 @@ Template.submit.events({
                 }
 
                 var oldVote = allKeywords.find((kw) => {
-                    console.log(kw);
                     return kw.emails.indexOf(email) >= 0 &&
                         kw.keyword === keywordName &&
                         kw.section === chosenSection &&
