@@ -1,0 +1,75 @@
+[
+  {
+    "name": "React",
+    "section": "Frameworks"
+  },{
+    "name": "Ruby",
+    "section": "Frameworks"
+  },{
+    "name": ".NET",
+    "section": "Frameworks"
+  },{
+    "name": "PHP",
+    "section": "Frameworks"
+  },{
+    "name": "Angular",
+    "section": "Frameworks"
+  },{
+    "name": "Java",
+    "section": "Frameworks"
+  },{
+    "name": "C#",
+    "section": "Frameworks"
+  },{
+    "name": "Python",
+    "section": "Frameworks"
+  },{
+    "name": "Tensorflow",
+    "section": "Frameworks"
+  },{
+    "name": "C++",
+    "section": "Frameworks"
+  },{
+    "name": "NServiceBus",
+    "section": "Frameworks"
+  },{
+    "name": "Hack",
+    "section": "Frameworks"
+  },{
+    "name": "Lumen",
+    "section": "Frameworks"
+  },{
+    "name": "Vue.js",
+    "section": "Frameworks"
+  },{
+    "name": "Laravel",
+    "section": "Frameworks"
+  },{
+    "name": "Nuxt",
+    "section": "Frameworks"
+  },{
+    "name": "APL",
+    "section": "Frameworks"
+  },{
+    "name": "GraphQL",
+    "section": "Frameworks"
+  },{
+    "name": "Elixir",
+    "section": "Frameworks"
+  },{
+    "name": "Scala",
+    "section": "Frameworks"
+  },{
+    "name": "Progress",
+    "section": "Frameworks"
+  },{
+    "name": ".NET Core",
+    "section": "Frameworks"
+  },{
+    "name": "Postgres",
+    "section": "Frameworks"
+  },{
+    "name": "F#",
+    "section": "Frameworks"
+  }
+]

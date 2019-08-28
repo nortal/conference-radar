@@ -1,6 +1,9 @@
-import { Template } from 'meteor/templating';
-import { Keywords } from '../../imports/api/keywords.js';
-import { Guests } from '../../imports/api/keywords.js';
+import {Template} from 'meteor/templating';
+import {ReactiveVar} from 'meteor/reactive-var'
+import {Guests, Keywords} from '../../imports/api/keywords.js';
+import _ from 'underscore';
+
+const keywordClassifier = require('/public/keywords.json');
 
 function makeid() {
     var text = "";
@@ -47,6 +50,25 @@ function getRandomSection() {
     }
 }
 
+Template.submit.onCreated(function() {
+    this.matches = new ReactiveVar([]);
+});
+
+Template.submit.helpers({
+    submittedKeywords: () => {
+        return Keywords.find({ emails: "test@nortal.com" }).fetch();
+    },
+    stages: () => {
+        return ["Adopt", "Trial", "Assess", "Avoid"];
+    },
+    getByStage: (votes, stage) => {
+        return votes.filter(vote => vote.stage === stage);
+    },
+    matches: () => {
+        return Template.instance().matches.get();
+    }
+});
+
 Template.submit.events({
     'click #submitButton'(event, template) {
         // Prevent default browser form submit
@@ -55,6 +77,7 @@ Template.submit.events({
         var newKeyword = template.$("#keywordText").val();
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionDropdown").val();
+        var email = "test@nortal.com"; // FIXME
 
         // test data generation, uncomment to spam test data into database
         //for (count = 0; count < 250; count++) {
@@ -77,17 +100,22 @@ Template.submit.events({
 
             if (newKeyword && newKeyword !== "" && chosenStage !== null && chosenSection !== null) {
                 if (keyword) {
-                    var voteString = 'votes';
-                    var action = {};
-                    action[voteString] = 1;
-                    Keywords.update(
-                        { _id: keyword._id },
-                        { $inc: action });
+                        var voteString = 'votes';
+                        var action = {};
+                        action[voteString] = 1;
+                        var addEmail = {emails: email};
+                        Keywords.update(
+                            { _id: keyword._id },
+                            {
+                                $addToSet: addEmail,
+                                $inc: action
+                            });
                 } else {
                     var newKeyword = {
                         keyword: newKeyword,
                         stage: chosenStage,
                         section: chosenSection,
+                        emails: [email],
                         votes: 1,
                     };
 
@@ -132,7 +160,32 @@ Template.submit.events({
             }
 
         //}
-
-
     },
+
+    'keyup #keywordText': _.debounce((event, template) => {
+        event.preventDefault();
+
+        template.matches.set([]);
+        if (!event || !event.target || !event.target.value) {
+            return;
+        }
+
+        keywordClassifier.forEach((keyword) => {
+            if (keyword && keyword.name && keyword.name.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0) {
+                template.matches.get().push(keyword);
+            }
+        });
+    }, 500),
+
+    'click .typeahead-result'(event, template) {
+        event.preventDefault();
+
+        const data = $(event.target).data();
+        template.matches.set([]);
+        template.$("#keywordText").val(data.name);
+        template.$("#sectionDropdown").val(data.section);
+    },
+    'click body'(event, template) {
+        template.matches.set([]);
+    }
 });

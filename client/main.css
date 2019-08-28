@@ -77,14 +77,10 @@ svg {
 .submit-button {
     border-radius: 25px;
     background: #009639;
-    padding: 5px;
-    width: 150px;
-    height: 50px;
     font-family: "Roboto",Arial,sans-serif;
     font-weight: 100;
-    font-size: 20px;
-    color: white;
-    border: 0;
+    font-size: 1.5rem;
+    margin-top: 10px;
 }
 
 .fader {
@@ -117,4 +113,36 @@ svg {
     color: #009639;
 }
 
-/* todo: All styles above are used only in submit page. Remove these once replaced by bootstrap. */
+.rounded {
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.typeahead-results {
+    background-color: #EEF2F5;
+    display: block;
+    z-index: 1000;
+}
+
+.typeahead-result {
+    cursor: pointer;
+    overflow: hidden;
+    font-weight: 300;
+
+    background: transparent;
+    color: #009639;
+}
+
+.typeahead-result:hover {
+    background-color: #009639;
+}
+
+.vote-group-title, .vote-group-votes {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.vote-group-title {
+    color: #009639;
+}

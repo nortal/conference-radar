@@ -34,6 +34,7 @@ Router.route('/confirm', function () {
 
 Router.route('/submit', function () {
     if (Session.get("isLoggedIn")) {
+        this.layout('submitLayout');
         this.render('submit');
     } else {
         Router.go("/");
