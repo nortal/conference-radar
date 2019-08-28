@@ -119,23 +119,39 @@ svg {
     border-radius: 20px;
 }
 
-.typeahead-results {
+.typeahead {
     background-color: #EEF2F5;
+    margin: 0;
+    min-width: 100px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 999;
+}
+
+.typeahead-results {
     display: block;
-    z-index: 1000;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    clear: both;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
 }
 
 .typeahead-result {
-    cursor: pointer;
-    overflow: hidden;
-    font-weight: 300;
-
+    display: block;
+    padding: 10px;
     background: transparent;
     color: #009639;
 }
 
 .typeahead-result:hover {
     background-color: #009639;
+    color: white;
 }
 
 .vote-group-title, .vote-group-votes {

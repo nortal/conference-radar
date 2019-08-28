@@ -1,3 +1,4 @@
 node_modules/
 deploy-nortal-test.sh
 deploy-remote.sh
+.idea

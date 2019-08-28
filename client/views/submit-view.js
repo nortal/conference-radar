@@ -185,7 +185,15 @@ Template.submit.events({
         template.$("#keywordText").val(data.name);
         template.$("#sectionDropdown").val(data.section);
     },
-    'click body'(event, template) {
+    'click'(event, template) {
+        console.log('click template')
+        template.matches.set([]);
+    }
+});
+
+Template.body.events({
+    'click'(event, template) {
+        console.log('click body');
         template.matches.set([]);
     }
 });

@@ -24,18 +24,20 @@
                 {{#with submittedKeywords}}
                     {{#if this}}
                         <div class="row">
-                            <p class="col">Votes:</p>
+                            <p class="col font-weight-bold">Votes:</p>
                         </div>
                         {{#each stage in stages}}
                             <div class="row pb-2">
-                                <div class="vote-group-title col-lg-3 col-md-4 col-sm-12">
-                                    {{stage}}:
-                                </div>
-                                <div class="vote-group-votes col-lg-9 col-md-8 col-sm-12">
-                                    {{#each keyword in getByStage this stage}}
-                                    {{keyword.keyword}}<br>
-                                    {{/each}}
-                                </div>
+                                {{#if getByStage this stage}}
+                                    <div class="vote-group-title col-lg-3 col-md-4 col-sm-12">
+                                        {{stage}}:
+                                    </div>
+                                    <div class="vote-group-votes col-lg-9 col-md-8 col-sm-12">
+                                        {{#each keyword in getByStage this stage}}
+                                            {{keyword.keyword}}<br>
+                                        {{/each}}
+                                    </div>
+                                {{/if}}
                             </div>
                         {{/each}}
                         <div>
@@ -48,14 +50,14 @@
                 <div>
                     <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Enter Here" />
                     <input hidden id="sectionDropdown" type="text" name="sectionDropdown" />
-                    <div class="typeahead-results">
-                        {{#each match in matches}}
-                            <div class="dropdown-item">
-                                <span class="col" data-name="{{match.name}}" data-section="{{match.section}}">
+                    <div class="typeahead">
+                        <div class="typeahead-results">
+                            {{#each match in matches}}
+                                <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
                                     {{match.name}}
-                                </span>
-                            </div>
-                        {{/each}}
+                                </div>
+                            {{/each}}
+                        </div>
                     </div>
                 </div>
                 <div>
