@@ -41,6 +41,7 @@ Template.radar.onRendered(function () {
     });
 
     //check every 3 seconds for update
+    setTimeout(pollDrawing, 100);
     setInterval(pollDrawing, 3000);
 });
 
@@ -66,50 +67,43 @@ function draw() {
 }
 
 function initalizeSvg(svg, data) {
+    data = _.sortBy(data, 'value').reverse();
 
-    data = _.sortBy(data, 'value').reverse(); 
+    // bounding rect of current column
+    const columnRect = svg.node().parentNode.getBoundingClientRect();
+    const columnWidth = columnRect.width;
 
-    const columnWidth = 250;
-    const labelWidth = 100; // Cut from the above columnWidth
-
+    // padding between entries
     const rowHeightWithPadding = 20;
 
-    const boundingClientRect = svg.node().parentNode.getBoundingClientRect();
-    const containerHeight = boundingClientRect.height - 100;
+    // width of the labels, cut from width
+    const labelWidth = 50;
 
-    /**
-     * Calculates the beginning of the row considering wrapping
-     */
-    const calculateDataRowX = function (data, index) {
-        const calculatedY = (index + 1) * rowHeightWithPadding;
-        // x calculation uses 0 based index
-        const columnIndex = Math.floor(calculatedY / containerHeight)
-        return columnIndex * columnWidth;
-    }
+    // Magic number centers circle on the dotted line
+    const verticalOffset = 3.5;
+    // length of the dotted line
+    const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
+
+
 
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
-        // y calculation uses 0 based index
-        const columnIndex = Math.floor(calculatedY / containerHeight)
-        const itemIndexInColumn = Math.ceil((calculatedY - (columnIndex * containerHeight)) / rowHeightWithPadding);
+        const itemIndexInColumn = Math.ceil(calculatedY / rowHeightWithPadding);
         return itemIndexInColumn * rowHeightWithPadding;
-    }
+    };
 
     const calculateScoreMarkerRadius = function (scoreMarkerValue) {
         return 2.6 * Math.sqrt(scoreMarkerValue);
-    }
+    };
 
     const row = svg.selectAll('g').data(data).enter().append("g");
 
-    const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
-
-    row.append("text")
-        .attr("x", calculateDataRowX)
-        .attr("y", calculateDataRowY)
-        .attr("font-size", "10px")
-        .attr("fill", "gray")
-        .attr("textLength", dottedLineLength)
-        .text("··········································································");
+    row.append("line")
+        .attr("x1", 0)
+        .attr("x2", dottedLineLength)
+        .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
+        .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
+        .attr("class", "dotted-line");
 
     var blipX = d3.scaleLinear()
         .domain([1, 4])
@@ -117,17 +111,16 @@ function initalizeSvg(svg, data) {
         .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
 
     row.append("text")
-        .attr("x", (d, i) => calculateDataRowX(d, i) + columnWidth - labelWidth)
-        .attr("y", calculateDataRowY)
+        .attr("x", columnWidth - labelWidth)
+        .attr("y", (d, i) => calculateDataRowY(d, i))
         .attr("font-size", "10px")
         .text(d => d.name);
 
     row.append("circle")
         .attr("r", d => calculateScoreMarkerRadius(d.value))
         .attr("class", "position-marker")
-        .attr("cx", (d, i) => calculateDataRowX(d, i) + blipX(d.value))
-        .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - 3.5),0); // Magic number is cemtering circle on the dotted line
-
+        .attr("cx", (d, i) => blipX(d.value))
+        .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0);
 }
 
 /**
@@ -143,6 +136,7 @@ function mergeBlip(blip, mergedBlips) {
     mergedBlips[blip.keyword] = mergedBlip;
 }
 
+// calculates score
 function initalizeEntries(keywords) {
 
 
@@ -158,7 +152,7 @@ function initalizeEntries(keywords) {
 
         var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4) / (avoidVotes + assessVotes + trialVotes + adoptVotes);
 
-        ;
+
         if (!summarizedBlips.hasOwnProperty(value.section)) {
             summarizedBlips[value.section] = [];
         }
