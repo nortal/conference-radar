@@ -1,39 +1,16 @@
 <template name="radar">
 
     <div class="row">
-        <div class="col-3">
-            <div class="bg-white rounded p-3">
-                <h3 class="mt-0 mb-2">Tools</h3>
-                <div>
-                    <svg id="tools"></svg>
+        {{#each quadrants}}
+            <div class="{{quadrantClass}}">
+                <div class="bg-white rounded p-3">
+                    <h3 class="mt-0 mb-2">{{name}}</h3>
+                    <div>
+                        <svg id="{{id}}"></svg>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="bg-white rounded p-3">
-                <h3 class="mt-0 mb-2">Frameworks</h3>
-                <div>
-                    <svg id="frameworks"></svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-3">
-            <div class="bg-white rounded p-3">
-                <h3 class="mt-0 mb-2">Techniques</h3>
-                <div>
-                    <svg id="techniques"></svg>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="bg-white rounded p-3">
-                <h3 class="mt-0 mb-2">Platforms</h3>
-                <div>
-                    <svg id="platforms"></svg>
-                </div>
-            </div>
-        </div>
+        {{/each}}
     </div>
 
 

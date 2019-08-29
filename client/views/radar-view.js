@@ -24,6 +24,26 @@ Template.radar.helpers({
     },
     blips: function () {
         return Template.instance().blips.get();
+    },
+    quadrants: function() {
+        return [
+            {name: "Languages & Frameworks", id: "frameworks"},
+            {name: "Platforms", id: "platforms"},
+            {name: "Techniques", id: "techniques"},
+            {name: "Tools", id: "tools"}
+        ];
+    },
+    quadrantClass: function() {
+        switch (Router.current().params.query.rows) {
+            case "1":
+                return "col-3";
+            case "2":
+                return "col-6";
+            case "4":
+                return "col-12";
+            default:
+                return "col-3"
+        }
     }
 });
 
