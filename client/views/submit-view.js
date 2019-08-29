@@ -193,6 +193,11 @@ Template.submit.events({
         template.$("#keywordText").val(data.name);
         template.$("#sectionDropdown").val(data.section);
     },
+
+    'click #finishButton'() {
+        Router.go('/finish');
+    },
+
     'click'(event, template) {
         console.log('click template')
         template.matches.set([]);
