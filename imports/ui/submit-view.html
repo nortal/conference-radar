@@ -24,6 +24,12 @@
             </div>
 
             <div class="col-12 col-md-6">
+                {{#if getInvalidInput}}
+                    <div class="alert alert-danger" role="alert">
+                        {{getInvalidInput}}
+                    </div>
+                {{/if}}
+
                 {{#with submittedKeywords}}
                     {{#if this}}
                         <div class="row">
@@ -52,6 +58,7 @@
 
                 <div>
                     <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Enter Here" />
+                    <input hidden id="sectionText" type="text" name="sectionText" />
                     <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
                             {{#each match in matches}}
@@ -62,7 +69,6 @@
                         </div>
                     </div>
                 </div>
-                <select hidden id="sectionDropdown" name="sectionDropdown"></select>
                 <div class="mb-3">
                     <select id="stageDropdown" name="stage" class="styled-select">
                         <option value='0' disabled selected>Ring</option>
