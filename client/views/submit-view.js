@@ -197,7 +197,8 @@ Template.submit.events({
         }
 
         keywordClassifier.forEach((keyword) => {
-            if (keyword && keyword.name && keyword.name.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0) {
+            if (keyword && keyword.name && keyword.name.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0 &&
+                template.matches.get().length <= 12) {
                 template.matches.get().push(keyword);
             }
         });
@@ -208,14 +209,20 @@ Template.submit.events({
 
     }, 100),
 
-    'click .typeahead-result'(event, template) {
+    'mousedown .typeahead-result'(event) {
         event.preventDefault();
+    },
 
+    'click .typeahead-result'(event, template) {
         const data = $(event.target).data();
         template.matches.set([]);
         template.invalidInput.set();
         template.$("#keywordText").val(data.name);
         template.$("#sectionText").val(data.section);
+    },
+
+    'focusout #keywordText'(event, template) {
+        template.matches.set([]);
     },
 
     'click #finishButton'() {
