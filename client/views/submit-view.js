@@ -201,7 +201,12 @@ Template.submit.events({
                 template.matches.get().push(keyword);
             }
         });
-    }, 500),
+
+        if (!template.matches.get().length) {
+            template.matches.get().push({name: 'No results'});
+        }
+
+    }, 100),
 
     'click .typeahead-result'(event, template) {
         event.preventDefault();
@@ -217,6 +222,10 @@ Template.submit.events({
         Router.go('/finish');
     },
 
+    'click #randomGenButton'(e, t) {
+        generateRandomData()
+    },
+
     'click'(event, template) {
         console.log('click template')
         template.matches.set([]);
@@ -229,3 +238,62 @@ Template.body.events({
         template.matches.set([]);
     }
 });
+
+
+/**
+ * Floods database with random votes
+ */
+function generateRandomData(userCount, quadrantCount, maxVotes) {
+    quadrantCount = quadrantCount || 120;
+    userCount = userCount || 10;
+    maxVotes = maxVotes || 4;
+
+    console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount + ', maxVotes='+maxVotes);
+
+    // Pick n random quadrants so the selection does not get diluted
+    let quadrantSelection = [];
+    for (let i = 0; i < quadrantCount; i++) {
+        quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
+    }
+
+    console.log("selected quadrants:")
+    console.log(quadrantSelection)
+
+    for (let j = 0; j < userCount; j++) {
+        let email = "" + Math.random();
+        // how many votes this user will cast
+        let voteCount = Math.floor(Math.random() * maxVotes);
+
+        // choose n random quadrants from the quadrant selection
+        for (let i = 0; i < voteCount; i++) {
+            let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
+            let randomStage = ["Adopt", "Trial", "Assess", "Avoid"][Math.floor(Math.random() * 4)];
+
+            let lookupPayload = {
+                keyword: randomQuadrant.name,
+                stage: randomStage,
+                section: randomQuadrant.section
+            };
+
+            let dbEntry = Keywords.find(lookupPayload).fetch();
+            if (dbEntry.length) {
+                console.log('updated: ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage)
+                Keywords.update(
+                    { _id: dbEntry._id },
+                    {
+                        $addToSet: {emails: email},
+                        $inc: {votes: 1}
+                    });
+            } else {
+                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage)
+                Keywords.insert({
+                    keyword: randomQuadrant.name,
+                    stage: randomStage,
+                    section: randomQuadrant.section,
+                    emails: [email],
+                    votes: 1,
+                });
+            }
+        }
+    }
+}
