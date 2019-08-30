@@ -1,4 +1,4 @@
-import { Template } from 'meteor/templating';
+﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords } from '../../imports/api/keywords.js';
 import d3 from 'd3';
@@ -111,10 +111,9 @@ function draw() {
 
     d3.selectAll("svg > *").remove();
 
-    initalizeSvg(d3.select("svg#tools"), visualizeEntries['Tools']);
-    initalizeSvg(d3.select("svg#techniques"), visualizeEntries['Techniques']);
-    initalizeSvg(d3.select("svg#frameworks"), visualizeEntries['Frameworks']);
-    initalizeSvg(d3.select("svg#platforms"), visualizeEntries['Platforms']);
+    _.each(quadrants, function (value) {
+        initalizeSvg(d3.select("svg#" + value.id), visualizeEntries[value.id]);
+    });
 }
 
 function initalizeSvg(svg, data) {
