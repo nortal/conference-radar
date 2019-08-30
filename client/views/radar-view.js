@@ -5,20 +5,12 @@ import d3 from 'd3';
 import _ from 'underscore';
 
 const keywordClassifier = require('/public/keywords.json');
-
-Template.radar.events({
-    'click #randomGenButton'(e,t) {
-        if (t.isDevMode()) {
-            generateRandomData()
-        }
-    },
-    'click #databaseClearButton'(e,t) {
-        if (t.isDevMode()) {
-            clearDatabase();
-        }
-    },
-});
-
+const quadrants = [
+    {name: "Languages & Frameworks", id: "frameworks"},
+    {name: "Platforms", id: "platforms"},
+    {name: "Techniques", id: "techniques"},
+    {name: "Tools", id: "tools"}
+];
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
@@ -32,38 +24,6 @@ Template.radar.onCreated(function () {
 
     // cycle highlight every 5 seconds
     //setInterval(highlightBlips, 5000);
-});
-
-Template.radar.helpers({
-    currentKeywordIndex: function () {
-        return Template.instance().currentKeywordIndex.get();
-    },
-    blips: function () {
-        return Template.instance().blips.get();
-    },
-    quadrants: function() {
-        return [
-            {name: "Languages & Frameworks", id: "frameworks"},
-            {name: "Platforms", id: "platforms"},
-            {name: "Techniques", id: "techniques"},
-            {name: "Tools", id: "tools"}
-        ];
-    },
-    quadrantClass: function() {
-        switch (Router.current().params.query.rows) {
-            case "1":
-                return "col-3";
-            case "2":
-                return "col-6";
-            case "4":
-                return "col-12";
-            default:
-                return "col-3"
-        }
-    },
-    isDevMode: function () {
-        return Meteor.settings.public.environment === "development";
-    }
 });
 
 Template.radar.onRendered(function () {
@@ -84,6 +44,58 @@ Template.radar.onRendered(function () {
     setInterval(pollDrawing, 3000);
 });
 
+Template.radar.helpers({
+    currentKeywordIndex: function () {
+        return Template.instance().currentKeywordIndex.get();
+    },
+    blips: function () {
+        return Template.instance().blips.get();
+    },
+    isDevMode: function () {
+        return Meteor.settings.public.environment === "development";
+    },
+    isSingleQuadrantView: function () {
+        return quadrants.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
+    }
+});
+
+Template.radar.events({
+    'click #randomGenButton'(e,t) {
+        generateRandomData()
+    },
+    'click #databaseClearButton'(e,t) {
+        clearDatabase();
+    },
+});
+
+Template.combinedRadar.helpers({
+    quadrants: function() {
+        return quadrants;
+    },
+    quadrantClass: function() {
+        switch (Router.current().params.query.rows) {
+            case "1":
+                return "col-3";
+            case "2":
+                return "col-6";
+            case "4":
+                return "col-12";
+            default:
+                return "col-3"
+        }
+    },
+});
+
+Template.singleRadar.onCreated(function () {
+    this.selectedQuadrant = quadrants.find(quadrant => { return quadrant.id === this.data });
+});
+
+Template.singleRadar.helpers({
+    quadrantData: function (field) {
+        return Template.instance().selectedQuadrant[field];
+    },
+});
+
 function pollDrawing() {
     var len = Keywords.find().fetch().length;
     if (Session.get("lastEntryCount") !== len) {
@@ -97,7 +109,6 @@ function draw() {
     var keywords = Keywords.find().fetch();
     var visualizeEntries = initalizeEntries(keywords);
 
-    console.log(visualizeEntries)
     d3.selectAll("svg > *").remove();
 
     initalizeSvg(d3.select("svg#tools"), visualizeEntries['Tools']);
@@ -107,6 +118,11 @@ function draw() {
 }
 
 function initalizeSvg(svg, data) {
+    // null when in single quadrant view
+    if (!svg.node()) {
+        return;
+    }
+
     data = _.sortBy(data, 'value').reverse();
 
     // bounding rect of current column

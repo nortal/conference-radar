@@ -53,3 +53,13 @@ Router.route('/radar', function () {
     this.layout('radarLayout');
     this.render('radar');
 });
+
+Router.route('/radar/:mode', function () {
+    this.layout('radarLayout');
+
+    this.render('radar', {
+        data: function () {
+            return this.params.mode;
+        }
+    });
+});

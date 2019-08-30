@@ -30,6 +30,7 @@ Template.login.events({
     'click #facebookLogin': function (event, template) {
 
         event.preventDefault();
+        template.inProgress.set(true);
 
         FB.login(function (response) {
             if (response.authResponse) {
@@ -38,7 +39,7 @@ Template.login.events({
                     loginOrSignUp(response.email, response.name);
                 });
             } else {
-                console.log('User cancelled login or did not fully authorize.');
+                template.inProgress.set(false);
             }
         }, {scope: 'email'});
 
@@ -47,16 +48,21 @@ Template.login.events({
     'click #googleLogin': function (event, template) {
 
         event.preventDefault();
+        template.inProgress.set(true);
+
         template.auth2.signIn().then(function (googleUser) {
             var profile = googleUser.getBasicProfile();
 
             loginOrSignUp(profile.getEmail(), profile.getName());
+        }).catch(function () {
+            template.inProgress.set(false);
         })
 
     },
 });
 
 Template.login.onCreated(function () {
+    this.inProgress = new ReactiveVar(false);
     const self = this;
 
     // Load login SDKs
@@ -67,23 +73,21 @@ Template.login.onCreated(function () {
             xfbml: true,
             version: Meteor.settings.public.auth.facebook.apiVersion
         });
-
-        FB.getLoginStatus(function (response) {
-            console.log('facebook signed in: ' + (response.status === 'connected'));
-        });
     });
 
     loadJsSdk('google-sdk', 'https://apis.google.com/js/client.js', function () {
         gapi.load('auth2', function () {
-
             // Assign to template instance so it's accessible in event listeners
             self.auth2 = gapi.auth2.init({
                 client_id: Meteor.settings.public.auth.google.clientId,
                 cookiepolicy: 'single_host_origin'
             });
-
-            console.log('google signed in: ' + self.auth2.isSignedIn.get());
         });
     });
+});
 
+Template.login.helpers({
+    inProgress: function () {
+        return Template.instance().inProgress.get();
+    }
 });

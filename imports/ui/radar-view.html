@@ -1,16 +1,17 @@
-<template name="radar">
+<template name="radarLayout">
+    <div class="container-fluid h-100 p-3 pt-2">
+        {{> yield}}
+    </div>
+</template>
 
-    <div class="row h-100">
-        {{#each quadrants}}
-            <div class="{{quadrantClass}}">
-                <div class="bg-white overflow-hidden h-100 rounded p-3">
-                    <h3 class="mt-0 mb-2">{{name}}</h3>
-                    <div class="h-100">
-                        <svg id="{{id}}"></svg>
-                    </div>
-                </div>
-            </div>
-        {{/each}}
+
+<template name="radar">
+    <div class="row no-gutters h-100">
+        {{#if isSingleQuadrantView}}
+            {{> singleRadar}}
+        {{else}}
+            {{> combinedRadar}}
+        {{/if}}
     </div>
 
     {{#if isDevMode}}
@@ -19,15 +20,28 @@
         <button id="databaseClearButton" type="button" class="btn btn-danger">Clear database</button>
     </div>
     {{/if}}
-
 </template>
 
-<template name="radarLayout">
+<template name="combinedRadar">
+    {{#each quadrants}}
+        <div class="{{quadrantClass}}">
+            <div class="bg-white overflow-hidden h-100 rounded p-3">
+                <h3 class="mt-0 mb-2">{{name}}</h3>
+                <div class="h-100">
+                    <svg id="{{id}}"></svg>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+</template>
 
-    <div class="container-fluid h-100 p-3 pt-2">
-
-        {{> yield}}
-
+<template name="singleRadar">
+    <div class="col-12">
+        <div class="bg-white overflow-hidden h-100 rounded p-3">
+            <h3 class="mt-0 mb-2">{{quadrantData "name"}}</h3>
+            <div class="h-100">
+                <svg id="{{quadrantData "id"}}"></svg>
+            </div>
+        </div>
     </div>
-
 </template>
