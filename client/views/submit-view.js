@@ -159,6 +159,7 @@ Template.submit.events({
     },
 
     'click .typeahead-result'(event, template) {
+        event.preventDefault();
         const data = $(event.target).data();
         template.matches.set([]);
         template.invalidInput.set();
@@ -173,16 +174,4 @@ Template.submit.events({
     'click #finishButton'() {
         Router.go('/finish');
     },
-
-    'click'(event, template) {
-        console.log('click template')
-        template.matches.set([]);
-    }
-});
-
-Template.body.events({
-    'click'(event, template) {
-        console.log('click body');
-        template.matches.set([]);
-    }
 });
