@@ -47,15 +47,18 @@ Template.submit.events({
         var email = Session.get("email");
 
         if (!keywordName || !keywordName.length || !chosenSection) {
-            template.invalidInput.set("No quadrant selected");
+            template.invalidInput.set("No quadrant selected!");
+            $("#errorToast").toast("show");
             return;
         }
 
         if (!chosenStage) {
-            template.invalidInput.set("No stage selected");
+            template.invalidInput.set("No stage selected!");
+            $("#errorToast").toast("show");
             return;
         }
 
+        $("#errorToast").toast("hide");
         template.invalidInput.set();
 
         var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
@@ -75,10 +78,7 @@ Template.submit.events({
             template.$('#keywordText').val("");
             template.$("#stageDropdown").val("0");
             template.$("#sectionText").val("0");
-            document.getElementById('alreadyVotedContainer').style.opacity = '1';
-            window.setTimeout(() => {
-                document.getElementById('alreadyVotedContainer').style.opacity = '0'
-            }, 4000);
+            $("#alreadyVotedToast").toast("show");
             return;
         }
 
@@ -124,14 +124,7 @@ Template.submit.events({
         template.$('#keywordText').val("");
         template.$("#stageDropdown").val("0");
         template.$("#sectionText").val("0");
-
-        document.getElementById('faderContainer').style.opacity = '1';
-
-        function fadeout() {
-            document.getElementById('faderContainer').style.opacity = '0';
-        }
-
-        window.setTimeout(fadeout, 4000);
+        $("#savedToast").toast("show");
     },
 
     'keyup #keywordText': _.debounce((event, template) => {
@@ -162,6 +155,7 @@ Template.submit.events({
         event.preventDefault();
         const data = $(event.target).data();
         template.autocomplete.set({matches: [], dirty: false});
+        $("#errorToast").toast("hide");
         template.invalidInput.set();
         template.$("#keywordText").val(data.name);
         template.$("#sectionText").val(data.section);
