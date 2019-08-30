@@ -4,6 +4,18 @@ import { Keywords } from '../../imports/api/keywords.js';
 import d3 from 'd3';
 import _ from 'underscore';
 
+const keywordClassifier = require('/public/keywords.json');
+
+Template.radar.events({
+    'click #randomGenButton'(e,t) {
+        generateRandomData()
+    },
+    'click #databaseClearButton'(e,t) {
+        clearDatabase();
+    },
+});
+
+
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
     this.legends = new ReactiveVar();
@@ -78,6 +90,7 @@ function draw() {
     var keywords = Keywords.find().fetch();
     var visualizeEntries = initalizeEntries(keywords);
 
+    console.log(visualizeEntries)
     d3.selectAll("svg > *").remove();
 
     initalizeSvg(d3.select("svg#tools"), visualizeEntries['Tools']);
@@ -97,7 +110,7 @@ function initalizeSvg(svg, data) {
     const rowHeightWithPadding = 20;
 
     // width of the labels, cut from width
-    const labelWidth = 50;
+    const labelWidth = 70;
 
     // Magic number centers circle on the dotted line
     const verticalOffset = 3.5;
@@ -181,4 +194,74 @@ function initalizeEntries(keywords) {
 
     return summarizedBlips;
 
+}
+
+
+function clearDatabase() {
+    console.log('clearing database...');
+
+    let keywords = Keywords.find().fetch();
+
+    for (let i = 0; i < keywords.length; i++) {
+        Keywords.remove({_id: keywords[i]._id});
+    }
+
+    console.log('database cleared');
+}
+
+/**
+ * Floods database with random votes
+ */
+function generateRandomData(userCount, quadrantCount) {
+    quadrantCount = quadrantCount || 64;
+    userCount = userCount || 16;
+
+    console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+
+    // Pick n random quadrants so the selection does not get diluted
+    let quadrantSelection = [];
+    for (let i = 0; i < quadrantCount; i++) {
+        quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
+    }
+
+    console.log("selected quadrants:")
+    console.log(quadrantSelection)
+
+    for (let j = 0; j < userCount; j++) {
+        let email = "" + Math.random();
+        // how many votes this user will cast
+        let voteCount = Math.floor(Math.random() * quadrantSelection.length);
+
+        // vote for n random quadrants
+        for (let i = 0; i < voteCount; i++) {
+            let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
+            let randomStage = ["Adopt", "Trial", "Assess", "Avoid"][Math.floor(Math.random() * 4)];
+
+            let lookupPayload = {
+                keyword: randomQuadrant.name,
+                stage: randomStage,
+                section: randomQuadrant.section
+            };
+
+            let dbEntry = Keywords.find(lookupPayload).fetch();
+            if (dbEntry.length) {
+                console.log('updated: ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage)
+                Keywords.update(
+                    { _id: dbEntry._id },
+                    {
+                        $addToSet: {emails: email},
+                        $inc: {votes: 1}
+                    });
+            } else {
+                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage)
+                Keywords.insert({
+                    keyword: randomQuadrant.name,
+                    stage: randomStage,
+                    section: randomQuadrant.section,
+                    emails: [email],
+                    votes: 1,
+                });
+            }
+        }
+    }
 }
