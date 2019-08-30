@@ -19,7 +19,7 @@ body {
 .dotted-line {
     stroke: #000;
     stroke-opacity: 0.3;
-    stroke-width: 1.5;
+    stroke-width: 1;
     stroke-dasharray: 2;
 }
 

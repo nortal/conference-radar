@@ -11,6 +11,12 @@ const quadrants = [
     {name: "Techniques", id: "techniques"},
     {name: "Tools", id: "tools"}
 ];
+const stages = [
+    {name: "Adopt", id: "adopt"},
+    {name: "Assess", id: "assess"},
+    {name: "Avoid", id: "avoid"},
+    {name: "Trial", id: "trial"}
+];
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
@@ -40,8 +46,11 @@ Template.radar.onRendered(function () {
     });
 
     //check every 3 seconds for update
-    setTimeout(pollDrawing, 100);
+    setTimeout(pollDrawing, 500);
     setInterval(pollDrawing, 3000);
+
+    // render on resize
+    $(window).resize(throttledOnWindowResize);
 });
 
 Template.radar.helpers({
@@ -69,6 +78,9 @@ Template.radar.events({
 });
 
 Template.combinedRadar.helpers({
+    stages: function() {
+        return stages;
+    },
     quadrants: function() {
         return quadrants;
     },
@@ -96,6 +108,11 @@ Template.singleRadar.helpers({
     },
 });
 
+Template.radar.onDestroyed(function() {
+    $(window).off('resize', throttledOnWindowResize);
+});
+
+
 function pollDrawing() {
     var len = Keywords.find().fetch().length;
     if (Session.get("lastEntryCount") !== len) {
@@ -105,41 +122,42 @@ function pollDrawing() {
 }
 
 function draw() {
-
     var keywords = Keywords.find().fetch();
-    var visualizeEntries = initalizeEntries(keywords);
+    var data = initalizeEntries(keywords);
 
     d3.selectAll("svg > *").remove();
 
-    _.each(quadrants, function (value) {
-        initalizeSvg(d3.select("svg#" + value.id), visualizeEntries[value.id]);
+    _.each(quadrants, function (quadrant) {
+        initalizeSvg(data, quadrant.id);
     });
 }
 
-function initalizeSvg(svg, data) {
-    // null when in single quadrant view
+
+function initalizeSvg(data, section) {
+    let svg = d3.select("svg#" + section);
+
+    // single section view
     if (!svg.node()) {
         return;
     }
 
+    // most voted
+    data = _.sortBy(data[section], 'votes').reverse();
+    data = data.slice(0, 10);
+
+    // top scoring
     data = _.sortBy(data, 'value').reverse();
 
-    // bounding rect of current column
-    const columnRect = svg.node().parentNode.getBoundingClientRect();
-    const columnWidth = columnRect.width;
-
+    // width of current column
+    const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
     // padding between entries
     const rowHeightWithPadding = 20;
-
-    // width of the labels, cut from width
+    // width of labels, cut from line width
     const labelWidth = 70;
-
     // Magic number centers circle on the dotted line
     const verticalOffset = 3.5;
-    // length of the dotted line
+    // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
-
-
 
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
@@ -151,6 +169,18 @@ function initalizeSvg(svg, data) {
         return 2.6 * Math.sqrt(scoreMarkerValue);
     };
 
+    const calculateScoreMarkerOpacity = function (scoreMarkerValue) {
+        return 2.6 * Math.sqrt(scoreMarkerValue);
+    };
+
+    var blipX = d3.scaleLinear()
+        .domain([1, 4])
+        // We substract maximum score marker radius for spacing
+        .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
+    var blipOpacity = d3.scaleLinear()
+        .domain([1, 4])
+        .range([0.1, 1.0]);
+
     const row = svg.selectAll('g').data(data).enter().append("g");
 
     row.append("line")
@@ -160,20 +190,17 @@ function initalizeSvg(svg, data) {
         .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
         .attr("class", "dotted-line");
 
-    var blipX = d3.scaleLinear()
-        .domain([1, 4])
-        // We substract maximum score marker radius for spacing
-        .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
-
     row.append("text")
         .attr("x", columnWidth - labelWidth)
         .attr("y", (d, i) => calculateDataRowY(d, i))
         .attr("font-size", "10px")
+        .attr("font-weight", (d, i) => { return i === 0 ? "bold" : "normal" })
         .text(d => d.name);
 
     row.append("circle")
         .attr("r", d => calculateScoreMarkerRadius(d.value))
-        .attr("class", "position-marker")
+        //.attr("class", "position-marker")
+        .attr("opacity", (d, i) => blipOpacity(d.value))
         .attr("cx", (d, i) => blipX(d.value))
         .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0);
 }
@@ -191,33 +218,52 @@ function mergeBlip(blip, mergedBlips) {
     mergedBlips[blip.keyword] = mergedBlip;
 }
 
+
+function mergeBlip2(blip, mergedBlips) {
+    if (!mergedBlips[blip.section]) {
+        mergedBlips[blip.section] = {};
+    }
+
+    if (!mergedBlips[blip.section][blip.stage]) {
+        mergedBlips[blip.section][blip.stage] = [];
+    }
+
+    mergedBlips[blip.section][blip.stage].push({
+        keyword: blip.keyword,
+        votes: blip.votes
+    });
+}
+
 // calculates score
 function initalizeEntries(keywords) {
-
-
     var mergedBlips = {};
     keywords.forEach(k => mergeBlip(k, mergedBlips));
 
     var summarizedBlips = {};
     _.each(mergedBlips, function (value, prop) {
-        var adoptVotes = value['Adopt'] || 0;
-        var trialVotes = value['Trial'] || 0;
-        var assessVotes = value['Assess'] || 0;
-        var avoidVotes = value['Avoid'] || 0;
+        var adoptVotes = value['adopt'] || 0;
+        var trialVotes = value['trial'] || 0;
+        var assessVotes = value['assess'] || 0;
+        var avoidVotes = value['avoid'] || 0;
 
+        var totalVotes = adoptVotes + trialVotes + assessVotes + avoidVotes;
         var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4) / (avoidVotes + assessVotes + trialVotes + adoptVotes);
 
 
         if (!summarizedBlips.hasOwnProperty(value.section)) {
             summarizedBlips[value.section] = [];
         }
-        summarizedBlips[value.section].push({ "name": prop, "value": totalScore });
+        summarizedBlips[value.section].push({ "name": prop, "value": totalScore, "votes": totalVotes });
     });
 
     return summarizedBlips;
 
 }
 
+
+const throttledOnWindowResize = _.throttle(draw, 3000, {
+    leading: false
+});
 
 function clearDatabase() {
     console.log('clearing database...');
@@ -257,7 +303,7 @@ function generateRandomData(userCount, quadrantCount) {
         // vote for n random quadrants
         for (let i = 0; i < voteCount; i++) {
             let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
-            let randomStage = ["Adopt", "Trial", "Assess", "Avoid"][Math.floor(Math.random() * 4)];
+            let randomStage = stages[Math.floor(Math.random() * stages.length)].id;
 
             let lookupPayload = {
                 keyword: randomQuadrant.name,
