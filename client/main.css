@@ -124,6 +124,15 @@ svg {
     text-align: left;
 }
 
+.typeahead-no-matches {
+    border-bottom: 1px solid #d4d4d4;
+    background: transparent;
+    color: #009639;
+    cursor: default;
+    display: block;
+    padding: 10px;
+}
+
 .typeahead-result {
     display: block;
     padding: 10px;

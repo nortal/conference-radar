@@ -61,12 +61,18 @@
                     <input hidden id="sectionText" type="text" name="sectionText" />
                     <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
-                            {{#each match in matches}}
-                                <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
-                                    <span>{{match.name}}</span>
-                                    <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                            {{#if noResults}}
+                                <div class="typeahead-no-matches">
+                                    <span>No results</span>
                                 </div>
-                            {{/each}}
+                            {{else}}
+                                {{#each match in matches}}
+                                    <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
+                                        <span>{{match.name}}</span>
+                                        <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -81,10 +87,10 @@
                 </div>
 
                 <div class="text-right">
-                    <button id="submitButton" type="button" class="submit-button">Submit</button>
+                    <button id="submitButton" type="button" class="submit-button col-md-5 col-sm-12">Submit</button>
                 </div>
                 <div class="text-right">
-                    <button id="finishButton" type="button" class="submit-button mt-4">Finish</button>
+                    <button id="finishButton" type="button" class="submit-button col-md-5 col-sm-12 mt-4 mb-2">Finish</button>
                 </div>
                 <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="faderContainer">
                     <p>Thank you!</p>
