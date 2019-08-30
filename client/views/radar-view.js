@@ -1,4 +1,4 @@
-﻿import { Template } from 'meteor/templating';
+import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords } from '../../imports/api/keywords.js';
 import d3 from 'd3';
@@ -268,15 +268,15 @@ function generateRandomData(userCount, quadrantCount) {
 
             let dbEntry = Keywords.find(lookupPayload).fetch();
             if (dbEntry.length) {
-                console.log('updated: ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage)
+                console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
                 Keywords.update(
-                    { _id: dbEntry._id },
+                    { _id: dbEntry[0]._id },
                     {
-                        $addToSet: {emails: email},
+                        $push: {emails: email},
                         $inc: {votes: 1}
                     });
             } else {
-                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage)
+                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
                 Keywords.insert({
                     keyword: randomQuadrant.name,
                     stage: randomStage,
