@@ -8,10 +8,14 @@ const keywordClassifier = require('/public/keywords.json');
 
 Template.radar.events({
     'click #randomGenButton'(e,t) {
-        generateRandomData()
+        if (t.isDevMode()) {
+            generateRandomData()
+        }
     },
     'click #databaseClearButton'(e,t) {
-        clearDatabase();
+        if (t.isDevMode()) {
+            clearDatabase();
+        }
     },
 });
 
@@ -56,6 +60,9 @@ Template.radar.helpers({
             default:
                 return "col-3"
         }
+    },
+    isDevMode: function () {
+        return Meteor.settings.public.environment === "development";
     }
 });
 

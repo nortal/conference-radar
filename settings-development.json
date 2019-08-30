@@ -1,5 +1,6 @@
 {
   "public": {
+    "environment": "development",
     "auth": {
       "google": {
         "clientId": ""
