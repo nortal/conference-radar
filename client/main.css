@@ -124,6 +124,15 @@ svg {
     text-align: left;
 }
 
+.typeahead-no-matches {
+    border-bottom: 1px solid #d4d4d4;
+    background: transparent;
+    color: #009639;
+    cursor: default;
+    display: block;
+    padding: 10px;
+}
+
 .typeahead-result {
     display: block;
     padding: 10px;
@@ -147,4 +156,19 @@ svg {
 
 .vote-group-title {
     color: #009639;
+}
+
+.toast {
+    text-align: center;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.toast-body {
+    padding: 1rem !important;
+    font-size: 140%;
 }

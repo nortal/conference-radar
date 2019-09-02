@@ -6,7 +6,7 @@ import _ from 'underscore';
 const keywordClassifier = require('/public/keywords.json');
 
 Template.submit.onCreated(function() {
-    this.matches = new ReactiveVar([]);
+    this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
     this.invalidInput = new ReactiveVar();
 });
@@ -22,7 +22,11 @@ Template.submit.helpers({
         return votes.filter(vote => vote.stage === stage);
     },
     matches: () => {
-        return Template.instance().matches.get();
+        return Template.instance().autocomplete.get().matches;
+    },
+    noResults: () => {
+        var autocomplete = Template.instance().autocomplete.get();
+        return !autocomplete.matches.length && autocomplete.dirty;
     },
     getSelectWidth: () => {
         return Template.instance().selectWidth.get();
@@ -43,15 +47,18 @@ Template.submit.events({
         var email = Session.get("email");
 
         if (!keywordName || !keywordName.length || !chosenSection) {
-            template.invalidInput.set("No quadrant selected");
+            template.invalidInput.set("No quadrant selected!");
+            $("#errorToast").toast("show");
             return;
         }
 
         if (!chosenStage) {
-            template.invalidInput.set("No stage selected");
+            template.invalidInput.set("No stage selected!");
+            $("#errorToast").toast("show");
             return;
         }
 
+        $("#errorToast").toast("hide");
         template.invalidInput.set();
 
         var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
@@ -71,10 +78,7 @@ Template.submit.events({
             template.$('#keywordText').val("");
             template.$("#stageDropdown").val("0");
             template.$("#sectionText").val("0");
-            document.getElementById('alreadyVotedContainer').style.opacity = '1';
-            window.setTimeout(() => {
-                document.getElementById('alreadyVotedContainer').style.opacity = '0'
-            }, 4000);
+            $("#alreadyVotedToast").toast("show");
             return;
         }
 
@@ -120,14 +124,7 @@ Template.submit.events({
         template.$('#keywordText').val("");
         template.$("#stageDropdown").val("0");
         template.$("#sectionText").val("0");
-
-        document.getElementById('faderContainer').style.opacity = '1';
-
-        function fadeout() {
-            document.getElementById('faderContainer').style.opacity = '0';
-        }
-
-        window.setTimeout(fadeout, 4000);
+        $("#savedToast").toast("show");
     },
 
     'keyup #keywordText': _.debounce((event, template) => {
@@ -136,21 +133,17 @@ Template.submit.events({
         template.selectWidth.set(event.target.getBoundingClientRect().width);
 
 
-        template.matches.set([]);
+        template.autocomplete.set({matches: [], dirty: true});
         if (!event || !event.target || !event.target.value) {
             return;
         }
 
         keywordClassifier.forEach((keyword) => {
             if (keyword && keyword.name && keyword.name.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0 &&
-                template.matches.get().length <= 12) {
-                template.matches.get().push(keyword);
+                template.autocomplete.get().matches.length <= 12) {
+                template.autocomplete.get().matches.push(keyword);
             }
         });
-
-        if (!template.matches.get().length) {
-            template.matches.get().push({name: 'No results'});
-        }
 
     }, 100),
 
@@ -159,30 +152,20 @@ Template.submit.events({
     },
 
     'click .typeahead-result'(event, template) {
+        event.preventDefault();
         const data = $(event.target).data();
-        template.matches.set([]);
+        template.autocomplete.set({matches: [], dirty: false});
+        $("#errorToast").toast("hide");
         template.invalidInput.set();
         template.$("#keywordText").val(data.name);
         template.$("#sectionText").val(data.section);
     },
 
     'focusout #keywordText'(event, template) {
-        template.matches.set([]);
+        template.autocomplete.set({matches: [], dirty: false});
     },
 
     'click #finishButton'() {
         Router.go('/finish');
     },
-
-    'click'(event, template) {
-        console.log('click template')
-        template.matches.set([]);
-    }
-});
-
-Template.body.events({
-    'click'(event, template) {
-        console.log('click body');
-        template.matches.set([]);
-    }
 });

@@ -24,12 +24,6 @@
             </div>
 
             <div class="col-12 col-md-6">
-                {{#if getInvalidInput}}
-                    <div class="alert alert-danger" role="alert">
-                        {{getInvalidInput}}
-                    </div>
-                {{/if}}
-
                 {{#with submittedKeywords}}
                     {{#if this}}
                         <div class="row">
@@ -61,12 +55,18 @@
                     <input hidden id="sectionText" type="text" name="sectionText" />
                     <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
-                            {{#each match in matches}}
-                                <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
-                                    <span>{{match.name}}</span>
-                                    <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                            {{#if noResults}}
+                                <div class="typeahead-no-matches">
+                                    <span>No results</span>
                                 </div>
-                            {{/each}}
+                            {{else}}
+                                {{#each match in matches}}
+                                    <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
+                                        <span>{{match.name}}</span>
+                                        <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -81,21 +81,32 @@
                 </div>
 
                 <div class="text-right">
-                    <button id="submitButton" type="button" class="submit-button">Submit</button>
+                    <button id="submitButton" type="button" class="submit-button col-md-5 col-sm-12">Submit</button>
                 </div>
                 <div class="text-right">
-                    <button id="finishButton" type="button" class="submit-button mt-4">Finish</button>
-                </div>
-                <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="faderContainer">
-                    <p>Thank you!</p>
-                    <p>Your opinion has been saved.</p>
-                </div>
-                <div class="fader" style="font-size: 140%; text-align: center; padding: 0px" id="alreadyVotedContainer">
-                    <p>You have already voted for this option!</p>
+                    <button id="finishButton" type="button" class="submit-button col-md-5 col-sm-12 mt-4 mb-2">Finish</button>
                 </div>
             </div>
 
 
         </div>
     </form>
+    <div class="toast" id="savedToast" data-delay="4000">
+        <div class="toast-body alert-success mb-0">
+            Thank you!<br>
+            Your opinion has been saved.
+        </div>
+    </div>
+    <div class="toast" id="alreadyVotedToast" data-delay="4000">
+        <div class="toast-body alert-warning bm-0">
+            You have already voted for this option!
+        </div>
+    </div>
+    <div class="toast" id="errorToast" data-delay="4000">
+        <div class="toast-body alert-danger mb-0">
+            {{#if getInvalidInput}}
+                {{getInvalidInput}}
+            {{/if}}
+        </div>
+    </div>
 </template>
