@@ -1,22 +1,11 @@
 ﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords } from '../../imports/api/keywords.js';
+import { Stages, Sections } from '../../imports/api/constants.js';
 import d3 from 'd3';
 import _ from 'underscore';
 
 const keywordClassifier = require('/public/keywords.json');
-const quadrants = [
-    {name: "Languages & Frameworks", id: "frameworks"},
-    {name: "Platforms", id: "platforms"},
-    {name: "Techniques", id: "techniques"},
-    {name: "Tools", id: "tools"}
-];
-const stages = [
-    {name: "Adopt", id: "adopt"},
-    {name: "Assess", id: "assess"},
-    {name: "Avoid", id: "avoid"},
-    {name: "Trial", id: "trial"}
-];
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
@@ -64,7 +53,7 @@ Template.radar.helpers({
         return Meteor.settings.public.environment === "development";
     },
     isSingleQuadrantView: function () {
-        return quadrants.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
+        return Sections.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
     }
 });
 
@@ -79,10 +68,10 @@ Template.radar.events({
 
 Template.combinedRadar.helpers({
     stages: function() {
-        return stages;
+        return Stages;
     },
     quadrants: function() {
-        return quadrants;
+        return Sections;
     },
     quadrantClass: function() {
         switch (Router.current().params.query.rows) {
@@ -99,7 +88,7 @@ Template.combinedRadar.helpers({
 });
 
 Template.singleRadar.onCreated(function () {
-    this.selectedQuadrant = quadrants.find(quadrant => { return quadrant.id === this.data });
+    this.selectedQuadrant = Sections.find(quadrant => { return quadrant.id === this.data });
 });
 
 Template.singleRadar.helpers({
@@ -127,7 +116,7 @@ function draw() {
 
     d3.selectAll("svg > *").remove();
 
-    _.each(quadrants, function (quadrant) {
+    _.each(Sections, function (quadrant) {
         initalizeSvg(data, quadrant.id);
     });
 }
@@ -303,7 +292,7 @@ function generateRandomData(userCount, quadrantCount) {
         // vote for n random quadrants
         for (let i = 0; i < voteCount; i++) {
             let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
-            let randomStage = stages[Math.floor(Math.random() * stages.length)].id;
+            let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
 
             let lookupPayload = {
                 keyword: randomQuadrant.name,

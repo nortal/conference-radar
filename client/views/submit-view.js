@@ -1,6 +1,7 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
 import {Keywords} from '../../imports/api/keywords.js';
+import {Stages} from '../../imports/api/constants.js';
 import _ from 'underscore';
 
 const keywordClassifier = require('/public/keywords.json');
@@ -16,12 +17,7 @@ Template.submit.helpers({
         return Keywords.find({ emails: Session.get("email") }).fetch();
     },
     stages: () => {
-        return [
-            {name: "Adopt", id: "adopt"},
-            {name: "Assess", id: "assess"},
-            {name: "Avoid", id: "avoid"},
-            {name: "Trial", id: "trial"}
-        ];
+        return Stages
     },
     getByStage: (votes, stage) => {
         return votes.filter(vote => vote.stage === stage.id);
