@@ -1,11 +1,14 @@
 <template name="radarLayout">
-    <div class="container-fluid h-100 p-3 pt-2">
+    <div class="container-fluid h-100 p-3 pt-2 radar">
         {{> yield}}
     </div>
 </template>
 
 
 <template name="radar">
+    <div class="row no-gutters radar-label">
+        Add and vote for your candidate!
+    </div>
     <div class="row no-gutters h-100">
         {{#if isSingleQuadrantView}}
             {{> singleRadar}}
@@ -24,9 +27,9 @@
 
 <template name="combinedRadar">
     {{#each quadrants}}
-        <div class="{{quadrantClass}}">
+        <div class="{{quadrantClass}} quadrant">
             <div class="bg-white overflow-hidden h-100 rounded p-3">
-                <h3 class="mt-0 mb-2">{{name}}</h3>
+                <h3 class="mt-0 mb-2 quadrant-title">{{name}}</h3>
                 <div class="h-100">
                     <svg id="{{id}}"></svg>
                 </div>
@@ -36,9 +39,9 @@
 </template>
 
 <template name="singleRadar">
-    <div class="col-12">
+    <div class="col-12 quadrant">
         <div class="bg-white overflow-hidden h-100 rounded p-3">
-            <h3 class="mt-0 mb-2">{{quadrantData "name"}}</h3>
+            <h3 class="mt-0 mb-2 quadrant-title">{{quadrantData "name"}}</h3>
             <div class="h-100">
                 <svg id="{{quadrantData "id"}}"></svg>
             </div>
