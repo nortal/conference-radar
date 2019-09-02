@@ -6,7 +6,7 @@ export const Sections = [
 ];
 export const Stages = [
     {name: "Adopt", id: "adopt"},
+    {name: "Trial", id: "trial"},
     {name: "Assess", id: "assess"},
-    {name: "Avoid", id: "avoid"},
-    {name: "Trial", id: "trial"}
+    {name: "Avoid", id: "avoid"}
 ];
