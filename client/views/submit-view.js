@@ -1,7 +1,7 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
 import {Keywords} from '../../imports/api/keywords.js';
-import {Stages} from '../../imports/api/constants.js';
+import {Stages,Sections} from '../../imports/api/constants.js';
 import _ from 'underscore';
 
 const keywordClassifier = require('/public/keywords.json');
@@ -44,6 +44,35 @@ Template.submit.helpers({
 });
 
 Template.submit.events({
+    'click button[name="delete"]'(event, template) {
+        const id = $(event.currentTarget).data("value");
+        const email = Session.get("email");
+
+        // find matching keyword
+        const keyword = Keywords.find({ _id: id }).fetch();
+
+        // no results with that id
+        if (!keyword.length) {
+            template.invalidInput.set("Invalid entry!");
+            $("#errorToast").toast("show");
+            return;
+        }
+
+        // user has not voted for that
+        if (!keyword[0].emails.includes(email)) {
+            template.invalidInput.set("Cannot remove that entry!");
+            $("#errorToast").toast("show");
+            return;
+        }
+
+        Keywords.update(
+            { _id: id },
+            {
+                $pull: {emails: email},
+                $inc: {votes: -1}
+            });
+    },
+
     'click #submitButton'(event, template) {
         // Prevent default browser form submit
         event.preventDefault();
@@ -61,6 +90,18 @@ Template.submit.events({
 
         if (!chosenStage) {
             template.invalidInput.set("No stage selected!");
+            $("#errorToast").toast("show");
+            return;
+        }
+
+        if (!Stages.find(s => s.id === chosenStage.toLowerCase())) {
+            template.invalidInput.set("Invalid stage!");
+            $("#errorToast").toast("show");
+            return;
+        }
+
+        if (!keywordClassifier.find(k => k.section === chosenSection && k.name === keywordName)) {
+            template.invalidInput.set("Invalid keyword!");
             $("#errorToast").toast("show");
             return;
         }
