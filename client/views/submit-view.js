@@ -19,6 +19,12 @@ Template.submit.helpers({
     stages: () => {
         return Stages
     },
+    getStageName: (id) => {
+        return Stages.find(s => s.id === id).name;
+    },
+    getSectionName: (id) => {
+        return Sections.find(s => s.id === id).name;
+    },
     getByStage: (votes, stage) => {
         return votes.filter(vote => vote.stage === stage.id);
     },
