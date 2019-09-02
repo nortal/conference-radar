@@ -153,7 +153,7 @@ Template.submit.events({
 
     'click .typeahead-result'(event, template) {
         event.preventDefault();
-        const data = $(event.target).data();
+        const data = $(event.currentTarget).data();
         template.autocomplete.set({matches: [], dirty: false});
         $("#errorToast").toast("hide");
         template.invalidInput.set();
