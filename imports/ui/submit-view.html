@@ -33,7 +33,7 @@
                             {{#if getByStage this stage}}
                             <div class="row pb-2">
                                 <div class="vote-group-title col-lg-3 col-md-4 col-sm-12">
-                                    {{stage}}:
+                                    {{stage.name}}:
                                 </div>
                                 <div class="vote-group-votes col-lg-9 col-md-8 col-sm-12">
                                     {{#each keyword in getByStage this stage}}
@@ -73,10 +73,9 @@
                 <div class="mb-3">
                     <select id="stageDropdown" name="stage" class="styled-select">
                         <option value='0' disabled selected>Ring</option>
-                        <option value='Adopt'>Adopt</option>
-                        <option value='Trial'>Trial</option>
-                        <option value='Assess'>Assess</option>
-                        <option value='Avoid'>Avoid</option>
+                        {{#each stages}}
+                            <option value='{{id}}'>{{name}}</option>
+                        {{/each}}
                     </select>
                 </div>
 

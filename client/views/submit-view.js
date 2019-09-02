@@ -16,10 +16,15 @@ Template.submit.helpers({
         return Keywords.find({ emails: Session.get("email") }).fetch();
     },
     stages: () => {
-        return ["Adopt", "Trial", "Assess", "Avoid"];
+        return [
+            {name: "Adopt", id: "adopt"},
+            {name: "Assess", id: "assess"},
+            {name: "Avoid", id: "avoid"},
+            {name: "Trial", id: "trial"}
+        ];
     },
     getByStage: (votes, stage) => {
-        return votes.filter(vote => vote.stage === stage);
+        return votes.filter(vote => vote.stage === stage.id);
     },
     matches: () => {
         return Template.instance().autocomplete.get().matches;
