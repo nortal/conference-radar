@@ -15,16 +15,34 @@ import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import {Users} from '../imports/api/keywords.js';
 
-function checkFinished() {
+function getUser() {
     const email = Session.get("email");
     if (!email || !email.length) {
-        return;
+        return null;
     }
 
     const users = Users.find({email: email}).fetch();
-    if (users && users.length && users[0].finished) {
+    if (users && users.length) {
+        return users[0];
+    }
+    return null;
+}
+
+function checkFinished() {
+    const user = getUser();
+    if (user && user.finished) {
         Session.set("isLoggedIn", true);
         Router.go("/finish");
+    }
+}
+
+function checkConfirmed() {
+    const user = getUser();
+    if (user && user.agreesTerms) {
+        Session.set("isLoggedIn", true);
+        Session.set('email', user.email);
+        Session.set('name', user.name);
+        Router.go("/submit");
     }
 }
 
@@ -43,6 +61,7 @@ Router.route('/login', function () {
 Router.route('/confirm', function () {
     if (Session.get("isLoggingIn")) {
         checkFinished();
+        checkConfirmed();
         this.render('confirm');
     } else {
         Router.go("/");
