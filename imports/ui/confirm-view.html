@@ -2,20 +2,6 @@
 
     <div class="row">
         <div class="col-md-6 col-sm-12">
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean congue nibh et felis
-                malesuada dapibus.
-            </p>
-            <p>
-                Etiam eu eros et felis ultricies consectetur. Donec condimentum lacus nisi, non varius
-                urna maximus at.
-            </p>
-            <p>
-                <a class="styled-link" href="www.nortal.com">nortal.com</a>
-            </p>
-        </div>
-
-        <div class="col-md-6 col-sm-12">
             {{#if getInvalidInput}}
                 <div class="alert alert-danger" role="alert">
                     {{getInvalidInput}}
@@ -26,6 +12,12 @@
                    value="{{getSessionVal 'name'}}" {{isDisabled 'name'}}/>
             <input class="styled-input mb-3" id="emailText" type="email" name="emailText" placeholder="Your e-mail"
                    value="{{getSessionVal 'email'}}" {{isDisabled 'email'}}/>
+            <p>
+                <a class="styled-link" href="www.nortal.com">nortal.com</a>
+            </p>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
 
             <div>
                 <label>
@@ -40,6 +32,13 @@
                     Nortal can contact me about future job opportunities for up to 3 years
                     <br/>
                     <a class="styled-link" href="https://nortal.com/recruitment-and-hiring-privacy-statement/">Privacy policy</a>
+                </label>
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="termsCheck"/>
+                    I agree to my data being stored and used to anonymously display statistics on Technology Radar
                 </label>
             </div>
 

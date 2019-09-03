@@ -1,5 +1,6 @@
 import {Template} from 'meteor/templating';
 import {Users} from '../../imports/api/keywords.js';
+import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
     this.invalidInput = new ReactiveVar();
@@ -10,31 +11,36 @@ Template.confirm.events({
 
         event.preventDefault();
 
-        var submitEmail = Session.get('email') || template.$("#emailText").val();
-        var submitName = Session.get('name') || template.$("#nameText").val();
-        var recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
-        var participateChecked = template.$('#participateCheck').is(':checked');
+        const submitEmail = Session.get('email') || template.$("#emailText").val();
+        const submitName = Session.get('name') || template.$("#nameText").val();
+        const recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
+        const participateChecked = template.$('#participateCheck').is(':checked');
+        const termsChecked = template.$('#termsCheck').is(':checked');
 
-        if (!submitEmail || !validateEmail(submitEmail)) {
+        if (!submitEmail || !UserValidation.email.test(submitEmail.toLowerCase())) {
             template.invalidInput.set("Invalid email");
             return;
         }
 
-        if (!submitName || !validateName(submitName)) {
+        if (!submitName || !UserValidation.name.test(submitName)) {
             template.invalidInput.set("Invalid name");
             return;
         }
 
-        var userPayload = {
-            name: submitName,
-            email: submitEmail,
-            wantsRecruitment: recruitmentChecked,
-            wantsParticipation: participateChecked,
-        };
+        if (!termsChecked) {
+            template.invalidInput.set("You must accept the terms before proceeding");
+            return;
+        }
 
-        var foundUsers = Users.find({email: submitEmail}).fetch();
+        const foundUsers = Users.find({email: submitEmail}).fetch();
         if (foundUsers.length === 0) {
-            Users.insert(userPayload);
+            Users.insert({
+                name: submitName,
+                email: submitEmail,
+                wantsRecruitment: recruitmentChecked,
+                wantsParticipation: participateChecked,
+                agreesTerms: termsChecked,
+            });
         }
 
         Session.set('isLoggedIn', true);
@@ -43,7 +49,6 @@ Template.confirm.events({
 
         Router.go('/submit');
     }
-
 });
 
 Template.confirm.helpers({
@@ -57,13 +62,3 @@ Template.confirm.helpers({
         return Template.instance().invalidInput.get();
     }
 });
-
-
-function validateEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
-function validateName(name) {
-    return name.length >= 3;
-}
