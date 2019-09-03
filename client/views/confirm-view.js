@@ -19,16 +19,19 @@ Template.confirm.events({
 
         if (!submitEmail || !UserValidation.email.test(submitEmail.toLowerCase())) {
             template.invalidInput.set("Invalid email");
+            $("#toast").toast("show");
             return;
         }
 
         if (!submitName || !UserValidation.name.test(submitName)) {
             template.invalidInput.set("Invalid name");
+            $("#toast").toast("show");
             return;
         }
 
         if (!termsChecked) {
             template.invalidInput.set("You must accept the terms before proceeding");
+            $("#toast").toast("show");
             return;
         }
 
