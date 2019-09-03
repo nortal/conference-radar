@@ -1,6 +1,6 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords} from '../../imports/api/keywords.js';
+import {Keywords,Users} from '../../imports/api/keywords.js';
 import {Stages,Sections} from '../../imports/api/constants.js';
 import _ from 'underscore';
 
@@ -214,6 +214,11 @@ Template.submit.events({
     },
 
     'click #finishButton'() {
+        const user = Users.findOne({email: Session.get("email")});
+        Users.update(
+            {_id: user._id, },
+            {"$set": {finished: true}}
+            );
         Router.go('/finish');
     },
 });

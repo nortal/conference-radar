@@ -13,6 +13,21 @@ import './views/radar-view.js';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
+import {Users} from '../imports/api/keywords.js';
+
+function checkFinished() {
+    const email = Session.get("email");
+    if (!email || !email.length) {
+        return;
+    }
+
+    const users = Users.find({email: email}).fetch();
+    if (users && users.length && users[0].finished) {
+        Session.set("isLoggedIn", true);
+        Router.go("/finish");
+    }
+}
+
 Router.configure({
     layoutTemplate: 'mainLayout'
 });
@@ -27,6 +42,7 @@ Router.route('/login', function () {
 
 Router.route('/confirm', function () {
     if (Session.get("isLoggingIn")) {
+        checkFinished();
         this.render('confirm');
     } else {
         Router.go("/");
@@ -35,6 +51,7 @@ Router.route('/confirm', function () {
 
 Router.route('/submit', function () {
     if (Session.get("isLoggedIn")) {
+        checkFinished();
         this.render('submit');
     } else {
         Router.go("/");
