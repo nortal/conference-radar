@@ -1,50 +1,77 @@
 <template name="radarLayout">
-    <div class="container-fluid h-100 p-3 pt-2 radar">
+    <div class="container-fluid p-3 pt-2 radar">
         {{> yield}}
     </div>
 </template>
 
 
 <template name="radar">
-    <div class="row no-gutters radar-label">
-        Add and vote for your candidate!
-    </div>
-    <div class="row no-gutters h-100">
-        {{#if isSingleQuadrantView}}
-            {{> singleRadar}}
-        {{else}}
-            {{> combinedRadar}}
+    <div class="bg-white h-100">
+        <div class="d-block d-lg-flex justify-content-between align-items-center p-3">
+            <div class="d-none d-md-block">
+                <div class="display-3 font-weight-bold">
+                    NORTAL TECHRADAR
+                </div>
+            </div>
+            <div class="d-block d-md-none">
+                <div class="h1 font-weight-bold">
+                    NORTAL TECHRADAR
+                </div>
+            </div>
+
+
+            <div class="d-none d-md-block">
+                <div class="h2 font-weight-bold">
+                    Add and vote for your candidate!
+                </div>
+            </div>
+            <div class="d-block d-md-none">
+                <div class="h4 font-weight-bold">
+                    Add and vote for your candidate!
+                </div>
+            </div>
+        </div>
+
+        <div class="row no-gutters">
+            {{#if isSingleQuadrantView}}
+                {{> singleRadar}}
+            {{else}}
+                {{> combinedRadar}}
+            {{/if}}
+        </div>
+
+        {{#if isDevMode}}
+            <div class="fixed-bottom">
+                <div class="p-1 bg-danger">
+                    <button id="randomGenButton" type="button" class="btn btn-sm btn-outline-light">Gen random data</button>
+                    <button id="databaseClearButton" type="button" class="btn btn-sm btn-outline-light">Clear database</button>
+                </div>
+            </div>
         {{/if}}
     </div>
-
-    {{#if isDevMode}}
-    <div class="position-absolute m-3" style="bottom:0">
-        <button id="randomGenButton" type="button" class="btn btn-danger">Gen random data</button>
-        <button id="databaseClearButton" type="button" class="btn btn-danger">Clear database</button>
-    </div>
-    {{/if}}
 </template>
 
 <template name="combinedRadar">
     {{#each quadrants}}
-        <div class="{{quadrantClass}} quadrant">
-            <div class="bg-white overflow-hidden h-100 rounded p-3">
+        <div class="{{quadrantClass}} quadrant p-3">
+            <div class="quadrant-title-container">
                 <h3 class="mt-0 mb-2 quadrant-title">{{name}}</h3>
-                <div class="h-100">
-                    <svg id="{{id}}"></svg>
-                </div>
+            </div>
+            <div class="h-100">
+                <svg id="{{id}}"></svg>
             </div>
         </div>
     {{/each}}
 </template>
 
 <template name="singleRadar">
-    <div class="col-12 quadrant">
-        <div class="bg-white overflow-hidden h-100 rounded p-3">
+    <div class="col-12 quadrant p-3">
+        <div class="quadrant-title-container">
             <h3 class="mt-0 mb-2 quadrant-title">{{quadrantData "name"}}</h3>
-            <div class="h-100">
-                <svg id="{{quadrantData "id"}}"></svg>
-            </div>
+        </div>
+
+        <div class="h-100">
+            <svg id="{{quadrantData "id"}}"></svg>
         </div>
     </div>
 </template>

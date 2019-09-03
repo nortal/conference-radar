@@ -82,7 +82,7 @@ Template.combinedRadar.helpers({
             case "4":
                 return "col-12";
             default:
-                return "col-3"
+                return "col-12 col-sm-6 col-lg-3"
         }
     },
 });
@@ -114,27 +114,34 @@ function draw() {
     var keywords = Keywords.find().fetch();
     var data = initalizeEntries(keywords);
 
-    d3.selectAll("svg > *").remove();
+    //d3.selectAll("svg > *").remove();
 
-    _.each(Sections, function (quadrant) {
-        initalizeSvg(data, quadrant.id);
+    _.each(Sections, function (section) {
+        let svg = d3.select("svg#" + section.id);
+        let sectionData = data[section.id];
+
+        // single section view
+        if (!svg.node()) {
+            return;
+        }
+
+        initializeSvg(svg, sectionData);
+        resizeSvg(section.id);
     });
 }
 
+function resizeSvg(section) {
+    let container = $("svg#" + section)[0];
+    let bbox = container.getBBox();
+    container.setAttribute("width", bbox.x + bbox.width + bbox.x);
+    container.setAttribute("height", bbox.y + bbox.height + bbox.y);
+}
 
-function initalizeSvg(data, section) {
-    let svg = d3.select("svg#" + section);
-
-    // single section view
-    if (!svg.node()) {
-        return;
-    }
-
-    // most voted
-    data = _.sortBy(data[section], 'votes').reverse();
-    data = data.slice(0, 10);
-
-    // top scoring
+function initializeSvg(svg, data) {
+    // order by votes descending, get the top 15
+    data = _.sortBy(data, 'votes').reverse();
+    data = data.slice(0, 15);
+    // order by score descending
     data = _.sortBy(data, 'value').reverse();
 
     // width of current column
@@ -158,40 +165,54 @@ function initalizeSvg(data, section) {
         return 2.6 * Math.sqrt(scoreMarkerValue);
     };
 
-    const calculateScoreMarkerOpacity = function (scoreMarkerValue) {
-        return 2.6 * Math.sqrt(scoreMarkerValue);
-    };
-
+    // blip x-pos based on score of 1-4
     var blipX = d3.scaleLinear()
         .domain([1, 4])
         // We substract maximum score marker radius for spacing
         .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
+    // blip opacity based on score of 1-4
     var blipOpacity = d3.scaleLinear()
         .domain([1, 4])
         .range([0.1, 1.0]);
 
-    const row = svg.selectAll('g').data(data).enter().append("g");
+    //svg.selectAll("g").remove();
 
-    row.append("line")
-        .attr("x1", 0)
-        .attr("x2", dottedLineLength)
+    console.log(123)
+
+    // define group
+    let nodes = svg.selectAll("g")
+        .data(data, (d, i, collection) => {return collection[i]});
+//(d,i, collection) => d.name !== collection[i].name || d.value !== collection[i].value || d.votes !== collection[i].votes
+    // exit, remove
+    nodes.exit().remove();
+
+    // enter
+    const enter = nodes.enter().append("g");
+
+
+    enter.append("line")
         .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
         .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
-        .attr("class", "dotted-line");
+        .attr("class", "dotted-line")
+        .transition()
+        .attr("x1", 0)
+        .attr("x2", dottedLineLength);
 
-    row.append("text")
-        .attr("x", columnWidth - labelWidth)
+    enter.append("text")
+        .text(d => d.name)
         .attr("y", (d, i) => calculateDataRowY(d, i))
-        .attr("font-size", "10px")
-        .attr("font-weight", (d, i) => { return i === 0 ? "bold" : "normal" })
-        .text(d => d.name);
+        .attr("x", columnWidth - labelWidth)
+        .attr("font-size", "10px");
 
-    row.append("circle")
-        .attr("r", d => calculateScoreMarkerRadius(d.value))
-        //.attr("class", "position-marker")
-        .attr("opacity", (d, i) => blipOpacity(d.value))
+    enter.append("circle")
+        .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
         .attr("cx", (d, i) => blipX(d.value))
-        .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0);
+        .transition()
+        .attr("r", d => 6)
+        //.attr("class", "position-marker")
+        .attr("opacity", (d, i) => blipOpacity(d.value));
+
+    nodes.merge(enter);
 }
 
 /**
@@ -207,26 +228,10 @@ function mergeBlip(blip, mergedBlips) {
     mergedBlips[blip.keyword] = mergedBlip;
 }
 
-
-function mergeBlip2(blip, mergedBlips) {
-    if (!mergedBlips[blip.section]) {
-        mergedBlips[blip.section] = {};
-    }
-
-    if (!mergedBlips[blip.section][blip.stage]) {
-        mergedBlips[blip.section][blip.stage] = [];
-    }
-
-    mergedBlips[blip.section][blip.stage].push({
-        keyword: blip.keyword,
-        votes: blip.votes
-    });
-}
-
 // calculates score
 function initalizeEntries(keywords) {
     var mergedBlips = {};
-    keywords.forEach(k => mergeBlip(k, mergedBlips));
+    keywords.filter(k => k.votes > 0).forEach(k => mergeBlip(k, mergedBlips));
 
     var summarizedBlips = {};
     _.each(mergedBlips, function (value, prop) {
@@ -238,7 +243,6 @@ function initalizeEntries(keywords) {
         var totalVotes = adoptVotes + trialVotes + assessVotes + avoidVotes;
         var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4) / (avoidVotes + assessVotes + trialVotes + adoptVotes);
 
-
         if (!summarizedBlips.hasOwnProperty(value.section)) {
             summarizedBlips[value.section] = [];
         }
@@ -246,11 +250,10 @@ function initalizeEntries(keywords) {
     });
 
     return summarizedBlips;
-
 }
 
 
-const throttledOnWindowResize = _.throttle(draw, 3000, {
+const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
 
