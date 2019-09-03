@@ -30,10 +30,10 @@
                         {{#each keyword in this}}
                             <li class="list-group-item d-flex justify-content-between py-2 px-3">
                                 <div class="d-block mr-2 text-left">
-                                    <div class="font-weight-bold">{{keyword.keyword}}</div>
+                                    <div class="font-weight-bold styled-link">{{keyword.keyword}}</div>
                                     <div class="text-black-50 small">{{getSectionName keyword.section}} - {{getStageName keyword.stage}}</div>
                                 </div>
-                                <button type="button" class="close" aria-label="Close" name="delete" data-value="{{keyword._id}}">
+                                <button type="button" class="close" aria-label="Close" data-value="{{keyword._id}}">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </li>

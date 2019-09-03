@@ -44,7 +44,7 @@ Template.submit.helpers({
 });
 
 Template.submit.events({
-    'click button[name="delete"]'(event, template) {
+    'click button.close'(event, template) {
         const id = $(event.currentTarget).data("value");
         const email = Session.get("email");
 
