@@ -12,7 +12,13 @@ body {
     background-color: #EEF2F5 !important;
 }
 
-.login {
+.login-title {
+    color: #009639;
+    font-weight: bold;
+    text-align: center;
+}
+
+.login-button {
     height: 40px;
     border-radius: 5px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
@@ -27,7 +33,7 @@ body {
     white-space: nowrap;
 }
 
-.login:focus, .login:hover {
+.login-button:focus, .login-button:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -47,19 +53,19 @@ body {
     color: white;
 }
 
-.login-icon {
+.login-button-icon {
     box-sizing: border-box;
     display: inline-block;
     margin: 8px 0 8px 8px;
     vertical-align: middle;
 }
 
-.login-icon svg {
+.login-button-icon svg {
     display: block;
     height: 24px;
 }
 
-.login-content {
+.login-button-text {
     display: inline-block;
     font-weight: bold;
     padding: 0 24px;
@@ -92,10 +98,6 @@ svg {
 
 /* todo: All styles below are used only in submit page. Remove these once replaced by bootstrap. */
 
-.grid-footer {
-    grid-area: footer;
-}
-
 .submit-button {
     border-radius: 25px;
     background: #009639;
@@ -112,11 +114,6 @@ svg {
 .submit-button:hover {
     background: #007d31;
     transition: 0.3s;
-}
-
-.fader {
-    opacity: 0;
-    transition: 1s opacity;
 }
 
 .styled-select {
@@ -201,15 +198,6 @@ svg {
 .typeahead-result:hover {
     background-color: #009639;
     color: white;
-}
-
-.vote-group-title, .vote-group-votes {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.vote-group-title {
-    color: #009639;
 }
 
 .toast {

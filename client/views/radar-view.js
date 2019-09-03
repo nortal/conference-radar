@@ -256,13 +256,7 @@ const throttledOnWindowResize = _.throttle(draw, 3000, {
 
 function clearDatabase() {
     console.log('clearing database...');
-
-    let keywords = Keywords.find().fetch();
-
-    for (let i = 0; i < keywords.length; i++) {
-        Keywords.remove({_id: keywords[i]._id});
-    }
-
+    Keywords.drop();
     console.log('database cleared');
 }
 
