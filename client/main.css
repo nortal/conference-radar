@@ -12,6 +12,60 @@ body {
     background-color: #EEF2F5 !important;
 }
 
+.login {
+    height: 40px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    transition: background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+    box-sizing: border-box;
+    color: #757575;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.login:focus, .login:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.google-login {
+    background: white;
+    color: #757575;
+}
+
+.google-login:active {
+    background-color: #e5e5e5;
+    box-shadow: none;
+    transition-duration: 10ms;
+}
+
+.facebook-login {
+    background: #4267b2;
+    color: white;
+}
+
+.login-icon {
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 8px 0 8px 8px;
+    vertical-align: middle;
+}
+
+.login-icon svg {
+    display: block;
+    height: 24px;
+}
+
+.login-content {
+    display: inline-block;
+    font-weight: bold;
+    padding: 0 24px;
+    vertical-align: middle;
+}
+
 .position-marker {
     fill: #009639;
 }
