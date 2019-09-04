@@ -109,7 +109,7 @@ function pollDrawing() {
 
 function draw() {
     var keywords = Keywords.find().fetch();
-    var data = initalizeEntries(keywords);
+    var data = initializeEntries(keywords);
 
     //d3.selectAll("svg > *").remove();
 
@@ -152,6 +152,8 @@ function initializeSvg(svg, data) {
     // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
 
+    _.each(data, (d) => d.width = columnWidth);
+
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
         const itemIndexInColumn = Math.ceil(calculatedY / rowHeightWithPadding);
@@ -174,13 +176,9 @@ function initializeSvg(svg, data) {
 
     //svg.selectAll("g").remove();
 
-    console.log(123)
-
     // define group
     let nodes = svg.selectAll("g")
-        .data(data, (d, i, collection) => {return collection[i]});
-//(d,i, collection) => d.name !== collection[i].name || d.value !== collection[i].value || d.votes !== collection[i].votes
-    // exit, remove
+        .data(data, (d,i) => d.width + d.name + d.votes + i);
     nodes.exit().remove();
 
     // enter
@@ -191,7 +189,6 @@ function initializeSvg(svg, data) {
         .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
         .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
         .attr("class", "dotted-line")
-        .transition()
         .attr("x1", 0)
         .attr("x2", dottedLineLength);
 
@@ -204,7 +201,7 @@ function initializeSvg(svg, data) {
     enter.append("circle")
         .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
         .attr("cx", (d, i) => blipX(d.value))
-        .transition()
+        .transition().duration(500)
         .attr("r", d => 6)
         //.attr("class", "position-marker")
         .attr("opacity", (d, i) => blipOpacity(d.value));
@@ -226,7 +223,7 @@ function mergeBlip(blip, mergedBlips) {
 }
 
 // calculates score
-function initalizeEntries(keywords) {
+function initializeEntries(keywords) {
     var mergedBlips = {};
     keywords.filter(k => k.votes > 0).forEach(k => mergeBlip(k, mergedBlips));
 
@@ -256,7 +253,13 @@ const throttledOnWindowResize = _.throttle(draw, 500, {
 
 function clearDatabase() {
     console.log('clearing database...');
-    Keywords.drop();
+
+    let keywords = Keywords.find().fetch();
+
+    for (let i = 0; i < keywords.length; i++) {
+        Keywords.remove({_id: keywords[i]._id});
+    }
+
     console.log('database cleared');
 }
 
