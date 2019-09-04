@@ -49,9 +49,6 @@ Template.radar.helpers({
     blips: function () {
         return Template.instance().blips.get();
     },
-    isDevMode: function () {
-        return Meteor.settings.public.environment === "development";
-    },
     isSingleQuadrantView: function () {
         return Sections.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
     }

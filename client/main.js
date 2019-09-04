@@ -99,3 +99,7 @@ Router.route('/radar/:mode', function () {
         }
     });
 });
+
+Template.registerHelper('isDevMode', () => {
+    return Meteor.settings.public.environment === "development";
+});

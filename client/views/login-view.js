@@ -19,8 +19,10 @@ function loginOrSignUp(email, name) {
 }
 
 Template.login.events({
-    //todo: remove me
     'click #skipLogin': function (event, template) {
+        if (Meteor.settings.public.environment !== "development") {
+            return;
+        }
 
         event.preventDefault();
         loginOrSignUp('user@test.dev', 'Test User');

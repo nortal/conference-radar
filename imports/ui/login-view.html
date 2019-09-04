@@ -39,9 +39,11 @@
                         Continue with Facebook
                     </div>
                 </div>
+                {{#if isDevMode}}
                 <div>
-                    <button class="submit-button btn-block bg-secondary" id="skipLogin">Skip</button>
+                    <button class="btn btn-block btn-light border-dark" id="skipLogin">Skip</button>
                 </div>
+                {{/if}}
             {{/if}}
         </div>
     </div>
