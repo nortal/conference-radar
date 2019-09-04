@@ -1,6 +1,6 @@
 ﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
-import { Keywords } from '../../imports/api/keywords.js';
+import { Keywords, Users } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
 import d3 from 'd3';
 import _ from 'underscore';
@@ -56,10 +56,13 @@ Template.radar.helpers({
 
 Template.radar.events({
     'click #randomGenButton'(e,t) {
-        generateRandomData()
+        devFunctions.generateRandomData()
     },
     'click #databaseClearButton'(e,t) {
-        clearDatabase();
+        devFunctions.clearDatabase();
+    },
+    'click #usersClearButton'(e,t) {
+        devFunctions.clearUsers();
     },
 });
 
@@ -253,71 +256,96 @@ const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
 
-function clearDatabase() {
-    console.log('clearing database...');
 
-    let keywords = Keywords.find().fetch();
+const devFunctions = {
+    clearDatabase: () => {
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-    for (let i = 0; i < keywords.length; i++) {
-        Keywords.remove({_id: keywords[i]._id});
-    }
+        console.log('clearing database...');
 
-    console.log('database cleared');
-}
+        let keywords = Keywords.find().fetch();
 
-/**
- * Floods database with random votes
- */
-function generateRandomData(userCount, quadrantCount) {
-    quadrantCount = quadrantCount || 64;
-    userCount = userCount || 16;
+        for (let i = 0; i < keywords.length; i++) {
+            Keywords.remove({_id: keywords[i]._id});
+        }
 
-    console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+        console.log('database cleared');
+    },
+    clearUsers: () => {
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-    // Pick n random quadrants so the selection does not get diluted
-    let quadrantSelection = [];
-    for (let i = 0; i < quadrantCount; i++) {
-        quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
-    }
+        console.log('clearing users...');
 
-    console.log("selected quadrants:")
-    console.log(quadrantSelection)
+        let users = Users.find().fetch();
 
-    for (let j = 0; j < userCount; j++) {
-        let email = "" + Math.random();
-        // how many votes this user will cast
-        let voteCount = Math.floor(Math.random() * quadrantSelection.length);
+        for (let i = 0; i < users.length; i++) {
+            Users.remove({_id: users[i]._id});
+        }
 
-        // vote for n random quadrants
-        for (let i = 0; i < voteCount; i++) {
-            let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
-            let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
+        console.log('users cleared');
+    },
+    generateRandomData: (userCount, quadrantCount) => {
+        quadrantCount = quadrantCount || 64;
+        userCount = userCount || 16;
 
-            let lookupPayload = {
-                keyword: randomQuadrant.name,
-                stage: randomStage,
-                section: randomQuadrant.section
-            };
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-            let dbEntry = Keywords.find(lookupPayload).fetch();
-            if (dbEntry.length) {
-                console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
-                Keywords.update(
-                    { _id: dbEntry[0]._id },
-                    {
-                        $push: {emails: email},
-                        $inc: {votes: 1}
-                    });
-            } else {
-                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
-                Keywords.insert({
+        console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+
+        // Pick n random quadrants so the selection does not get diluted
+        let quadrantSelection = [];
+        for (let i = 0; i < quadrantCount; i++) {
+            quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
+        }
+
+        console.log("selected quadrants:")
+        console.log(quadrantSelection)
+
+        for (let j = 0; j < userCount; j++) {
+            let email = "" + Math.random();
+            // how many votes this user will cast
+            let voteCount = Math.floor(Math.random() * quadrantSelection.length);
+
+            // vote for n random quadrants
+            for (let i = 0; i < voteCount; i++) {
+                let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
+                let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
+
+                let lookupPayload = {
                     keyword: randomQuadrant.name,
                     stage: randomStage,
-                    section: randomQuadrant.section,
-                    emails: [email],
-                    votes: 1,
-                });
+                    section: randomQuadrant.section
+                };
+
+                let dbEntry = Keywords.find(lookupPayload).fetch();
+                if (dbEntry.length) {
+                    console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
+                    Keywords.update(
+                        { _id: dbEntry[0]._id },
+                        {
+                            $push: {emails: email},
+                            $inc: {votes: 1}
+                        });
+                } else {
+                    console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
+                    Keywords.insert({
+                        keyword: randomQuadrant.name,
+                        stage: randomStage,
+                        section: randomQuadrant.section,
+                        emails: [email],
+                        votes: 1,
+                    });
+                }
             }
         }
+    },
+    isDevMode: () => {
+        return Meteor.settings.public.environment === "development"
     }
-}
+};
