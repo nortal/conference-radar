@@ -139,7 +139,7 @@ function initializeSvg(svg, data) {
     data = _.sortBy(data, 'votes').reverse();
     data = data.slice(0, 15);
     // order by score descending
-    data = _.sortBy(data, 'value').reverse();
+    data = _.sortBy(data, 'graphScore').reverse();
 
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
@@ -164,21 +164,21 @@ function initializeSvg(svg, data) {
         return 2.6 * Math.sqrt(scoreMarkerValue);
     };
 
-    // blip x-pos based on score of 1-4
+    // blip x-pos based on score of 1-8
     var blipX = d3.scaleLinear()
-        .domain([1, 4])
+        .domain([1, 8])
         // We substract maximum score marker radius for spacing
-        .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
-    // blip opacity based on score of 1-4
+        .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
+    // blip opacity based on score of 1-8
     var blipOpacity = d3.scaleLinear()
-        .domain([1, 4])
+        .domain([1, 8])
         .range([0.1, 1.0]);
 
     //svg.selectAll("g").remove();
 
     // define group
     let nodes = svg.selectAll("g")
-        .data(data, (d,i) => d.width + d.name + d.votes + i);
+        .data(data, (d,i) => d.width + d.name + d.graphScore + i);
     nodes.exit().remove();
 
     // enter
@@ -200,11 +200,11 @@ function initializeSvg(svg, data) {
 
     enter.append("circle")
         .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
-        .attr("cx", (d, i) => blipX(d.value))
+        .attr("cx", (d, i) => blipX(d.graphScore))
         .transition().duration(500)
         .attr("r", d => 6)
         //.attr("class", "position-marker")
-        .attr("opacity", (d, i) => blipOpacity(d.value));
+        .attr("opacity", (d, i) => blipOpacity(d.graphScore));
 
     nodes.merge(enter);
 }
@@ -227,6 +227,7 @@ function initializeEntries(keywords) {
     var mergedBlips = {};
     keywords.filter(k => k.votes > 0).forEach(k => mergeBlip(k, mergedBlips));
 
+    var quartileMaxVotes = {};
     var summarizedBlips = {};
     _.each(mergedBlips, function (value, prop) {
         var adoptVotes = value['adopt'] || 0;
@@ -235,14 +236,30 @@ function initializeEntries(keywords) {
         var avoidVotes = value['avoid'] || 0;
 
         var totalVotes = adoptVotes + trialVotes + assessVotes + avoidVotes;
-        var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4) / (avoidVotes + assessVotes + trialVotes + adoptVotes);
+        var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4);
+        var averageScore = totalScore / totalVotes;
 
         if (!summarizedBlips.hasOwnProperty(value.section)) {
             summarizedBlips[value.section] = [];
         }
-        summarizedBlips[value.section].push({ "name": prop, "value": totalScore, "votes": totalVotes });
+        summarizedBlips[value.section].push({ "name": prop, "averageScore": averageScore, "totalScore": totalScore, "votes": totalVotes });
+
+        if (!quartileMaxVotes.hasOwnProperty(value.section)) {
+            quartileMaxVotes[value.section] = {0: 0, 1: 0, 2: 0, 3: 0};
+        }
+
+        const quartile = getQuartile(averageScore);
+        if (quartileMaxVotes[value.section][quartile] < totalVotes) {
+            quartileMaxVotes[value.section][quartile] = totalVotes;
+        }
     });
 
+    _.each(summarizedBlips, function (framework, prop) {
+        _.each(framework, function (value) {
+            const quartile = getQuartile(value.averageScore);
+            value.graphScore = value.averageScore + value.totalScore / quartileMaxVotes[prop][quartile];
+        });
+    });
     return summarizedBlips;
 }
 
@@ -250,6 +267,20 @@ function initializeEntries(keywords) {
 const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
+
+function getQuartile(score) {
+    if (score >= 3) {
+        return 0;
+    } else if (score < 3 && score >= 2) {
+        return 1;
+    } else if (score < 2 && score >= 1) {
+        return 2;
+    } else if (score < 1) {
+        return 3;
+    } else {
+        return -1;
+    }
+}
 
 function clearDatabase() {
     console.log('clearing database...');
