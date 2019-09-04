@@ -114,37 +114,38 @@ function draw() {
     var keywords = Keywords.find().fetch();
     var data = initializeEntries(keywords);
 
-    //d3.selectAll("svg > *").remove();
-
     _.each(Sections, function (section) {
-        let svg = d3.select("svg#" + section.id);
-        let sectionData = data[section.id];
+        const svg = d3.select("svg#" + section.id);
 
-        // single section view
+        // single view
         if (!svg.node()) {
             return;
         }
 
-        initializeSvg(svg, sectionData);
-        resizeSvg(section.id);
+        initializeSvg(svg, data[section.id]);
+        resizeSvg(svg);
     });
 }
 
-function resizeSvg(section) {
-    const container = $("svg#" + section)[0];
-    const parentWidth = container.parentNode.getBoundingClientRect().width;
+function resizeSvg(element) {
+    const svg = element.node();
+    const bbox = svg.getBBox();
 
-    let bbox = container.getBBox();
-    container.setAttribute("width", parentWidth);
-    container.setAttribute("height", bbox.y + bbox.height + bbox.y);
+    svg.setAttribute("width", svg.parentNode.getBoundingClientRect().width);
+    svg.setAttribute("height", bbox.y + bbox.height + bbox.y);
 }
 
 function initializeSvg(svg, data) {
-    // order by votes descending, get the top 15
-    data = _.sortBy(data, 'votes').reverse();
-    data = data.slice(0, 15);
-    // order by score descending
-    data = _.sortBy(data, 'value').reverse();
+    const sortData = function(data) {
+        // votes descending
+        data = _.sortBy(data, 'votes').reverse();
+        // top 15
+        data = data.slice(0, 15);
+        // score descending
+        return _.sortBy(data, 'value').reverse();
+    };
+
+    data = sortData(data);
 
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
@@ -174,12 +175,6 @@ function initializeSvg(svg, data) {
         .domain([1, 4])
         // We substract maximum score marker radius for spacing
         .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(4)]);
-    // blip opacity based on score of 1-4
-    var blipOpacity = d3.scaleLinear()
-        .domain([1, 4])
-        .range([0.1, 1.0]);
-
-    //svg.selectAll("g").remove();
 
     // define group
     let nodes = svg.selectAll("g")
@@ -188,7 +183,6 @@ function initializeSvg(svg, data) {
 
     // enter
     const enter = nodes.enter().append("g");
-
 
     enter.append("line")
         .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
@@ -208,8 +202,7 @@ function initializeSvg(svg, data) {
         .attr("cx", (d, i) => blipX(d.value))
         .transition().duration(500)
         .attr("r", d => 6)
-        //.attr("class", "position-marker")
-        .attr("opacity", (d, i) => blipOpacity(d.value));
+        .attr("class", "position-marker");
 
     nodes.merge(enter);
 }
@@ -252,7 +245,7 @@ function initializeEntries(keywords) {
 }
 
 
-const throttledOnWindowResize = _.throttle(draw, 500, {
+const throttledOnWindowResize = _.throttle(draw, 10, {
     leading: false
 });
 
