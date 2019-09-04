@@ -1,6 +1,6 @@
 ﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
-import { Keywords } from '../../imports/api/keywords.js';
+import { Keywords, Users } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
 import d3 from 'd3';
 import _ from 'underscore';
@@ -56,10 +56,13 @@ Template.radar.helpers({
 
 Template.radar.events({
     'click #randomGenButton'(e,t) {
-        generateRandomData()
+        devFunctions.generateRandomData()
     },
     'click #databaseClearButton'(e,t) {
-        clearDatabase();
+        devFunctions.clearDatabase();
+    },
+    'click #usersClearButton'(e,t) {
+        devFunctions.clearUsers();
     },
 });
 
@@ -111,35 +114,38 @@ function draw() {
     var keywords = Keywords.find().fetch();
     var data = initializeEntries(keywords);
 
-    //d3.selectAll("svg > *").remove();
-
     _.each(Sections, function (section) {
-        let svg = d3.select("svg#" + section.id);
-        let sectionData = data[section.id];
+        const svg = d3.select("svg#" + section.id);
 
-        // single section view
+        // single view
         if (!svg.node()) {
             return;
         }
 
-        initializeSvg(svg, sectionData);
-        resizeSvg(section.id);
+        initializeSvg(svg, data[section.id]);
+        resizeSvg(svg);
     });
 }
 
-function resizeSvg(section) {
-    let container = $("svg#" + section)[0];
-    let bbox = container.getBBox();
-    container.setAttribute("width", bbox.x + bbox.width + bbox.x);
-    container.setAttribute("height", bbox.y + bbox.height + bbox.y);
+function resizeSvg(element) {
+    const svg = element.node();
+    const bbox = svg.getBBox();
+
+    svg.setAttribute("width", svg.parentNode.getBoundingClientRect().width);
+    svg.setAttribute("height", bbox.y + bbox.height + bbox.y);
 }
 
 function initializeSvg(svg, data) {
-    // order by votes descending, get the top 15
-    data = _.sortBy(data, 'votes').reverse();
-    data = data.slice(0, 15);
-    // order by score descending
-    data = _.sortBy(data, 'graphScore').reverse();
+    const sortData = function(data) {
+        // votes descending
+        data = _.sortBy(data, 'votes').reverse();
+        // top 15
+        data = data.slice(0, 15);
+        // score descending
+        return _.sortBy(data, 'graphScore').reverse();
+    };
+
+    data = sortData(data);
 
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
@@ -169,12 +175,6 @@ function initializeSvg(svg, data) {
         .domain([1, 8])
         // We substract maximum score marker radius for spacing
         .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
-    // blip opacity based on score of 1-8
-    var blipOpacity = d3.scaleLinear()
-        .domain([1, 8])
-        .range([0.1, 1.0]);
-
-    //svg.selectAll("g").remove();
 
     // define group
     let nodes = svg.selectAll("g")
@@ -183,7 +183,6 @@ function initializeSvg(svg, data) {
 
     // enter
     const enter = nodes.enter().append("g");
-
 
     enter.append("line")
         .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
@@ -203,8 +202,7 @@ function initializeSvg(svg, data) {
         .attr("cx", (d, i) => blipX(d.graphScore))
         .transition().duration(500)
         .attr("r", d => 6)
-        //.attr("class", "position-marker")
-        .attr("opacity", (d, i) => blipOpacity(d.graphScore));
+        .attr("class", "position-marker");
 
     nodes.merge(enter);
 }
@@ -264,7 +262,7 @@ function initializeEntries(keywords) {
 }
 
 
-const throttledOnWindowResize = _.throttle(draw, 500, {
+const throttledOnWindowResize = _.throttle(draw, 10, {
     leading: false
 });
 
@@ -282,71 +280,96 @@ function getQuartile(score) {
     }
 }
 
-function clearDatabase() {
-    console.log('clearing database...');
 
-    let keywords = Keywords.find().fetch();
+const devFunctions = {
+    clearDatabase: () => {
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-    for (let i = 0; i < keywords.length; i++) {
-        Keywords.remove({_id: keywords[i]._id});
-    }
+        console.log('clearing database...');
 
-    console.log('database cleared');
-}
+        let keywords = Keywords.find().fetch();
 
-/**
- * Floods database with random votes
- */
-function generateRandomData(userCount, quadrantCount) {
-    quadrantCount = quadrantCount || 64;
-    userCount = userCount || 16;
+        for (let i = 0; i < keywords.length; i++) {
+            Keywords.remove({_id: keywords[i]._id});
+        }
 
-    console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+        console.log('database cleared');
+    },
+    clearUsers: () => {
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-    // Pick n random quadrants so the selection does not get diluted
-    let quadrantSelection = [];
-    for (let i = 0; i < quadrantCount; i++) {
-        quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
-    }
+        console.log('clearing users...');
 
-    console.log("selected quadrants:")
-    console.log(quadrantSelection)
+        let users = Users.find().fetch();
 
-    for (let j = 0; j < userCount; j++) {
-        let email = "" + Math.random();
-        // how many votes this user will cast
-        let voteCount = Math.floor(Math.random() * quadrantSelection.length);
+        for (let i = 0; i < users.length; i++) {
+            Users.remove({_id: users[i]._id});
+        }
 
-        // vote for n random quadrants
-        for (let i = 0; i < voteCount; i++) {
-            let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
-            let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
+        console.log('users cleared');
+    },
+    generateRandomData: (userCount, quadrantCount) => {
+        quadrantCount = quadrantCount || 64;
+        userCount = userCount || 16;
 
-            let lookupPayload = {
-                keyword: randomQuadrant.name,
-                stage: randomStage,
-                section: randomQuadrant.section
-            };
+        if (!devFunctions.isDevMode()) {
+            return;
+        }
 
-            let dbEntry = Keywords.find(lookupPayload).fetch();
-            if (dbEntry.length) {
-                console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
-                Keywords.update(
-                    { _id: dbEntry[0]._id },
-                    {
-                        $push: {emails: email},
-                        $inc: {votes: 1}
-                    });
-            } else {
-                console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
-                Keywords.insert({
+        console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+
+        // Pick n random quadrants so the selection does not get diluted
+        let quadrantSelection = [];
+        for (let i = 0; i < quadrantCount; i++) {
+            quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
+        }
+
+        console.log("selected quadrants:")
+        console.log(quadrantSelection)
+
+        for (let j = 0; j < userCount; j++) {
+            let email = "" + Math.random();
+            // how many votes this user will cast
+            let voteCount = Math.floor(Math.random() * quadrantSelection.length);
+
+            // vote for n random quadrants
+            for (let i = 0; i < voteCount; i++) {
+                let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
+                let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
+
+                let lookupPayload = {
                     keyword: randomQuadrant.name,
                     stage: randomStage,
-                    section: randomQuadrant.section,
-                    emails: [email],
-                    votes: 1,
-                });
+                    section: randomQuadrant.section
+                };
+
+                let dbEntry = Keywords.find(lookupPayload).fetch();
+                if (dbEntry.length) {
+                    console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
+                    Keywords.update(
+                        { _id: dbEntry[0]._id },
+                        {
+                            $push: {emails: email},
+                            $inc: {votes: 1}
+                        });
+                } else {
+                    console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
+                    Keywords.insert({
+                        keyword: randomQuadrant.name,
+                        stage: randomStage,
+                        section: randomQuadrant.section,
+                        emails: [email],
+                        votes: 1,
+                    });
+                }
             }
         }
+    },
+    isDevMode: () => {
+        return Meteor.settings.public.environment === "development"
     }
-}
+};

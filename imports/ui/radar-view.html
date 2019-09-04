@@ -7,28 +7,12 @@
 
 <template name="radar">
     <div class="bg-white h-100">
-        <div class="d-block d-lg-flex justify-content-between align-items-center p-3">
-            <div class="d-none d-md-block">
-                <div class="display-3 font-weight-bold">
-                    NORTAL TECHRADAR
-                </div>
+        <div class="d-block d-lg-flex justify-content-between align-items-center p-3 mb-4 pb-sm-5">
+            <div class="scaled-main-title">
+                NORTAL TECHRADAR
             </div>
-            <div class="d-block d-md-none">
-                <div class="h1 font-weight-bold">
-                    NORTAL TECHRADAR
-                </div>
-            </div>
-
-
-            <div class="d-none d-md-block">
-                <div class="h2 font-weight-bold">
-                    Add and vote for your candidate!
-                </div>
-            </div>
-            <div class="d-block d-md-none">
-                <div class="h4 font-weight-bold">
-                    Add and vote for your candidate!
-                </div>
+            <div class="scaled-sub-title">
+                Add and vote for your candidate!
             </div>
         </div>
 
@@ -45,6 +29,7 @@
                 <div class="p-1 bg-danger">
                     <button id="randomGenButton" type="button" class="btn btn-sm btn-outline-light">Gen random data</button>
                     <button id="databaseClearButton" type="button" class="btn btn-sm btn-outline-light">Clear database</button>
+                    <button id="usersClearButton" type="button" class="btn btn-sm btn-outline-light">Clear users</button>
                 </div>
             </div>
         {{/if}}
@@ -53,11 +38,11 @@
 
 <template name="combinedRadar">
     {{#each quadrants}}
-        <div class="{{quadrantClass}} quadrant p-3">
+        <div class="{{quadrantClass}} quadrant p-3 mb-3">
             <div class="quadrant-title-container">
-                <h3 class="mt-0 mb-2 quadrant-title">{{name}}</h3>
+                <h3 class="mt-0 mb-2 scaled-quadrant-title">{{name}}</h3>
             </div>
-            <div class="h-100">
+            <div>
                 <svg id="{{id}}"></svg>
             </div>
         </div>
@@ -67,7 +52,7 @@
 <template name="singleRadar">
     <div class="col-12 quadrant p-3">
         <div class="quadrant-title-container">
-            <h3 class="mt-0 mb-2 quadrant-title">{{quadrantData "name"}}</h3>
+            <h3 class="mt-0 mb-2 scaled-quadrant-title">{{quadrantData "name"}}</h3>
         </div>
 
         <div class="h-100">
