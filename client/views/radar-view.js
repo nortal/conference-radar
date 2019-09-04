@@ -1,4 +1,4 @@
-import { Template } from 'meteor/templating';
+﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords, Users } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
@@ -155,16 +155,18 @@ function initializeSvg(svg, data) {
     // width of labels, cut from line width
     const labelWidth = 70;
     // Magic number centers circle on the dotted line
+    const headerHeight = 15;
     const verticalOffset = 3.5;
     // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
+    const lineSeparatorHeight = 4;
 
     _.each(data, (d) => d.width = columnWidth);
 
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
         const itemIndexInColumn = Math.ceil(calculatedY / rowHeightWithPadding);
-        return itemIndexInColumn * rowHeightWithPadding;
+        return itemIndexInColumn * rowHeightWithPadding + headerHeight;
     };
 
     const calculateScoreMarkerRadius = function (scoreMarkerValue) {
@@ -177,13 +179,16 @@ function initializeSvg(svg, data) {
         // We substract maximum score marker radius for spacing
         .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
 
+    const headerFontSize = d3.scaleLinear()
+        .domain([0, dottedLineLength])
+        .range([0, 10]);
+
     // define group
-    let nodes = svg.selectAll("g")
-        .data(data, (d,i) => d.width + d.name + d.graphScore + i);
+    let nodes = svg.selectAll("g.radar-row").data(data, (d,i) => d.width + d.name + d.graphScore + i);
     nodes.exit().remove();
 
     // enter
-    const enter = nodes.enter().append("g");
+    let enter = nodes.enter().append("g").attr("class", "radar-row");
 
     enter.append("line")
         .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
@@ -191,6 +196,15 @@ function initializeSvg(svg, data) {
         .attr("class", "dotted-line")
         .attr("x1", 0)
         .attr("x2", dottedLineLength);
+
+    // line separators
+    _.each([0.25,0.50,0.75], (placement) => {
+        enter.append("rect")
+            .attr("x", placement * dottedLineLength)
+            .attr("y", (d, i) => calculateDataRowY(d, i) - verticalOffset - lineSeparatorHeight / 2)
+            .attr("height", lineSeparatorHeight)
+            .attr("class", "line-separator");
+    });
 
     enter.append("text")
         .text(d => d.name)
@@ -200,12 +214,31 @@ function initializeSvg(svg, data) {
 
     enter.append("circle")
         .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
+        .transition().duration(500)
         .attr("cx", (d, i) => blipX(d.graphScore))
+        .attr("r", d => 2)
         .transition().duration(500)
         .attr("r", d => 6)
         .attr("class", "position-marker");
 
     nodes.merge(enter);
+
+    const stages = Stages.reverse();
+    _.each(stages, (d) => d.width = columnWidth);
+
+    console.log(stages)
+
+    nodes = svg.selectAll("g.radar-row-header").data(stages); //, (d) => d.id + d.width
+    nodes.exit().remove();
+
+    enter = nodes.enter().append("g").attr("class", "radar-row-header");
+    enter.append("text")
+        .text(d => d.name)
+        .attr("y", headerHeight * 1.3)
+        .attr("x", (d,i) => i / Stages.length * dottedLineLength);
+
+    nodes.merge(enter);
+
 }
 
 /**

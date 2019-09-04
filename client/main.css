@@ -73,14 +73,24 @@ body {
 }
 
 .position-marker {
-    fill: rgba(0, 0, 0, 0.65);
+    fill: #555;
 }
 
 .dotted-line {
-    stroke: #000;
-    stroke-opacity: 0.3;
+    stroke: #999;
     stroke-width: 1;
-    stroke-dasharray: 2;
+    stroke-dasharray: 1.5;
+}
+
+.line-separator {
+    fill: #aaa;
+    width: 1px;
+}
+
+.radar-row-header {
+    font-size: .6rem;
+    text-transform: uppercase;
+    fill: #757575;
 }
 
 .dotted-line-thick {
