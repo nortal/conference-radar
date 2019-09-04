@@ -14,6 +14,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import {Users} from '../imports/api/keywords.js';
+import {DevelopFunctions} from '../imports/api/develop.js';
 
 function getUser() {
     const email = Session.get("email");
@@ -100,6 +101,4 @@ Router.route('/radar/:mode', function () {
     });
 });
 
-Template.registerHelper('isDevMode', () => {
-    return Meteor.settings.public.environment === "development";
-});
+Template.registerHelper('isDevMode', DevelopFunctions.isDevMode);
