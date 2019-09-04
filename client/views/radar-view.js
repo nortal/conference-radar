@@ -128,9 +128,11 @@ function draw() {
 }
 
 function resizeSvg(section) {
-    let container = $("svg#" + section)[0];
+    const container = $("svg#" + section)[0];
+    const parentWidth = container.parentNode.getBoundingClientRect().width;
+
     let bbox = container.getBBox();
-    container.setAttribute("width", bbox.x + bbox.width + bbox.x);
+    container.setAttribute("width", parentWidth);
     container.setAttribute("height", bbox.y + bbox.height + bbox.y);
 }
 
