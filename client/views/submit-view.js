@@ -9,7 +9,24 @@ const keywordClassifier = require('/public/keywords.json');
 Template.submit.onCreated(function() {
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
-    this.invalidInput = new ReactiveVar();
+});
+
+Template.submit.onRendered(function () {
+    this.toast = {
+        element: $('#toast'),
+        show(styleClass, content) {
+            $("div.toast-body", this.element)
+                .attr("class", "toast-body " + styleClass)
+                .html(content);
+
+            this.element.toast("show");
+            return this;
+        },
+        hide() {
+            this.element.toast("hide");
+            return this;
+        }
+    };
 });
 
 Template.submit.helpers({
@@ -37,9 +54,6 @@ Template.submit.helpers({
     },
     getSelectWidth: () => {
         return Template.instance().selectWidth.get();
-    },
-    getInvalidInput: function () {
-        return Template.instance().invalidInput.get();
     }
 });
 
@@ -53,15 +67,13 @@ Template.submit.events({
 
         // no results with that id
         if (!keyword.length) {
-            template.invalidInput.set("Invalid entry!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "Invalid entry!");
             return;
         }
 
         // user has not voted for that
         if (!keyword[0].emails.includes(email)) {
-            template.invalidInput.set("Cannot remove that entry!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "Cannot remove that entry!");
             return;
         }
 
@@ -83,31 +95,26 @@ Template.submit.events({
         var email = Session.get("email");
 
         if (!keywordName || !keywordName.length || !chosenSection) {
-            template.invalidInput.set("No quadrant selected!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "No quadrant selected!");
             return;
         }
 
         if (!chosenStage) {
-            template.invalidInput.set("No stage selected!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "No stage selected!");
             return;
         }
 
         if (!Stages.find(s => s.id === chosenStage.toLowerCase())) {
-            template.invalidInput.set("Invalid stage!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "Invalid stage!");
             return;
         }
 
         if (!keywordClassifier.find(k => k.section === chosenSection && k.name === keywordName)) {
-            template.invalidInput.set("Invalid keyword!");
-            $("#errorToast").toast("show");
+            template.toast.show("alert-danger", "Invalid keyword!");
             return;
         }
 
-        $("#errorToast").toast("hide");
-        template.invalidInput.set();
+        template.toast.hide();
 
         var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
         var allKeywords = Keywords.find().fetch();
@@ -126,7 +133,7 @@ Template.submit.events({
             template.$('#keywordText').val("");
             template.$("#stageDropdown").val("0");
             template.$("#sectionText").val("0");
-            $("#alreadyVotedToast").toast("show");
+            template.toast.show("alert-warning", "You have already voted for this option!");
             return;
         }
 
@@ -172,7 +179,7 @@ Template.submit.events({
         template.$('#keywordText').val("");
         template.$("#stageDropdown").val("0");
         template.$("#sectionText").val("0");
-        $("#savedToast").toast("show");
+        template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
     },
 
     'keyup #keywordText': _.debounce((event, template) => {
@@ -202,15 +209,13 @@ Template.submit.events({
     'click .typeahead-result'(event, template) {
         event.preventDefault();
         const data = $(event.currentTarget).data();
-        template.autocomplete.set({matches: [], dirty: false});
-        $("#errorToast").toast("hide");
-        template.invalidInput.set();
+        clearAutocomplete(template);
         template.$("#keywordText").val(data.name);
         template.$("#sectionText").val(data.section);
     },
 
     'focusout #keywordText'(event, template) {
-        template.autocomplete.set({matches: [], dirty: false});
+        clearAutocomplete(template);
     },
 
     'click #finishButton'() {
@@ -221,4 +226,9 @@ Template.submit.events({
             );
         Router.go('/finish');
     },
+
 });
+
+function clearAutocomplete(template) {
+    template.autocomplete.set({matches: [], dirty: false});
+}

@@ -83,22 +83,10 @@
 
         </div>
     </form>
-    <div class="toast" id="savedToast" data-delay="4000">
-        <div class="toast-body alert-success mb-0">
-            Thank you!<br>
-            Your opinion has been saved.
-        </div>
-    </div>
-    <div class="toast" id="alreadyVotedToast" data-delay="4000">
-        <div class="toast-body alert-warning bm-0">
-            You have already voted for this option!
-        </div>
-    </div>
-    <div class="toast" id="errorToast" data-delay="4000">
-        <div class="toast-body alert-danger mb-0">
-            {{#if getInvalidInput}}
-                {{getInvalidInput}}
-            {{/if}}
+
+    <div class="toast" id="toast" data-delay="4000">
+        <div class="toast-body alert-success">
+            Contents
         </div>
     </div>
 </template>
