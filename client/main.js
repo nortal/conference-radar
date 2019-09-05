@@ -18,11 +18,9 @@ import {DevelopFunctions} from '../imports/api/develop.js';
 
 function getUser() {
     const email = Session.get("email");
-    if (!email || !email.length) {
-        return null;
-    }
+    const appId = Session.get("appId");
 
-    const users = Users.find({email: email}).fetch();
+    var users = Users.find({"$or": [{email: email}, {appIds: appId}]}).fetch();
     if (users && users.length) {
         return users[0];
     }
