@@ -49,8 +49,9 @@
                     <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
                             {{#if noResults}}
-                                <div class="typeahead-no-matches">
-                                    <span>No results</span>
+                                <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
+                                    <div>No results</div>
+                                    <button class="btn btn-sm btn-success" id="suggestButton">Suggest this</button>
                                 </div>
                             {{else}}
                                 {{#each match in matches}}

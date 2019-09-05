@@ -215,6 +215,11 @@ Template.submit.events({
     },
 
     'focusout #keywordText'(event, template) {
+        if (event.relatedTarget && event.relatedTarget.id === "suggestButton") {
+            template.$('#keywordText').val("");
+            template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        }
+
         clearAutocomplete(template);
     },
 
