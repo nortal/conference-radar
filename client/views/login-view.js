@@ -10,10 +10,11 @@ function loadJsSdk(id, src, onLoad) {
     js.addEventListener('load', onLoad);
 }
 
-function loginOrSignUp(email, name) {
+function loginOrSignUp(email, name, appId) {
     Session.set('isLoggingIn', true);
     Session.set('email', email);
     Session.set('name', name);
+    Session.set('appId', appId);
 
     Router.go('/confirm');
 }
@@ -37,8 +38,8 @@ Template.login.events({
         FB.login(function (response) {
             if (response.authResponse) {
                 console.log('Fetching information....');
-                FB.api('/me', {fields: 'name,email'}, function (response) {
-                    loginOrSignUp(response.email, response.name);
+                FB.api('/me', {fields: 'name,email,id'}, function (response) {
+                    loginOrSignUp(response.email, response.name, response.id);
                 });
             } else {
                 template.inProgress.set(false);
@@ -55,7 +56,7 @@ Template.login.events({
         template.auth2.signIn().then(function (googleUser) {
             var profile = googleUser.getBasicProfile();
 
-            loginOrSignUp(profile.getEmail(), profile.getName());
+            loginOrSignUp(profile.getEmail(), profile.getName(), profile.getId());
         }).catch(function () {
             template.inProgress.set(false);
         })

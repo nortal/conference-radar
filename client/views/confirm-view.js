@@ -11,6 +11,7 @@ Template.confirm.events({
 
         event.preventDefault();
 
+        const appId = Session.get('appId');
         const submitEmail = Session.get('email') || template.$("#emailText").val();
         const submitName = Session.get('name') || template.$("#nameText").val();
         const recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
@@ -38,11 +39,12 @@ Template.confirm.events({
         const foundUsers = Users.find({email: submitEmail}).fetch();
         if (foundUsers.length === 0) {
             Users.insert({
+                appId: appId,
                 name: submitName,
                 email: submitEmail,
                 wantsRecruitment: recruitmentChecked,
                 wantsParticipation: participateChecked,
-                agreesTerms: termsChecked,
+                agreesTerms: termsChecked
             });
         }
 
