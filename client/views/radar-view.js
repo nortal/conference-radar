@@ -1,4 +1,4 @@
-﻿import { Template } from 'meteor/templating';
+import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords, Users } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
@@ -137,17 +137,6 @@ function resizeSvg(element) {
 }
 
 function initializeSvg(svg, data) {
-    const sortData = function(data) {
-        // votes descending
-        data = _.sortBy(data, 'votes').reverse();
-        // top 15
-        data = data.slice(0, 15);
-        // score descending
-        return _.sortBy(data, 'graphScore').reverse();
-    };
-
-    data = sortData(data);
-
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
     // padding between entries
@@ -161,8 +150,6 @@ function initializeSvg(svg, data) {
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
     const lineSeparatorHeight = 4;
 
-    _.each(data, (d) => d.width = columnWidth);
-
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
         const itemIndexInColumn = Math.ceil(calculatedY / rowHeightWithPadding);
@@ -173,66 +160,68 @@ function initializeSvg(svg, data) {
         return 2.6 * Math.sqrt(scoreMarkerValue);
     };
 
-    // blip x-pos based on score of 1-8
-    var blipX = d3.scaleLinear()
-        .domain([1, 8])
-        // We substract maximum score marker radius for spacing
-        .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
+    const calculateBlipX = function (score) {
+        const blipX = d3.scaleLinear()
+            .domain([1, 8])
+            // We substract maximum score marker radius for spacing
+            .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
 
-    const headerFontSize = d3.scaleLinear()
-        .domain([0, dottedLineLength])
-        .range([0, 10]);
+        return blipX(score);
+    };
 
-    // define group
-    let nodes = svg.selectAll("g.radar-row").data(data, (d,i) => d.width + d.name + d.graphScore + i);
-    nodes.exit().remove();
 
-    // enter
-    let enter = nodes.enter().append("g").attr("class", "radar-row");
+    const buildMain = function(selection, data) {
+        const nodes = selection.selectAll("g.radar-row")
+            .data(data, (d,i) => d.width + d.name + d.graphScore + i);
 
-    enter.append("line")
-        .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
-        .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
-        .attr("class", "dotted-line")
-        .attr("x1", 0)
-        .attr("x2", dottedLineLength);
+        const enter = nodes.enter()
+            .append("g")
+            .attr("class", "radar-row");
 
-    // line separators
-    _.each([0.25,0.50,0.75], (placement) => {
-        enter.append("rect")
-            .attr("x", placement * dottedLineLength)
-            .attr("y", (d, i) => calculateDataRowY(d, i) - verticalOffset - lineSeparatorHeight / 2)
-            .attr("height", lineSeparatorHeight)
-            .attr("class", "line-separator");
-    });
+        enter.append("line")
+            .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
+            .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
+            .attr("class", "dotted-line")
+            .attr("x1", 0)
+            .attr("x2", dottedLineLength);
 
-    enter.append("text")
-        .text(d => d.name)
-        .attr("y", (d, i) => calculateDataRowY(d, i))
-        .attr("x", columnWidth - labelWidth)
-        .attr("font-size", "10px");
+        _.each([0.25,0.50,0.75], (placement) => {
+            enter.append("rect")
+                .attr("x", placement * dottedLineLength)
+                .attr("y", (d, i) => calculateDataRowY(d, i) - verticalOffset - lineSeparatorHeight / 2)
+                .attr("height", lineSeparatorHeight)
+                .attr("class", "line-separator");
+        });
 
-    enter.append("circle")
-        .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
-        .transition().duration(500)
-        .attr("cx", (d, i) => blipX(d.graphScore))
-        .attr("r", d => 2)
-        .transition().duration(500)
-        .attr("r", d => 6)
-        .attr("class", "position-marker");
+        enter.append("text")
+            .text(d => d.name)
+            .attr("y", (d, i) => calculateDataRowY(d, i))
+            .attr("x", columnWidth - labelWidth)
+            .attr("font-size", "10px");
 
-    nodes.merge(enter);
+        enter.append("circle")
+            .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
+            .transition().duration(500)
+            .attr("cx", (d, i) => calculateBlipX(d.graphScore))
+            .attr("r", d => 2)
+            .transition().duration(500)
+            .attr("r", d => 6)
+            .attr("class", "position-marker");
 
-    const buildHeader = function (data) {
-        const nodes = svg.selectAll('g.radar-row-header')
+        nodes.merge(enter);
+        nodes.exit().remove();
+    };
+
+    const buildHeader = function (selection, data) {
+        const nodes = selection.selectAll('g.radar-row-header')
             .data(data.parent, (d) => d.toString());
 
-        nodes.enter()
+        const enter = nodes.enter()
             .append('g')
             .attr('class', 'radar-row-header')
-            .merge(nodes)
             .call(d => buildHeaderTexts(d, data));
 
+        nodes.merge(enter);
         nodes.exit().remove();
     };
 
@@ -263,7 +252,24 @@ function initializeSvg(svg, data) {
         return stages;
     };
 
-    buildHeader({
+
+    const sortData = function(data, width) {
+        // add width for binding
+        _.each(data, (d) => d.width = width);
+        // votes descending
+        data = _.sortBy(data, 'votes').reverse();
+        // top 15
+        data = data.slice(0, 15);
+        // score descending
+        return _.sortBy(data, 'graphScore').reverse();
+    };
+
+
+    data = sortData(data, columnWidth);
+
+    buildMain(svg, data);
+
+    buildHeader(svg, {
         parent: [columnWidth],
         child: buildHeaderData(Stages)
     });
