@@ -89,9 +89,9 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        var keywordName = template.$("#keywordText").val();
-        var chosenStage = template.$("#stageDropdown").val();
-        var chosenSection = template.$("#sectionText").val();
+        var keywordName = template.$("#keywordText").val().trim().toLowerCase();
+        var chosenStage = template.$("#stageDropdown").val().trim().toLowerCase();
+        var chosenSection = template.$("#sectionText").val().trim().toLowerCase();
         var email = Session.get("email");
 
         if (!keywordName || !keywordName.length || !chosenSection) {
@@ -104,13 +104,8 @@ Template.submit.events({
             return;
         }
 
-        if (!Stages.find(s => s.id === chosenStage.toLowerCase())) {
+        if (!Stages.find(s => s.id === chosenStage)) {
             template.toast.show("alert-danger", "Invalid stage!");
-            return;
-        }
-
-        if (!keywordClassifier.find(k => k.section === chosenSection && k.name === keywordName)) {
-            template.toast.show("alert-danger", "Invalid keyword!");
             return;
         }
 
@@ -121,64 +116,50 @@ Template.submit.events({
 
         // case insensitive search
         for (i = 0; i < allKeywords.length; ++i) {
-            if (allKeywords[i].keyword.toLowerCase() === keywordName.toLowerCase() &&
-                allKeywords[i].stage === chosenStage &&
+            if (allKeywords[i].name.toLowerCase() === keywordName &&
                 allKeywords[i].section === chosenSection) {
                 keyword = allKeywords[i];
                 break;
             }
         }
 
-        if (keyword && keyword.emails && keyword.emails.indexOf(email) >= 0) {
-            template.$('#keywordText').val("");
-            template.$("#stageDropdown").val("0");
-            template.$("#sectionText").val("0");
+        if (!keyword) {
+            template.toast.show("alert-danger", "Invalid keyword!");
+            return;
+        }
+
+        const oldVotedStage = Object.keys(keyword.votes).find(function (stage) {
+            return keyword.votes[stage].indexOf(email) !== -1;
+        });
+
+        if (oldVotedStage === chosenStage) {
+            clearForm(template);
             template.toast.show("alert-warning", "You have already voted for this option!");
             return;
         }
 
-        if (keyword) {
-            var voteString = 'votes';
-            var action = {};
-            action[voteString] = 1;
-            var addEmail = {emails: email};
+        // remove old vote
+        if (oldVotedStage) {
+            const modifier = {};
+            modifier["votes." + oldVotedStage] = email;
+
             Keywords.update(
                 { _id: keyword._id },
                 {
-                    $addToSet: addEmail,
-                    $inc: action
-                });
-        } else {
-            var newKeyword = {
-                keyword: keywordName,
-                stage: chosenStage,
-                section: chosenSection,
-                emails: [email],
-                votes: 1,
-            };
-            Keywords.insert(newKeyword);
-        }
-
-        var oldVote = allKeywords.find((kw) => {
-            return kw.emails.indexOf(email) >= 0 &&
-                kw.keyword === keywordName &&
-                kw.section === chosenSection &&
-                kw.stage !== chosenStage;
-        });
-
-        if (oldVote) {
-            Keywords.update(
-                { _id: oldVote._id },
-                {
-                    $pull: {emails: email},
-                    $inc: {votes: -1}
+                    $pull: {votes: voteRemoveModifier}
                 });
         }
 
-        // Clear form
-        template.$('#keywordText').val("");
-        template.$("#stageDropdown").val("0");
-        template.$("#sectionText").val("0");
+        const modifier = {};
+        modifier["votes." + chosenStage] = email;
+
+        Keywords.update(
+            { _id: keyword._id },
+            {
+                $addToSet: modifier
+            });
+
+        clearForm(template);
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
     },
 
@@ -186,15 +167,18 @@ Template.submit.events({
         event.preventDefault();
 
         template.selectWidth.set(event.target.getBoundingClientRect().width);
-
-
         template.autocomplete.set({matches: [], dirty: true});
+
         if (!event || !event.target || !event.target.value) {
             return;
         }
 
-        keywordClassifier.forEach((keyword) => {
-            if (keyword && keyword.name && keyword.name.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0 &&
+        const value = event.target.value.toLowerCase();
+
+        // todo: improve search
+        const allKeywords = Keywords.find().fetch();
+        _.each(allKeywords, function (keyword) {
+            if (keyword.name.toLowerCase().indexOf(value) >= 0 &&
                 template.autocomplete.get().matches.length <= 12) {
                 template.autocomplete.get().matches.push(keyword);
             }
@@ -216,8 +200,7 @@ Template.submit.events({
 
     'focusout #keywordText'(event, template) {
         if (event.relatedTarget && event.relatedTarget.id === "suggestButton") {
-            template.$('#keywordText').val("");
-            template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+            suggestEvent(event, template);
         }
 
         clearAutocomplete(template);
@@ -236,4 +219,21 @@ Template.submit.events({
 
 function clearAutocomplete(template) {
     template.autocomplete.set({matches: [], dirty: false});
+}
+
+function clearForm(template) {
+    template.$('#keywordText').val("");
+    template.$("#stageDropdown").val("0");
+    template.$("#sectionText").val("0");
+}
+
+function suggestEvent(event, template) {
+    const suggestion = template.$('#keywordText');
+
+    //console.log(Keywords.find().fetch())
+    // todo: check if exists. if yes, error. if not, create entry + show toast
+
+    template.$('#keywordText').val("");
+    //template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+    template.toast.show("alert-warning", "Sorry! This feature is currently disabled!");
 }

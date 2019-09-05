@@ -280,19 +280,22 @@ function initializeSvg(svg, data) {
  * Merges provided blip into another object
  */
 function mergeBlip(blip, mergedBlips) {
-    var mergedBlip = mergedBlips[blip.keyword];
+    var mergedBlip = mergedBlips[blip.name];
     if (!mergedBlip) {
         mergedBlip = { "section": blip.section }
     }
 
-    mergedBlip[blip.stage] = blip.votes;
-    mergedBlips[blip.keyword] = mergedBlip;
+    _.each(Object.keys(blip.votes), function (stage) {
+        mergedBlip[stage] = blip.votes[stage].length;
+    });
+
+    mergedBlips[blip.name] = mergedBlip;
 }
 
 // calculates score
 function initializeEntries(keywords) {
     var mergedBlips = {};
-    keywords.filter(k => k.votes > 0).forEach(k => mergeBlip(k, mergedBlips));
+    keywords.forEach(k => mergeBlip(k, mergedBlips));
 
     var quartileMaxVotes = {};
     var summarizedBlips = {};
@@ -306,9 +309,14 @@ function initializeEntries(keywords) {
         var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4);
         var averageScore = totalScore / totalVotes;
 
+        if (totalVotes === 0) {
+            return;
+        }
+
         if (!summarizedBlips.hasOwnProperty(value.section)) {
             summarizedBlips[value.section] = [];
         }
+
         summarizedBlips[value.section].push({ "name": prop, "averageScore": averageScore, "totalScore": totalScore, "votes": totalVotes });
 
         if (!quartileMaxVotes.hasOwnProperty(value.section)) {
