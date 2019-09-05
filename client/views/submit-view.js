@@ -31,13 +31,18 @@ Template.submit.onRendered(function () {
 
 Template.submit.helpers({
     submittedKeywords: () => {
-        return Keywords.find({ emails: Session.get("email") }).fetch();
+        const email = Session.get("email");
+        const stages = []
+        Stages.forEach((stage) => stages.push({["votes." + stage.id]: email}));
+        return Keywords.find({$or: stages}).fetch();
     },
     stages: () => {
         return Stages
     },
-    getStageName: (id) => {
-        return Stages.find(s => s.id === id).name;
+    getStageName: (votes) => {
+        const email = Session.get("email");
+        const stage = _.findKey(votes, (emails) =>  emails.includes(email));
+        return Stages.find(s => s.id === stage).name;
     },
     getSectionName: (id) => {
         return Sections.find(s => s.id === id).name;
