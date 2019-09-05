@@ -1,8 +1,9 @@
-import { Template } from 'meteor/templating';
+﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords, Users } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
 import { DevelopFunctions } from '../../imports/api/develop.js';
+import { GetQueryParam } from '../../imports/api/shared.js';
 import d3 from 'd3';
 import _ from 'underscore';
 
@@ -75,7 +76,7 @@ Template.combinedRadar.helpers({
         return Sections;
     },
     quadrantClass: function() {
-        switch (Router.current().params.query.rows) {
+        switch (GetQueryParam["rows"]) {
             case "1":
                 return "col-3";
             case "2":
@@ -259,7 +260,7 @@ function initializeSvg(svg, data) {
         // votes descending
         data = _.sortBy(data, 'votes').reverse();
         // top 15
-        data = data.slice(0, 15);
+        data = data.slice(0, GetQueryParam("top") || 15);
         // score descending
         return _.sortBy(data, 'graphScore').reverse();
     };
