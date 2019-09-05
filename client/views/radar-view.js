@@ -223,22 +223,50 @@ function initializeSvg(svg, data) {
 
     nodes.merge(enter);
 
-    const stages = Stages.reverse();
-    _.each(stages, (d) => d.width = columnWidth);
+    const buildHeader = function (data) {
+        const nodes = svg.selectAll('g.radar-row-header')
+            .data(data.parent, (d) => d.toString());
 
-    console.log(stages)
+        nodes.enter()
+            .append('g')
+            .attr('class', 'radar-row-header')
+            .merge(nodes)
+            .call(d => buildHeaderTexts(d, data));
 
-    nodes = svg.selectAll("g.radar-row-header").data(stages); //, (d) => d.id + d.width
-    nodes.exit().remove();
+        nodes.exit().remove();
+    };
 
-    enter = nodes.enter().append("g").attr("class", "radar-row-header");
-    enter.append("text")
-        .text(d => d.name)
-        .attr("y", headerHeight * 1.3)
-        .attr("x", (d,i) => i / Stages.length * dottedLineLength);
+    const buildHeaderTexts = function (selection, data) {
+        const nodes = selection.selectAll('text.radar-header-title')
+            .data(data.child);
 
-    nodes.merge(enter);
+        const sectionLength = dottedLineLength / Stages.length;
+        const centerOffset = sectionLength / 2;
 
+        const enter = nodes.enter()
+            .append('text')
+            .attr('class', 'radar-header-title')
+            .attr("y", headerHeight * 1.3)
+            .attr("x", (d,i) => i * sectionLength + centerOffset);
+
+        enter.append('tspan')
+            .text(d => d.name)
+            .attr("text-anchor", "middle");
+
+        nodes.merge(enter);
+        nodes.exit().remove();
+    };
+
+    const buildHeaderData = function(stages) {
+        stages = stages.reverse();
+        _.each(stages, (d) => d.width = columnWidth);
+        return stages;
+    };
+
+    buildHeader({
+        parent: [columnWidth],
+        child: buildHeaderData(Stages)
+    });
 }
 
 /**
@@ -296,7 +324,7 @@ function initializeEntries(keywords) {
 }
 
 
-const throttledOnWindowResize = _.throttle(draw, 10, {
+const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
 
