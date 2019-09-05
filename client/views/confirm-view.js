@@ -39,13 +39,24 @@ Template.confirm.events({
         const foundUsers = Users.find({email: submitEmail}).fetch();
         if (foundUsers.length === 0) {
             Users.insert({
-                appId: appId,
+                appIds: [appId],
                 name: submitName,
                 email: submitEmail,
                 wantsRecruitment: recruitmentChecked,
                 wantsParticipation: participateChecked,
                 agreesTerms: termsChecked
             });
+        } else {
+            Users.update(
+                {_id: foundUsers[0]._id},
+                {
+                    $addToSet: {appIds: appId},
+                    $set: {
+                        wantsRecruitment: recruitmentChecked,
+                        wantsParticipation: participateChecked
+                    }
+                }
+            );
         }
 
         Session.set('isLoggedIn', true);

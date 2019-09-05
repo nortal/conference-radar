@@ -55,7 +55,6 @@ Template.login.events({
 
         template.auth2.signIn().then(function (googleUser) {
             var profile = googleUser.getBasicProfile();
-
             loginOrSignUp(profile.getEmail(), profile.getName(), profile.getId());
         }).catch(function () {
             template.inProgress.set(false);

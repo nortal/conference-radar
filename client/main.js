@@ -20,8 +20,7 @@ function getUser() {
     const email = Session.get("email");
     const appId = Session.get("appId");
 
-    var users = Users.find({"$or": [{email: email}, {appId: appId}]}).fetch();
-    console.log(users)
+    var users = Users.find({"$or": [{email: email}, {appIds: appId}]}).fetch();
     if (users && users.length) {
         return users[0];
     }
