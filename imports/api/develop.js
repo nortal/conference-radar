@@ -1,5 +1,6 @@
 import {Keywords, Users} from "./keywords";
 import {Stages} from "./constants";
+import _ from "underscore";
 
 export const DevelopFunctions = {
     clearDatabase: () => {
@@ -32,7 +33,7 @@ export const DevelopFunctions = {
 
         console.log('users cleared');
     },
-    generateRandomData: (keywordClassifier, userCount, quadrantCount) => {
+    generateRandomData: (userCount, quadrantCount) => {
         quadrantCount = quadrantCount || 64;
         userCount = userCount || 16;
 
@@ -40,19 +41,20 @@ export const DevelopFunctions = {
             throw new Error("Function should only be called in develop environment");
         }
 
-        console.log('starting data generation with params: quadrantCount=' + quadrantCount + ', userCount='+userCount);
+        console.log('starting data generation with params: quadrantCount', quadrantCount, 'userCount', userCount);
+
+        const allKeywords = Keywords.find().fetch();
 
         // Pick n random quadrants so the selection does not get diluted
         let quadrantSelection = [];
         for (let i = 0; i < quadrantCount; i++) {
-            quadrantSelection.push(keywordClassifier[Math.floor(Math.random() * keywordClassifier.length)]);
+            quadrantSelection.push(allKeywords[Math.floor(Math.random() * allKeywords.length)]);
         }
 
-        console.log("selected quadrants:")
-        console.log(quadrantSelection)
+        console.log("selected quadrants:", quadrantSelection);
 
         for (let j = 0; j < userCount; j++) {
-            let email = "" + Math.random();
+            let email = Math.random().toString();
             // how many votes this user will cast
             let voteCount = Math.floor(Math.random() * quadrantSelection.length);
 
@@ -61,35 +63,44 @@ export const DevelopFunctions = {
                 let randomQuadrant = quadrantSelection[Math.floor(Math.random() * quadrantSelection.length)];
                 let randomStage = Stages[Math.floor(Math.random() * Stages.length)].id;
 
-                let lookupPayload = {
-                    keyword: randomQuadrant.name,
-                    stage: randomStage,
-                    section: randomQuadrant.section
-                };
+                console.log(email, "voted", randomStage, randomQuadrant.name);
 
-                let dbEntry = Keywords.find(lookupPayload).fetch();
-                if (dbEntry.length) {
-                    console.log('updated ' + dbEntry[0]._id + ': ' + lookupPayload.keyword + ' ' + lookupPayload.section + ' ' + lookupPayload.stage);
-                    Keywords.update(
-                        { _id: dbEntry[0]._id },
-                        {
-                            $push: {emails: email},
-                            $inc: {votes: 1}
-                        });
-                } else {
-                    console.log('inserted: ' + randomQuadrant.name + ' ' + randomQuadrant.section + ' ' + randomStage);
-                    Keywords.insert({
-                        keyword: randomQuadrant.name,
-                        stage: randomStage,
-                        section: randomQuadrant.section,
-                        emails: [email],
-                        votes: 1,
+                const modifier = {};
+                modifier["votes." + randomStage] = email;
+
+                Keywords.update(
+                    { _id: randomQuadrant._id },
+                    {
+                        $addToSet: modifier
                     });
-                }
             }
         }
     },
     isDevMode: () => {
         return Meteor.settings.public.environment === "development"
+    },
+    clearVotes() {
+        if (!DevelopFunctions.isDevMode()) {
+            throw new Error("Function should only be called in develop environment");
+        }
+
+        console.log('clearing votes...');
+
+        let allKeywords = Keywords.find().fetch();
+
+        for (let i = 0; i < allKeywords.length; i++) {
+            const modifier = {};
+            _.each(Stages, function (stage) {
+                modifier["votes." + stage.id] = [];
+            });
+
+            Keywords.update(
+                { _id: allKeywords[i]._id },
+                {
+                    $set: modifier
+                });
+        }
+
+        console.log('votes cleared');
     }
 };
