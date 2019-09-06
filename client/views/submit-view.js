@@ -205,10 +205,15 @@ Template.submit.events({
     'click #suggestButton'(event, template) {
         const suggestion = template.$('#suggestionText').val();
         const section = template.$('#suggestionSectionDropdown').val();
+        const stage = template.$('#suggestionStageDropdown').val();
         const email = Session.get("email");
 
         if (!UserInputVerification.verifySection(section)) {
             template.toast.show("alert-danger", "Please enter a valid section!");
+            return;
+        }
+        if (!UserInputVerification.verifyStage(stage)) {
+            template.toast.show("alert-danger", "Please enter a valid stage!");
             return;
         }
 
@@ -252,8 +257,10 @@ Template.submit.events({
         });
 
         template.$('#suggestionText').val("");
-        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
+        template.$('#suggestionStageDropdown')[0].selectedIndex = 0;
         template.$("#suggestionModal").modal("hide");
+        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
     }
 });
 

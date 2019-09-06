@@ -98,19 +98,31 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Suggest a technology</h5>
+                    <h5 class="modal-title">Add a new technology</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input class="styled-input" id="suggestionText" type="text" name="suggestionText" placeholder="Enter here" />
+                    <div class="mb-3">
+                        <input class="styled-input" id="suggestionText" type="text" name="suggestionText" placeholder="Enter here" />
+                    </div>
 
-                    <select id="suggestionSectionDropdown" name="suggestionSectionDropdown" class="styled-select">
-                        {{#each sections}}
-                            <option value='{{id}}'>{{name}}</option>
-                        {{/each}}
-                    </select>
+                    <div class="mb-3">
+                        <select id="suggestionSectionDropdown" name="suggestionSectionDropdown" class="styled-select">
+                            {{#each sections}}
+                                <option value='{{id}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="suggestionStageDropdown" name="suggestionStageDropdown" class="styled-select">
+                            {{#each stages}}
+                                <option value='{{id}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
 
                 </div>
                 <div class="modal-footer">
