@@ -2,9 +2,8 @@ import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
 import {Keywords,Users} from '../../imports/api/keywords.js';
 import {Stages,Sections} from '../../imports/api/constants.js';
+import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
-
-const keywordClassifier = require('/public/keywords.json');
 
 Template.submit.onCreated(function() {
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
@@ -99,65 +98,48 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        var keywordName = template.$("#keywordText").val().trim().toLowerCase();
-        var chosenStage = template.$("#stageDropdown").val().trim().toLowerCase();
-        var chosenSection = template.$("#sectionText").val().trim().toLowerCase();
+        var keywordName = template.$("#keywordText").val();
+        var chosenStage = template.$("#stageDropdown").val();
+        var chosenSection = template.$("#sectionText").val();
         var email = Session.get("email");
 
-        if (!keywordName || !keywordName.length || !chosenSection) {
-            template.toast.show("alert-danger", "No quadrant selected!");
-            return;
-        }
-
-        if (!chosenStage) {
-            template.toast.show("alert-danger", "No stage selected!");
-            return;
-        }
-
-        if (!Stages.find(s => s.id === chosenStage)) {
+        if (!UserInputVerification.verifyStage(chosenStage)) {
             template.toast.show("alert-danger", "Invalid stage!");
             return;
         }
 
-        template.toast.hide();
-
-        var keyword; // = Keywords.find({ keyword: newKeyword, stage: chosenStage, section: chosenSection }).fetch();
-        var allKeywords = Keywords.find().fetch();
-
-        // case insensitive search
-        for (i = 0; i < allKeywords.length; ++i) {
-            if (allKeywords[i].name.toLowerCase() === keywordName &&
-                allKeywords[i].section === chosenSection) {
-                keyword = allKeywords[i];
-                break;
-            }
+        if (!UserInputVerification.verifySection(chosenSection)) {
+            template.toast.show("alert-danger", "Invalid section!");
+            return;
         }
 
+        if (!UserInputVerification.verifyKeyword(chosenSection, keywordName)) {
+            template.toast.show("alert-danger", "Invalid keyword!");
+            return;
+        }
+
+        keywordName = keywordName.trim(); // case-sensitive
+        chosenStage = chosenStage.trim().toLowerCase();
+        chosenSection = chosenSection.trim().toLowerCase();
+        email = email.trim().toLowerCase();
+
+        //template.toast.hide();
+        clearForm(template);
+
+        const keyword = Keywords.find({ name: keywordName, section: chosenSection }).fetch()[0];
         if (!keyword) {
             template.toast.show("alert-danger", "Invalid keyword!");
             return;
         }
 
+        // find stage user has voted for, if any
         const oldVotedStage = Object.keys(keyword.votes).find(function (stage) {
             return keyword.votes[stage].indexOf(email) !== -1;
         });
 
-        if (oldVotedStage === chosenStage) {
-            clearForm(template);
+        if (oldVotedStage) {
             template.toast.show("alert-warning", "You have already voted for this option!");
             return;
-        }
-
-        // remove old vote
-        if (oldVotedStage) {
-            const modifier = {};
-            modifier["votes." + oldVotedStage] = email;
-
-            Keywords.update(
-                { _id: keyword._id },
-                {
-                    $pull: {votes: voteRemoveModifier}
-                });
         }
 
         const modifier = {};
@@ -169,7 +151,6 @@ Template.submit.events({
                 $addToSet: modifier
             });
 
-        clearForm(template);
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
     },
 
