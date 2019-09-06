@@ -150,7 +150,7 @@ function initializeSvg(svg, data) {
     const verticalOffset = 3.5;
     // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
-    const lineSeparatorHeight = 4;
+    const lineSeparatorHeight = 6;
 
     const calculateDataRowY = function (data, index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
@@ -164,13 +164,58 @@ function initializeSvg(svg, data) {
 
     const calculateBlipX = function (score) {
         const blipX = d3.scaleLinear()
-            .domain([1, 8])
+            .domain([0, 8])
             // We substract maximum score marker radius for spacing
             .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
 
         return blipX(score);
     };
 
+
+    const calculateTextColor = function (data, i) {
+        let textClass = "radar-row-name";
+
+        if (isFirstOfStage(data, i)) {
+            textClass += " font-weight-bold";
+            const currentStage = getStage(data[i].graphScore);
+            textClass += " color-" + currentStage;
+        }
+
+        return textClass;
+    };
+
+    const calculateCircleColor = function (data, i) {
+        let circleClass = "position-marker";
+
+        if (isFirstOfStage(data, i)) {
+            const currentStage = getStage(data[i].graphScore);
+            circleClass += " color-" + currentStage;
+        }
+
+        return circleClass;
+    };
+
+    const isFirstOfStage = function (data, i) {
+        console.log(data[i])
+
+        const currentStage = getStage(data[i].graphScore);
+        const blipsOnCurrentStage = data.filter(d => getStage(d.graphScore) === currentStage);
+        return blipsOnCurrentStage[0] === data[i];
+    };
+
+    const getStage = function(graphScore) {
+        const scorePercentage = graphScore / 8 * 100;
+
+        if (scorePercentage > 75) {
+            return "adopt";
+        } else if (scorePercentage > 50) {
+            return "trial";
+        } else if (scorePercentage > 25) {
+            return "assess";
+        } else {
+            return "avoid";
+        }
+    };
 
     const buildMain = function(selection, data) {
         const nodes = selection.selectAll("g.radar-row")
@@ -187,7 +232,7 @@ function initializeSvg(svg, data) {
             .attr("x1", 0)
             .attr("x2", dottedLineLength);
 
-        _.each([0.25,0.50,0.75], (placement) => {
+        _.each([0,0.25,0.50,0.75,1], (placement) => {
             enter.append("rect")
                 .attr("x", placement * dottedLineLength)
                 .attr("y", (d, i) => calculateDataRowY(d, i) - verticalOffset - lineSeparatorHeight / 2)
@@ -199,16 +244,16 @@ function initializeSvg(svg, data) {
             .text(d => d.name)
             .attr("y", (d, i) => calculateDataRowY(d, i))
             .attr("x", columnWidth - labelWidth)
-            .attr("font-size", "10px");
+            .attr("class", (d,i) => calculateTextColor(data, i));
 
         enter.append("circle")
             .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
+            .attr("class", (d,i) => calculateCircleColor(data, i))
             .transition().duration(500)
             .attr("cx", (d, i) => calculateBlipX(d.graphScore))
-            .attr("r", d => 2)
+            .attr("r", 2)
             .transition().duration(500)
-            .attr("r", d => 6)
-            .attr("class", "position-marker");
+            .attr("r", 4);
 
         nodes.merge(enter);
         nodes.exit().remove();
@@ -236,7 +281,7 @@ function initializeSvg(svg, data) {
 
         const enter = nodes.enter()
             .append('text')
-            .attr('class', 'radar-header-title')
+            .attr('class', (d) => 'radar-header-title color-' + d.name)
             .attr("y", headerHeight * 1.3)
             .attr("x", (d,i) => i * sectionLength + centerOffset);
 

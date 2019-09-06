@@ -1,27 +1,33 @@
 <template name="radarLayout">
-    <div class="container-fluid p-3 pt-2 radar">
+    <div class="container-fluid px-2 px-md-5 pt-md-3 radar">
         {{> yield}}
     </div>
 </template>
 
 
 <template name="radar">
-    <div class="bg-white h-100">
-        <div class="d-block d-lg-flex justify-content-between align-items-center p-3 mb-4 pb-sm-5">
+    <div class="h-100">
+        <div class="d-flex justify-content-between align-items-center py-3 py-sm-0">
             <div class="scaled-main-title">
-                NORTAL TECHRADAR
+                TECHRADAR
             </div>
-            <div class="scaled-sub-title">
-                Add and vote for your candidate!
+            <div>
+                <img src="/images/Nortal_RGB_positive.png" width="120" height="63" alt="">
             </div>
         </div>
 
-        <div class="row no-gutters">
+        <div class="row pb-4">
             {{#if isSingleQuadrantView}}
                 {{> singleRadar}}
             {{else}}
                 {{> combinedRadar}}
             {{/if}}
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="radar-footer-title">Add and vote for your candidate</div>
+            </div>
         </div>
 
         {{#if isDevMode}}
@@ -39,12 +45,15 @@
 
 <template name="combinedRadar">
     {{#each quadrants}}
-        <div class="{{quadrantClass}} quadrant p-3 mb-3">
+        <div class="{{quadrantClass}} quadrant p-3 mt-4">
             <div class="quadrant-title-container">
                 <h3 class="mt-0 mb-2 scaled-quadrant-title">{{name}}</h3>
             </div>
-            <div>
-                <svg id="{{id}}"></svg>
+
+            <div class="quadrant-svg-wrapper">
+                <div>
+                    <svg id="{{id}}"></svg>
+                </div>
             </div>
         </div>
     {{/each}}

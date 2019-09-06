@@ -9,7 +9,7 @@ body {
     font-weight: 200;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    background-color: #EEF2F5 !important;
+    background-color: #fff !important;
 }
 
 .login-title {
@@ -73,13 +73,13 @@ body {
 }
 
 .position-marker {
-    fill: #555;
+    fill: #AFB9BF;
 }
 
 .dotted-line {
     stroke: #999;
     stroke-width: 1;
-    stroke-dasharray: 1.5;
+    stroke-dasharray: 1, 1.5;
 }
 
 .line-separator {
@@ -238,16 +238,6 @@ body {
     padding: 1.5rem 1rem 0.5rem 1rem;
 }
 
-.quadrant .quadrant-title-container {
-    border-bottom: 6px solid rgba(0, 0, 0, 0.7);
-    position: relative;
-    width: 100%;
-}
-
-.quadrant:nth-of-type(odd) .quadrant-title-container {
-    border-bottom: 6px solid rgba(0, 0, 0, 0.25);
-}
-
 ul.list-group > li.list-group-item {
     border: 1px solid rgb(169,169,169);
 }
@@ -267,27 +257,91 @@ ul.list-group > li.list-group-item:last-child {
     font-weight: 700;
     line-height: 1.2;
 }
-.scaled-sub-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.2;
-}
 .scaled-quadrant-title {
     font-weight: 700;
     text-transform: uppercase;
     position: absolute;
     bottom: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 @media (min-width: 576px) {
     .scaled-main-title {
-        font-size: 4.5rem;
-    }
-    .scaled-sub-title {
-        font-size: 2rem;
+        font-size: 3.5rem;
     }
     .scaled-quadrant-title {
-        font-size: 1.75rem;
+        font-size: 1.25rem;
     }
+}
+
+.secondary-button {
+    border-radius: 25px;
+    background: #fff;
+    color: #009639;
+    padding: 5px;
+    width: 150px;
+    height: 50px;
+    font-weight: 100;
+    font-size: 20px;
+    border: 2px solid #009639;
+    transition: 0.3s;
+}
+
+.secondary-button:hover {
+    background: #009639;
+    color: #fff;
+    transition: 0.3s;
+}
+
+.color-avoid {
+    color: #C74A85;
+    fill: #C74A85 !important;
+}
+.color-assess {
+    color: #644693;
+    fill: #644693 !important;
+}
+.color-trial {
+    color: #01549F;
+    fill: #01549F !important;
+}
+.color-adopt {
+    color: #47973A;
+    fill: #47973A !important;
+}
+.color-none {
+    color: #AFB9BF;
+    fill: #AFB9BF !important;
+}
+
+.quadrant-svg-wrapper {
+    background-color: #fff;
+    border: 2px solid #EEF2F5;
+    border-top: none;
+    height: 100%;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.quadrant .quadrant-title-container {
+    border-bottom: 8px solid #47973A;
+    position: relative;
+    width: 100%;
+}
+
+.radar-header-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.radar-row-name {
+    fill: #5B6064;
+    font-size: 10px;
+}
+.radar-footer-title{
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    color: #47973A;
+    font-weight: 700;
+    letter-spacing: 3px;
 }
