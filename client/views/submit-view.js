@@ -158,7 +158,7 @@ Template.submit.events({
         event.preventDefault();
 
         template.selectWidth.set(event.target.getBoundingClientRect().width);
-        template.autocomplete.set({matches: [], dirty: true});
+        clearAutocomplete(template, true);
 
         if (!event || !event.target || !event.target.value) {
             return;
@@ -184,7 +184,7 @@ Template.submit.events({
     'click .typeahead-result'(event, template) {
         event.preventDefault();
         const data = $(event.currentTarget).data();
-        clearAutocomplete(template);
+        clearAutocomplete(template, false);
         template.$("#keywordText").val(data.name);
         template.$("#sectionText").val(data.section);
     },
@@ -194,7 +194,7 @@ Template.submit.events({
             suggestEvent(event, template);
         }
 
-        clearAutocomplete(template);
+        clearAutocomplete(template, false);
     },
 
     'click #finishButton'() {
@@ -208,8 +208,8 @@ Template.submit.events({
 
 });
 
-function clearAutocomplete(template) {
-    template.autocomplete.set({matches: [], dirty: false});
+function clearAutocomplete(template, dirty) {
+    template.autocomplete.set({matches: [], dirty: dirty});
 }
 
 function clearForm(template) {
