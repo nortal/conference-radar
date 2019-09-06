@@ -51,8 +51,13 @@
                     <div class="typeahead" style="width: {{getSelectWidth}}px;">
                         <div class="typeahead-results">
                             {{#if noResults}}
-                                <div class="typeahead-no-matches">
+                                <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
                                     <div>No results</div>
+                                    <a class="styled-link" href="#" data-toggle="modal" data-target="#suggestionModal" style="font-size: 12px">
+                                        <span class="text-black-50">(</span>
+                                        <span>Add this</span>
+                                        <span class="text-black-50">)</span>
+                                    </a>
                                 </div>
                             {{else}}
                                 {{#each match in matches}}
@@ -89,7 +94,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="suggestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">

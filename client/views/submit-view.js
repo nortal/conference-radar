@@ -193,6 +193,12 @@ Template.submit.events({
     },
 
     'focusout #keywordText'(event, template) {
+        // is user clicked on a link that opens the suggestion modal
+        if (event.relatedTarget && event.relatedTarget.dataset.toggle === "modal") {
+            event.preventDefault();
+            return;
+        }
+
         clearAutocomplete(template, false);
     },
 
@@ -215,11 +221,13 @@ Template.submit.events({
         for (let i = 0; i < allKeywords.length; i++) {
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
+                // Already suggested
                 if (allKeywords[i].suggestedBy === email) {
                     template.toast.show("alert-danger", "You have already suggested this!");
                     return;
                 }
 
+                // Already suggested but not enabled yet
                 if (!allKeywords[i].enabled) {
                     template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
                     return;
@@ -243,6 +251,7 @@ Template.submit.events({
             votes: votes
         });
 
+        template.$('#suggestionText').val("");
         template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
         template.$("#suggestionModal").modal("hide");
     }
