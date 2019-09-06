@@ -27,14 +27,6 @@ function getUser() {
     return null;
 }
 
-function checkFinished() {
-    const user = getUser();
-    if (user && user.finished) {
-        Session.set("isLoggedIn", true);
-        Router.go("/finish");
-    }
-}
-
 function checkConfirmed() {
     const user = getUser();
     if (user && user.agreesTerms) {
@@ -59,7 +51,6 @@ Router.route('/login', function () {
 
 Router.route('/confirm', function () {
     if (Session.get("isLoggingIn")) {
-        checkFinished();
         checkConfirmed();
         this.render('confirm');
     } else {
@@ -69,7 +60,6 @@ Router.route('/confirm', function () {
 
 Router.route('/submit', function () {
     if (Session.get("isLoggedIn")) {
-        checkFinished();
         this.render('submit');
     } else {
         Router.go("/");
