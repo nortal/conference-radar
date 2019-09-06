@@ -286,8 +286,11 @@ function mergeBlip(blip, mergedBlips) {
         mergedBlip = { "section": blip.section }
     }
 
-    _.each(Object.keys(blip.votes), function (stage) {
-        mergedBlip[stage] = blip.votes[stage].length;
+    _.each(blip.votes, function (vote) {
+        if (!mergedBlip[vote.stage]) {
+            mergedBlip[vote.stage] = 1;
+        }
+        mergedBlip[vote.stage]++;
     });
 
     mergedBlips[blip.name] = mergedBlip;
