@@ -2,7 +2,6 @@ import './main.html';
 import '../imports/ui/login-view.html';
 import '../imports/ui/confirm-view.html';
 import '../imports/ui/submit-view.html';
-import '../imports/ui/finish-view.html';
 import '../imports/ui/radar-view.html';
 
 import './views/confirm-view';
@@ -71,14 +70,6 @@ Router.route('/submit', function () {
     if (Session.get("isLoggedIn")) {
         checkFinished();
         this.render('submit');
-    } else {
-        Router.go("/");
-    }
-});
-
-Router.route('/finish', function () {
-    if (Session.get("isLoggedIn")) {
-        this.render('finish');
     } else {
         Router.go("/");
     }

@@ -196,15 +196,6 @@ Template.submit.events({
         clearAutocomplete(template, false);
     },
 
-    'click #finishButton'() {
-        const user = Users.findOne({email: Session.get("email")});
-        Users.update(
-            {_id: user._id, },
-            {"$set": {finished: true}}
-            );
-        Router.go('/finish');
-    },
-
     'click #suggestButton'(event, template) {
         const suggestion = template.$('#suggestionText').val();
         const section = template.$('#suggestionSectionDropdown').val();
