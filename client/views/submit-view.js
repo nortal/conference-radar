@@ -214,7 +214,7 @@ Template.submit.events({
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
                 // Already suggested
-                if (allKeywords[i].suggestedBy === email) {
+                if (allKeywords[i].votes.find((votes) => votes.email === email)) {
                     template.toast.show("alert-danger", "You have already suggested this!");
                     return;
                 }
@@ -231,7 +231,6 @@ Template.submit.events({
         }
 
         Keywords.insert({
-            suggestedBy: email,
             name: suggestion,
             section: section,
             enabled: false,

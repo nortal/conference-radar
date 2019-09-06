@@ -162,7 +162,7 @@ function initializeSvg(svg, data) {
         const blipX = d3.scaleLinear()
             .domain([-4, 4])
             // We substract maximum score marker radius for spacing
-            .range([6, dottedLineLength - 6]);
+            .range([4, dottedLineLength - 4]);
 
         return blipX(score);
     };
