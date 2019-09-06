@@ -38,6 +38,9 @@ Template.submit.helpers({
     stages: () => {
         return Stages
     },
+    sections: () => {
+        return Sections
+    },
     getStageName: (votes) => {
         const email = Session.get("email");
         const stage = _.findKey(votes, (emails) =>  emails.includes(email));
@@ -190,22 +193,68 @@ Template.submit.events({
     },
 
     'focusout #keywordText'(event, template) {
-        if (event.relatedTarget && event.relatedTarget.id === "suggestButton") {
-            suggestEvent(event, template);
+        // is user clicked on a link that opens the suggestion modal
+        if (event.relatedTarget && event.relatedTarget.dataset.toggle === "modal") {
+            event.preventDefault();
+            return;
         }
 
         clearAutocomplete(template, false);
     },
 
-    'click #finishButton'() {
-        const user = Users.findOne({email: Session.get("email")});
-        Users.update(
-            {_id: user._id, },
-            {"$set": {finished: true}}
-            );
-        Router.go('/finish');
-    },
+    'click #suggestButton'(event, template) {
+        const suggestion = template.$('#suggestionText').val();
+        const section = template.$('#suggestionSectionDropdown').val();
+        const email = Session.get("email");
 
+        if (!UserInputVerification.verifySection(section)) {
+            template.toast.show("alert-danger", "Please enter a valid section!");
+            return;
+        }
+
+        if (!suggestion || !suggestion.trim()) {
+            template.toast.show("alert-danger", "Please enter a suggestion!");
+            return;
+        }
+
+        const allKeywords = Keywords.find().fetch();
+        for (let i = 0; i < allKeywords.length; i++) {
+            if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
+
+                // Already suggested
+                if (allKeywords[i].suggestedBy === email) {
+                    template.toast.show("alert-danger", "You have already suggested this!");
+                    return;
+                }
+
+                // Already suggested but not enabled yet
+                if (!allKeywords[i].enabled) {
+                    template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+                    return;
+                }
+
+                template.toast.show("alert-danger", "Technology already exists!");
+                return;
+            }
+        }
+
+        const votes = {};
+        _.each(Stages.map(s => s.id), function (stage) {
+            votes[stage] = [];
+        });
+
+        Keywords.insert({
+            suggestedBy: email,
+            name: suggestion,
+            section: section,
+            enabled: false,
+            votes: votes
+        });
+
+        template.$('#suggestionText').val("");
+        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        template.$("#suggestionModal").modal("hide");
+    }
 });
 
 function clearAutocomplete(template, dirty) {
@@ -216,15 +265,4 @@ function clearForm(template) {
     template.$('#keywordText').val("");
     template.$("#stageDropdown").val("0");
     template.$("#sectionText").val("0");
-}
-
-function suggestEvent(event, template) {
-    const suggestion = template.$('#keywordText');
-
-    //console.log(Keywords.find().fetch())
-    // todo: check if exists. if yes, error. if not, create entry + show toast
-
-    template.$('#keywordText').val("");
-    //template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
-    template.toast.show("alert-warning", "Sorry! This feature is currently disabled!");
 }

@@ -7,8 +7,6 @@ import { GetQueryParam } from '../../imports/api/shared.js';
 import d3 from 'd3';
 import _ from 'underscore';
 
-const keywordClassifier = require('/public/keywords.json');
-
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
     this.legends = new ReactiveVar();
@@ -58,10 +56,13 @@ Template.radar.helpers({
 
 Template.radar.events({
     'click #randomGenButton'() {
-        DevelopFunctions.generateRandomData(keywordClassifier);
+        DevelopFunctions.generateRandomData();
     },
     'click #databaseClearButton'() {
         DevelopFunctions.clearDatabase();
+    },
+    'click #votesClearButton'() {
+        DevelopFunctions.clearVotes();
     },
     'click #usersClearButton'() {
         DevelopFunctions.clearUsers();

@@ -15,6 +15,8 @@
                         </ul>
                             Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
                     <p>Share your point of view and vote for an existing placement or add a new one.</p>
+                    <p>If a technology is not on the list, you can suggest it
+                        <a href="#" class="styled-link" data-toggle="modal" data-target="#suggestionModal">here</a>.</p>
                     <p>
                         <a class="styled-link" href="www.nortal.com">nortal.com</a>
                     </p>
@@ -51,7 +53,11 @@
                             {{#if noResults}}
                                 <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
                                     <div>No results</div>
-                                    <button class="btn btn-sm btn-success" id="suggestButton">Suggest this</button>
+                                    <a class="styled-link" href="#" data-toggle="modal" data-target="#suggestionModal" style="font-size: 12px">
+                                        <span class="text-black-50">(</span>
+                                        <span>Add this</span>
+                                        <span class="text-black-50">)</span>
+                                    </a>
                                 </div>
                             {{else}}
                                 {{#each match in matches}}
@@ -76,18 +82,41 @@
                 <div class="text-right">
                     <button id="submitButton" type="button" class="submit-button col-md-5 col-sm-12">Submit</button>
                 </div>
-                <div class="text-right">
-                    <button id="finishButton" type="button" class="submit-button col-md-5 col-sm-12 mt-4 mb-2">Finish</button>
-                </div>
             </div>
 
 
         </div>
     </form>
 
-    <div class="toast" id="toast" data-delay="4000">
+    <div class="toast" id="toast" data-delay="4000" style="z-index: 7000">
         <div class="toast-body alert-success">
             Contents
+        </div>
+    </div>
+
+    <div class="modal fade" id="suggestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Suggest a technology</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input class="styled-input" id="suggestionText" type="text" name="suggestionText" placeholder="Enter here" />
+
+                    <select id="suggestionSectionDropdown" name="suggestionSectionDropdown" class="styled-select">
+                        {{#each sections}}
+                            <option value='{{id}}'>{{name}}</option>
+                        {{/each}}
+                    </select>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="suggestButton" type="button" class="submit-button">Submit</button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
