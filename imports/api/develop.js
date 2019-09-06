@@ -1,45 +1,43 @@
 import {Keywords, Users} from "./keywords";
 import {Stages} from "./constants";
-import _ from "underscore";
 
 export const DevelopFunctions = {
-    clearDatabase: () => {
+    isDevMode: () => {
+        return Meteor.settings.public.environment === "development"
+    },
+    checkDevMode: () => {
         if (!DevelopFunctions.isDevMode()) {
             throw new Error("Function should only be called in develop environment");
         }
-
+    },
+    clearDatabase: () => {
+        DevelopFunctions.checkDevMode();
         console.log('clearing database...');
-
-        let keywords = Keywords.find().fetch();
-
-        for (let i = 0; i < keywords.length; i++) {
-            Keywords.remove({_id: keywords[i]._id});
-        }
-
+        Keywords.find().fetch().forEach((keyword) => Keywords.remove({_id: keyword._id}));
         console.log('database cleared');
     },
     clearUsers: () => {
-        if (!DevelopFunctions.isDevMode()) {
-            throw new Error("Function should only be called in develop environment");
-        }
-
+        DevelopFunctions.checkDevMode();
         console.log('clearing users...');
-
-        let users = Users.find().fetch();
-
-        for (let i = 0; i < users.length; i++) {
-            Users.remove({_id: users[i]._id});
-        }
-
+        Users.find().fetch().forEach((user) => Users.remove({_id: user._id}));
         console.log('users cleared');
     },
+    clearVotes: () => {
+        DevelopFunctions.checkDevMode();
+        console.log('clearing votes...');
+        Keywords.find().fetch().forEach((keyword) => {
+            Keywords.update(
+                { _id: keyword._id },
+                { $set: {votes: []} }
+            );
+        });
+        console.log('votes cleared');
+    },
     generateRandomData: (userCount, quadrantCount) => {
+        DevelopFunctions.checkDevMode();
+
         quadrantCount = quadrantCount || 64;
         userCount = userCount || 16;
-
-        if (!DevelopFunctions.isDevMode()) {
-            throw new Error("Function should only be called in develop environment");
-        }
 
         console.log('starting data generation with params: quadrantCount', quadrantCount, 'userCount', userCount);
 
@@ -65,42 +63,12 @@ export const DevelopFunctions = {
 
                 console.log(email, "voted", randomStage, randomQuadrant.name);
 
-                const modifier = {};
-                modifier["votes." + randomStage] = email;
-
                 Keywords.update(
                     { _id: randomQuadrant._id },
                     {
-                        $addToSet: modifier
+                        $addToSet: {votes: {email: email, stage: randomStage}}
                     });
             }
         }
-    },
-    isDevMode: () => {
-        return Meteor.settings.public.environment === "development"
-    },
-    clearVotes() {
-        if (!DevelopFunctions.isDevMode()) {
-            throw new Error("Function should only be called in develop environment");
-        }
-
-        console.log('clearing votes...');
-
-        let allKeywords = Keywords.find().fetch();
-
-        for (let i = 0; i < allKeywords.length; i++) {
-            const modifier = {};
-            _.each(Stages, function (stage) {
-                modifier["votes." + stage.id] = [];
-            });
-
-            Keywords.update(
-                { _id: allKeywords[i]._id },
-                {
-                    $set: modifier
-                });
-        }
-
-        console.log('votes cleared');
     }
 };

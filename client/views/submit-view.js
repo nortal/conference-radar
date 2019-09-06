@@ -30,10 +30,7 @@ Template.submit.onRendered(function () {
 
 Template.submit.helpers({
     submittedKeywords: () => {
-        const email = Session.get("email");
-        const stages = []
-        Stages.forEach((stage) => stages.push({["votes." + stage.id]: email}));
-        return Keywords.find({$or: stages}).fetch();
+        return Keywords.find({votes: {$elemMatch: {email: Session.get("email")}}}).fetch();
     },
     stages: () => {
         return Stages
@@ -43,8 +40,8 @@ Template.submit.helpers({
     },
     getStageName: (votes) => {
         const email = Session.get("email");
-        const stage = _.findKey(votes, (emails) =>  emails.includes(email));
-        return Stages.find(s => s.id === stage).name;
+        const vote = _.find(votes, (vote) =>  vote.email === email);
+        return Stages.find(s => s.id === vote.stage).name;
     },
     getSectionName: (id) => {
         return Sections.find(s => s.id === id).name;
@@ -77,23 +74,18 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVotedStage = Object.keys(keyword.votes).find(function (stage) {
-            return keyword.votes[stage].indexOf(email) !== -1;
-        });
+        const oldVote = keyword.votes.find((vote) => vote.email === email);
 
         // user has not voted for that
-        if (!oldVotedStage) {
+        if (!oldVote) {
             template.toast.show("alert-danger", "You have not voted for that option!");
             return;
         }
 
-        const modifier = {};
-        modifier["votes." + oldVotedStage] = email;
-
         Keywords.update(
             { _id: id },
             {
-                $pull: modifier,
+                $pull: {votes: {email: email, stage: oldVote.stage}},
             });
     },
 
@@ -136,22 +128,17 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVotedStage = Object.keys(keyword.votes).find(function (stage) {
-            return keyword.votes[stage].indexOf(email) !== -1;
-        });
+        const oldVote = keyword.votes.find((vote) => vote.email === email);
 
-        if (oldVotedStage) {
+        if (oldVote) {
             template.toast.show("alert-warning", "You have already voted for this option!");
             return;
         }
 
-        const modifier = {};
-        modifier["votes." + chosenStage] = email;
-
         Keywords.update(
             { _id: keyword._id },
             {
-                $addToSet: modifier
+                $addToSet: {votes: {email: email, stage: chosenStage}}
             });
 
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
@@ -243,17 +230,12 @@ Template.submit.events({
             }
         }
 
-        const votes = {};
-        _.each(Stages.map(s => s.id), function (stage) {
-            votes[stage] = [];
-        });
-
         Keywords.insert({
             suggestedBy: email,
             name: suggestion,
             section: section,
             enabled: false,
-            votes: votes
+            votes: [{email: email, stage: "TODO"}]
         });
 
         template.$('#suggestionText').val("");
