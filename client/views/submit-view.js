@@ -68,25 +68,30 @@ Template.submit.events({
         const email = Session.get("email");
 
         // find matching keyword
-        const keyword = Keywords.find({ _id: id }).fetch();
-
-        // no results with that id
-        if (!keyword.length) {
-            template.toast.show("alert-danger", "Invalid entry!");
+        const keyword = Keywords.find({ _id: id }).fetch()[0];
+        if (!keyword) {
+            template.toast.show("alert-danger", "Could not find that keyword!");
             return;
         }
+
+        // find stage user has voted for, if any
+        const oldVotedStage = Object.keys(keyword.votes).find(function (stage) {
+            return keyword.votes[stage].indexOf(email) !== -1;
+        });
 
         // user has not voted for that
-        if (!keyword[0].emails.includes(email)) {
-            template.toast.show("alert-danger", "Cannot remove that entry!");
+        if (!oldVotedStage) {
+            template.toast.show("alert-danger", "You have not voted for that option!");
             return;
         }
+
+        const modifier = {};
+        modifier["votes." + oldVotedStage] = email;
 
         Keywords.update(
             { _id: id },
             {
-                $pull: {emails: email},
-                $inc: {votes: -1}
+                $pull: modifier,
             });
     },
 
