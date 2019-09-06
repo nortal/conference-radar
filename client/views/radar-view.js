@@ -248,10 +248,18 @@ function initializeSvg(svg, data) {
         nodes.exit().remove();
     };
 
-    const buildHeaderData = function(stages) {
+    const buildHeaderData = function(stages, width) {
         stages = stages.reverse();
-        _.each(stages, (d) => d.width = columnWidth);
-        return stages;
+
+        const data = [];
+        _.each(stages, function (stage) {
+            data.push({
+                name: stage,
+                width: width
+            });
+        });
+
+        return data;
     };
 
 
@@ -271,9 +279,10 @@ function initializeSvg(svg, data) {
 
     buildMain(svg, data);
 
+    const stages = Stages.map(stage => stage.id);
     buildHeader(svg, {
         parent: [columnWidth],
-        child: buildHeaderData(Stages)
+        child: buildHeaderData(stages, columnWidth)
     });
 }
 
