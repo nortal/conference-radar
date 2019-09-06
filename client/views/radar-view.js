@@ -158,15 +158,11 @@ function initializeSvg(svg, data) {
         return itemIndexInColumn * rowHeightWithPadding + headerHeight;
     };
 
-    const calculateScoreMarkerRadius = function (scoreMarkerValue) {
-        return 2.6 * Math.sqrt(scoreMarkerValue);
-    };
-
     const calculateBlipX = function (score) {
         const blipX = d3.scaleLinear()
-            .domain([1, 8])
+            .domain([-4, 4])
             // We substract maximum score marker radius for spacing
-            .range([calculateScoreMarkerRadius(1), dottedLineLength - calculateScoreMarkerRadius(8)]);
+            .range([6, dottedLineLength - 6]);
 
         return blipX(score);
     };
@@ -288,7 +284,7 @@ function mergeBlip(blip, mergedBlips) {
 
     _.each(blip.votes, function (vote) {
         if (!mergedBlip[vote.stage]) {
-            mergedBlip[vote.stage] = 1;
+            mergedBlip[vote.stage] = 0;
         }
         mergedBlip[vote.stage]++;
     });
@@ -310,7 +306,7 @@ function initializeEntries(keywords) {
         var avoidVotes = value['avoid'] || 0;
 
         var totalVotes = adoptVotes + trialVotes + assessVotes + avoidVotes;
-        var totalScore = (avoidVotes * 1 + assessVotes * 2 + trialVotes * 3 + adoptVotes * 4);
+        var totalScore = (avoidVotes * -2 + assessVotes * -1 + trialVotes * 1 + adoptVotes * 2);
         var averageScore = totalScore / totalVotes;
 
         if (totalVotes === 0) {
@@ -348,13 +344,13 @@ const throttledOnWindowResize = _.throttle(draw, 500, {
 });
 
 function getQuartile(score) {
-    if (score >= 3) {
+    if (score >= 1) {
         return 0;
-    } else if (score < 3 && score >= 2) {
+    } else if (score < 1 && score >= 0) {
         return 1;
-    } else if (score < 2 && score >= 1) {
+    } else if (score < 0 && score >= -1) {
         return 2;
-    } else if (score < 1) {
+    } else if (score < -1) {
         return 3;
     } else {
         return -1;
