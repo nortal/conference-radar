@@ -1,10 +1,12 @@
 <template name="admin">
 
+    {{#if isDevMode}}
     <div class="row pb-3">
         <div class="col">
-            {{> adminControl title='Danger zone'}}
+            {{> adminControl title='Developer controls'}}
         </div>
     </div>
+    {{/if}}
 
     <div class="row pb-3">
         <div class="col">

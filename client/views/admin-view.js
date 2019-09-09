@@ -9,7 +9,7 @@ Template.admin.helpers({
     'getEnabledKeywords'() {
         return Keywords.find({enabled: true}).fetch();
     },
-    'getDisabledKeywords'() { // {votes: {$elemMatch: {email: user.email}}}
+    'getDisabledKeywords'() {
         return Keywords.find({enabled: false}).fetch();
     }
 });
@@ -35,8 +35,6 @@ Template.adminKeywordVoteList.events({
         const stage = target.data('stage');
         const email = target.data('email');
         const id = target.data('id');
-
-        console.log(email, stage);
 
         if (action === 'delete') {
             Keywords.update(
@@ -66,5 +64,5 @@ Template.adminControl.events({
     },
     'click #usersClearButton'() {
         DevelopFunctions.clearUsers();
-    },
+    }
 });
