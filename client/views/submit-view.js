@@ -157,7 +157,7 @@ Template.submit.events({
         const value = event.target.value.toLowerCase();
 
         // todo: improve search
-        const allKeywords = Keywords.find().fetch();
+        const allKeywords = Keywords.find({enabled: true}).fetch();
         _.each(allKeywords, function (keyword) {
             if (keyword.name.toLowerCase().indexOf(value) >= 0 &&
                 template.autocomplete.get().matches.length <= 12) {
@@ -214,7 +214,7 @@ Template.submit.events({
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
                 // Already suggested
-                if (allKeywords[i].suggestedBy === email) {
+                if (allKeywords[i].votes.find((votes) => votes.email === email)) {
                     template.toast.show("alert-danger", "You have already suggested this!");
                     return;
                 }
@@ -231,11 +231,10 @@ Template.submit.events({
         }
 
         Keywords.insert({
-            suggestedBy: email,
             name: suggestion,
             section: section,
             enabled: false,
-            votes: [{email: email, stage: "TODO"}]
+            votes: [{email: email, stage: stage}]
         });
 
         template.$('#suggestionText').val("");
