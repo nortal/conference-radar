@@ -234,7 +234,7 @@ Template.submit.events({
             name: suggestion,
             section: section,
             enabled: false,
-            votes: [{email: email, stage: "TODO"}]
+            votes: [{email: email, stage: stage}]
         });
 
         template.$('#suggestionText').val("");
