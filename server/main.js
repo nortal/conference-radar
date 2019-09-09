@@ -5,7 +5,7 @@ import _ from "underscore";
 const keywordClassifier = require('/public/keywords.json');
 
 Meteor.startup(() => {
-    if (Keywords.find().fetch().length === 0) {
+    if (!Keywords.find().fetch().length) {
         initialDatabaseConfiguration(keywordClassifier);
     }
 });
@@ -15,7 +15,7 @@ function initialDatabaseConfiguration(classifiers) {
         throw new Error("No classifiers provided");
     }
 
-    if (Keywords.count()) {
+    if (Keywords.find().fetch().length) {
         throw new Error("Database is not empty!");
     }
 
