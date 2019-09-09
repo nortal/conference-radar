@@ -3,11 +3,13 @@ import '../imports/ui/login-view.html';
 import '../imports/ui/confirm-view.html';
 import '../imports/ui/submit-view.html';
 import '../imports/ui/radar-view.html';
+import '../imports/ui/admin-view.html';
 
 import './views/confirm-view';
 import './views/login-view.js';
 import './views/submit-view.js';
 import './views/radar-view.js';
+import './views/admin-view.js';
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
@@ -57,4 +59,18 @@ Router.route('/radar/:mode', function () {
     });
 });
 
+Router.route('/admin', function () {
+    const user = Session.get('user');
+
+    if (user && user.admin) {
+        this.render('admin');
+    } else {
+        Router.go('/');
+    }
+});
+
 Template.registerHelper('isDevMode', DevelopFunctions.isDevMode);
+Template.registerHelper('isAdmin', function () {
+    const user = Session.get('user');
+    return user && user.admin;
+});

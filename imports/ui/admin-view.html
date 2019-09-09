@@ -1,0 +1,64 @@
+<template name="admin">
+
+    <div class="row pb-3">
+        <div class="col">
+            {{> adminUserList title='Users' collection=getAllUsers}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            {{> adminKeywordList title='Enabled keywords' collection=getEnabledKeywords}}
+        </div>
+        <div class="col-6">
+            {{> adminKeywordList title='Disabled keywords' collection=getDisabledKeywords}}
+        </div>
+    </div>
+
+</template>
+
+
+<template name="adminKeywordList">
+    <h1>{{title}}</h1>
+        <ul class="list-group">
+            {{#if collection}}
+                {{#each keyword in collection}}
+                    <li class="list-group-item d-flex align-items-center">
+                        <div class="{{keywordColorClass keyword.enabled}} font-weight-bold pr-3">
+                            {{keyword.name}}
+                        </div>
+                        <div class="small text-black-50 pr-3">
+                            ({{keyword.section}})
+                        </div>
+
+                        <div class="ml-auto">
+                            {{#if (keyword.enabled)}}
+                                <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">Disable</button>
+                            {{else}}
+                                <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">Enable</button>
+                            {{/if}}
+                        </div>
+                    </li>
+                {{/each}}
+            {{else}}
+                <li class="list-group-item text-center">No results</li>
+            {{/if}}
+        </ul>
+</template>
+
+
+<template name="adminUserList">
+    <h1>{{title}}</h1>
+    <ul class="list-group">
+        {{#each user in collection}}
+            <li class="list-group-item d-flex align-items-center">
+                <div class="text-success font-weight-bold pr-3">
+                    {{user.name}}
+                </div>
+                <div class="text-black-50">
+                    {{user.email}}
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+</template>
