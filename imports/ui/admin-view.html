@@ -2,6 +2,12 @@
 
     <div class="row pb-3">
         <div class="col">
+            {{> adminControl title='Danger zone'}}
+        </div>
+    </div>
+
+    <div class="row pb-3">
+        <div class="col">
             {{> adminUserList title='Users' collection=getAllUsers}}
         </div>
     </div>
@@ -15,6 +21,18 @@
         </div>
     </div>
 
+</template>
+
+
+<template name="adminControl">
+    <h1>{{title}}</h1>
+
+    <div>
+        <button id="randomGenButton" type="button" class="btn btn-sm btn-outline-danger">Gen random votes</button>
+        <button id="votesClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear votes</button>
+        <button id="usersClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear users</button>
+        <button id="databaseClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear keywords</button>
+    </div>
 </template>
 
 

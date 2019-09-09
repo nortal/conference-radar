@@ -1,5 +1,6 @@
 import {Template} from 'meteor/templating';
 import {Keywords, Users} from "../../imports/api/keywords";
+import {DevelopFunctions} from "../../imports/api/develop";
 
 Template.admin.helpers({
     'getAllUsers'() {
@@ -16,5 +17,20 @@ Template.admin.helpers({
 Template.adminKeywordList.helpers({
     'keywordColorClass'(enabled) {
         return enabled ? 'text-success' : 'text-danger';
+    },
+});
+
+Template.adminControl.events({
+    'click #randomGenButton'() {
+        DevelopFunctions.generateRandomData();
+    },
+    'click #databaseClearButton'() {
+        DevelopFunctions.clearDatabase();
+    },
+    'click #votesClearButton'() {
+        DevelopFunctions.clearVotes();
+    },
+    'click #usersClearButton'() {
+        DevelopFunctions.clearUsers();
     },
 });

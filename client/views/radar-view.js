@@ -2,7 +2,6 @@
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Keywords } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
-import { DevelopFunctions } from '../../imports/api/develop.js';
 import { GetQueryParam } from '../../imports/api/shared.js';
 import d3 from 'd3';
 import _ from 'underscore';
@@ -52,21 +51,6 @@ Template.radar.helpers({
     isSingleQuadrantView: function () {
         return Sections.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
     }
-});
-
-Template.radar.events({
-    'click #randomGenButton'() {
-        DevelopFunctions.generateRandomData();
-    },
-    'click #databaseClearButton'() {
-        DevelopFunctions.clearDatabase();
-    },
-    'click #votesClearButton'() {
-        DevelopFunctions.clearVotes();
-    },
-    'click #usersClearButton'() {
-        DevelopFunctions.clearUsers();
-    },
 });
 
 Template.combinedRadar.helpers({
