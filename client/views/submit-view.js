@@ -157,7 +157,7 @@ Template.submit.events({
         const value = event.target.value.toLowerCase();
 
         // todo: improve search
-        const allKeywords = Keywords.find().fetch();
+        const allKeywords = Keywords.find({enabled: true}).fetch();
         _.each(allKeywords, function (keyword) {
             if (keyword.name.toLowerCase().indexOf(value) >= 0 &&
                 template.autocomplete.get().matches.length <= 12) {

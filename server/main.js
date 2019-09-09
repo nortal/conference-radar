@@ -15,7 +15,7 @@ function initialDatabaseConfiguration(classifiers) {
         throw new Error("No classifiers provided");
     }
 
-    if (Keywords.find().count()) {
+    if (Keywords.count()) {
         throw new Error("Database is not empty!");
     }
 

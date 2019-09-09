@@ -1,6 +1,6 @@
 ﻿import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var'
-import { Keywords, Users } from '../../imports/api/keywords.js';
+import { Keywords } from '../../imports/api/keywords.js';
 import { Stages, Sections } from '../../imports/api/constants.js';
 import { DevelopFunctions } from '../../imports/api/develop.js';
 import { GetQueryParam } from '../../imports/api/shared.js';
@@ -106,7 +106,7 @@ Template.radar.onDestroyed(function() {
 
 
 function pollDrawing() {
-    var len = Keywords.find().fetch().length;
+    var len = Keywords.find({enabled: true}).count();
     if (Session.get("lastEntryCount") !== len) {
         draw();
         Session.set("lastEntryCount", len);
@@ -114,7 +114,7 @@ function pollDrawing() {
 }
 
 function draw() {
-    var keywords = Keywords.find().fetch();
+    var keywords = Keywords.find({enabled: true}).fetch();
     var data = initializeEntries(keywords);
 
     _.each(Sections, function (section) {
