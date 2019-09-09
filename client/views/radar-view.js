@@ -191,6 +191,16 @@ function initializeSvg(svg, data) {
         return circleClass;
     };
 
+    const calculateCircleSize = function (data, i) {
+        let circleRadius = 4;
+
+        if (isFirstOfStage(data, i)) {
+            circleRadius = 5;
+        }
+
+        return circleRadius;
+    };
+
     const isFirstOfStage = function (data, i) {
         const currentStage = getStage(data[i].graphScore);
         const blipsOnCurrentStage = data.filter(d => getStage(d.graphScore) === currentStage);
@@ -247,7 +257,7 @@ function initializeSvg(svg, data) {
             .attr("cx", (d, i) => calculateBlipX(d.graphScore))
             .attr("r", 2)
             .transition().duration(500)
-            .attr("r", 4);
+            .attr("r", (d,i) => calculateCircleSize(data,i));
 
         nodes.merge(enter);
         nodes.exit().remove();
