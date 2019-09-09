@@ -41,28 +41,38 @@
         <ul class="list-group">
             {{#if collection}}
                 {{#each keyword in collection}}
-                    <li class="list-group-item d-flex align-items-center">
-                        <div class="d-block">
-                            <div class="{{keywordColorClass keyword.enabled}} pr-3">
-                                <span class="font-weight-bold mr-1">{{keyword.name}}</span>
-                                <span class="small text-black-50">({{keyword.section}})</span>
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-block">
+                                <div class="{{keywordColorClass keyword.enabled}} pr-3">
+                                    <span class="font-weight-bold mr-1">{{keyword.name}}</span>
+                                    <span class="small text-black-50">({{keyword.section}})</span>
+                                </div>
+                                <div class="text-black-50">
+                                    {{#if (keyword.votes.length)}}
+                                        <span>{{keyword.votes.length}} votes</span>
+                                        <a class="small text-black-50" data-toggle="collapse" href="#collapse-votes-{{keyword._id}}"
+                                           role="button" aria-expanded="false" aria-controls="collapse-votes-{{keyword._id}}">
+                                            (Show)
+                                        </a>
+                                    {{/if}}
+                                </div>
                             </div>
-                            <div class="text-black-50">
-                                {{#if (keyword.votes.length)}}
-                                    <span>Votes:</span>
-                                    <span>{{keyword.votes.length}}</span>
+                            <div>
+                                {{#if (keyword.enabled)}}
+                                    <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">Disable</button>
                                 {{else}}
-                                    <span>No votes</span>
+                                    <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">Enable</button>
+
+                                    {{#unless (keyword.votes.length)}}
+                                        <button data-id="{{keyword._id}}" data-action="delete" class="btn btn-outline-danger">Delete</button>
+                                    {{/unless}}
                                 {{/if}}
                             </div>
                         </div>
 
-                        <div class="ml-auto">
-                            {{#if (keyword.enabled)}}
-                                <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">Disable</button>
-                            {{else}}
-                                <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">Enable</button>
-                            {{/if}}
+                        <div class="collapse" id="collapse-votes-{{keyword._id}}">
+                            {{> adminKeywordVoteList keyword=keyword}}
                         </div>
                     </li>
                 {{/each}}
@@ -70,6 +80,22 @@
                 <li class="list-group-item text-center">No results</li>
             {{/if}}
         </ul>
+</template>
+
+<template name="adminKeywordVoteList">
+
+    <ul class="list-group list-group-flush px-3 pt-2">
+        {{#each vote in keyword.votes}}
+            <li class="list-group-item p-0">
+                <span>{{vote.email}} - {{vote.stage}}</span>
+                <button type="button" class="close" aria-label="Delete" data-id="{{keyword._id}}"
+                        data-email="{{vote.email}}" data-action="delete" data-stage="{{keyword.stage}}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </li>
+        {{/each}}
+    </ul>
+
 </template>
 
 

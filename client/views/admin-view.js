@@ -16,9 +16,35 @@ Template.admin.helpers({
 
 Template.adminKeywordList.events({
     'click button[data-action]'(event, template) {
-        const action = $(event.target).data('action');
-        const id = $(event.target).data('id');
-        Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
+        const target = $(event.target);
+        const action = target.data('action');
+        const id = target.data('id');
+
+        if (action === 'delete') {
+            Keywords.remove({_id: id});
+        } else {
+            Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
+        }
+    }
+});
+
+Template.adminKeywordVoteList.events({
+    'click button[data-action]'(event, template) {
+        const target = $(event.currentTarget);
+        const action = target.data('action');
+        const stage = target.data('stage');
+        const email = target.data('email');
+        const id = target.data('id');
+
+        console.log(email, stage);
+
+        if (action === 'delete') {
+            Keywords.update(
+                { _id: id },
+                {
+                    $pull: {votes: {email: email, stage: stage}},
+                });
+        }
     }
 });
 
