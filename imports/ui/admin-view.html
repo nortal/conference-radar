@@ -17,7 +17,7 @@
             {{> adminKeywordList title='Enabled keywords' collection=getEnabledKeywords}}
         </div>
         <div class="col-6">
-            {{> adminKeywordList title='Disabled keywords' collection=getDisabledKeywords}}
+            {{> adminKeywordList title='Pending keywords' collection=getDisabledKeywords}}
         </div>
     </div>
 
@@ -42,11 +42,19 @@
             {{#if collection}}
                 {{#each keyword in collection}}
                     <li class="list-group-item d-flex align-items-center">
-                        <div class="{{keywordColorClass keyword.enabled}} font-weight-bold pr-3">
-                            {{keyword.name}}
-                        </div>
-                        <div class="small text-black-50 pr-3">
-                            ({{keyword.section}})
+                        <div class="d-block">
+                            <div class="{{keywordColorClass keyword.enabled}} pr-3">
+                                <span class="font-weight-bold mr-1">{{keyword.name}}</span>
+                                <span class="small text-black-50">({{keyword.section}})</span>
+                            </div>
+                            <div class="text-black-50">
+                                {{#if (keyword.votes.length)}}
+                                    <span>Votes:</span>
+                                    <span>{{keyword.votes.length}}</span>
+                                {{else}}
+                                    <span>No votes</span>
+                                {{/if}}
+                            </div>
                         </div>
 
                         <div class="ml-auto">
@@ -70,9 +78,13 @@
     <ul class="list-group">
         {{#each user in collection}}
             <li class="list-group-item d-flex align-items-center">
-                <div class="text-success font-weight-bold pr-3">
-                    {{user.name}}
+                <div class="text-success pr-3">
+                    <span class="font-weight-bold mr-1">{{user.name}}</span>
+                    {{#if (user.admin)}}
+                        <span class="text-black-50">(Admin)</span>
+                    {{/if}}
                 </div>
+
                 <div class="text-black-50">
                     {{user.email}}
                 </div>

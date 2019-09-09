@@ -14,6 +14,14 @@ Template.admin.helpers({
     }
 });
 
+Template.adminKeywordList.events({
+    'click button[data-action]'(event, template) {
+        const action = $(event.target).data('action');
+        const id = $(event.target).data('id');
+        Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
+    }
+});
+
 Template.adminKeywordList.helpers({
     'keywordColorClass'(enabled) {
         return enabled ? 'text-success' : 'text-danger';
