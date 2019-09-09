@@ -11,9 +11,9 @@ Template.confirm.events({
 
         event.preventDefault();
 
-        const appId = Session.get('appId');
-        const submitEmail = Session.get('email') || template.$("#emailText").val();
-        const submitName = Session.get('name') || template.$("#nameText").val();
+        const signUpDetails = Session.get('signUpDetails');
+        const submitEmail = signUpDetails.email || template.$("#emailText").val();
+        const submitName = signUpDetails.name || template.$("#nameText").val();
         const recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
         const participateChecked = template.$('#participateCheck').is(':checked');
         const termsChecked = template.$('#termsCheck').is(':checked');
@@ -36,10 +36,10 @@ Template.confirm.events({
             return;
         }
 
-        const foundUsers = Users.find({email: submitEmail}).fetch();
-        if (foundUsers.length === 0) {
+        const matchingUser = Users.findOne({email: submitEmail});
+        if (!matchingUser) {
             Users.insert({
-                appIds: [appId],
+                appIds: [signUpDetails.appId],
                 name: submitName,
                 email: submitEmail,
                 wantsRecruitment: recruitmentChecked,
@@ -48,9 +48,9 @@ Template.confirm.events({
             });
         } else {
             Users.update(
-                {_id: foundUsers[0]._id},
+                {_id: matchingUser._id},
                 {
-                    $addToSet: {appIds: appId},
+                    $addToSet: {appIds: signUpDetails.appId},
                     $set: {
                         wantsRecruitment: recruitmentChecked,
                         wantsParticipation: participateChecked
@@ -59,22 +59,23 @@ Template.confirm.events({
             );
         }
 
-        Session.set('isLoggedIn', true);
-        Session.set('email', submitEmail);
-        Session.set('name', submitName);
-
+        const userDetails = Users.findOne({email: submitEmail});
+        Session.set('user', userDetails);
         Router.go('/submit');
+        Session.set('signUpDetails', undefined);
     }
 });
 
 Template.confirm.helpers({
     isDisabled: function (key) {
-        return !Session.get(key) ? '' : 'disabled';
-    },
-    getSessionVal: function (key) {
-        return Session.get(key);
+        const details = Session.get('signUpDetails');
+        return details && details[key] ? 'disabled' : '';
     },
     getInvalidInput: function () {
         return Template.instance().invalidInput.get();
+    },
+    getDetails: function (key) {
+        const details = Session.get('signUpDetails');
+        return details ? details[key] : '';
     }
 });

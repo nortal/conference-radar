@@ -30,7 +30,8 @@ Template.submit.onRendered(function () {
 
 Template.submit.helpers({
     submittedKeywords: () => {
-        return Keywords.find({votes: {$elemMatch: {email: Session.get("email")}}}).fetch();
+        const user = Session.get('user');
+        return Keywords.find({votes: {$elemMatch: {email: user.email}}}).fetch();
     },
     stages: () => {
         return Stages
@@ -39,8 +40,8 @@ Template.submit.helpers({
         return Sections
     },
     getStageName: (votes) => {
-        const email = Session.get("email");
-        const vote = _.find(votes, (vote) =>  vote.email === email);
+        const user = Session.get('user');
+        const vote = _.find(votes, (vote) =>  vote.email === user.email);
         return Stages.find(s => s.id === vote.stage).name;
     },
     getSectionName: (id) => {
@@ -64,7 +65,7 @@ Template.submit.helpers({
 Template.submit.events({
     'click button.close'(event, template) {
         const id = $(event.currentTarget).data("value");
-        const email = Session.get("email");
+        const user = Session.get('user');
 
         // find matching keyword
         const keyword = Keywords.find({ _id: id }).fetch()[0];
@@ -74,7 +75,7 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.email === email);
+        const oldVote = keyword.votes.find((vote) => vote.email === user.email);
 
         // user has not voted for that
         if (!oldVote) {
@@ -85,7 +86,7 @@ Template.submit.events({
         Keywords.update(
             { _id: id },
             {
-                $pull: {votes: {email: email, stage: oldVote.stage}},
+                $pull: {votes: {email: user.email, stage: oldVote.stage}},
             });
     },
 
@@ -93,10 +94,10 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
+        const user = Session.get('user');
         var keywordName = template.$("#keywordText").val();
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionText").val();
-        var email = Session.get("email");
 
         if (!UserInputVerification.verifyStage(chosenStage)) {
             template.toast.show("alert-danger", "Invalid stage!");
@@ -116,7 +117,6 @@ Template.submit.events({
         keywordName = keywordName.trim(); // case-sensitive
         chosenStage = chosenStage.trim().toLowerCase();
         chosenSection = chosenSection.trim().toLowerCase();
-        email = email.trim().toLowerCase();
 
         //template.toast.hide();
         clearForm(template);
@@ -128,7 +128,7 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.email === email);
+        const oldVote = keyword.votes.find((vote) => vote.email === user.email);
 
         if (oldVote) {
             template.toast.show("alert-warning", "You have already voted for this option!");
@@ -138,7 +138,7 @@ Template.submit.events({
         Keywords.update(
             { _id: keyword._id },
             {
-                $addToSet: {votes: {email: email, stage: chosenStage}}
+                $addToSet: {votes: {email: user.email, stage: chosenStage}}
             });
 
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
@@ -193,7 +193,7 @@ Template.submit.events({
         const suggestion = template.$('#suggestionText').val();
         const section = template.$('#suggestionSectionDropdown').val();
         const stage = template.$('#suggestionStageDropdown').val();
-        const email = Session.get("email");
+        const user = Session.get('user');
 
         if (!UserInputVerification.verifySection(section)) {
             template.toast.show("alert-danger", "Please enter a valid section!");
@@ -214,7 +214,7 @@ Template.submit.events({
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
                 // Already suggested
-                if (allKeywords[i].votes.find((votes) => votes.email === email)) {
+                if (allKeywords[i].votes.find((votes) => votes.email === user.email)) {
                     template.toast.show("alert-danger", "You have already suggested this!");
                     return;
                 }
@@ -234,7 +234,7 @@ Template.submit.events({
             name: suggestion,
             section: section,
             enabled: false,
-            votes: [{email: email, stage: stage}]
+            votes: [{email: user.email, stage: stage}]
         });
 
         template.$('#suggestionText').val("");

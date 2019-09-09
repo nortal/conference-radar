@@ -1,4 +1,6 @@
 import {Template} from 'meteor/templating';
+import {DevelopFunctions} from "../../imports/api/develop";
+import {Users} from "../../imports/api/keywords";
 
 function loadJsSdk(id, src, onLoad) {
     var fjs = document.getElementsByTagName('script')[0];
@@ -11,17 +13,25 @@ function loadJsSdk(id, src, onLoad) {
 }
 
 function loginOrSignUp(email, name, appId) {
-    Session.set('isLoggingIn', true);
-    Session.set('email', email);
-    Session.set('name', name);
-    Session.set('appId', appId);
+    const user = Users.findOne({"$or": [{email: email}, {appIds: appId}]});
+    if (user) {
+        Session.set('user', user);
+        Router.go('/submit');
+        return;
+    }
+
+    Session.set('signUpDetails', {
+        email: email,
+        name: name,
+        appId: appId
+    });
 
     Router.go('/confirm');
 }
 
 Template.login.events({
     'click #skipLogin': function (event, template) {
-        if (Meteor.settings.public.environment !== "development") {
+        if (!DevelopFunctions.isDevMode()) {
             return;
         }
 
