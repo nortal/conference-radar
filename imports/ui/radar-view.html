@@ -17,11 +17,23 @@
         </div>
 
         <div class="row pb-4">
-            {{#if isSingleQuadrantView}}
-                {{> singleRadar}}
-            {{else}}
-                {{> combinedRadar}}
-            {{/if}}
+            {{#each section in quadrants}}
+                <div class="{{quadrantClass}} quadrant d-flex flex-column p-3 mt-4">
+                    <div class="quadrant-title-container">
+                        <h3 class="mt-0 mb-2 scaled-quadrant-title">{{section.name}}</h3>
+                    </div>
+
+                    <div class="quadrant-svg-wrapper">
+                        <div>
+                            <svg id="{{section.id}}"></svg>
+                        </div>
+                    </div>
+
+                    <div class="quadrant-log p-3">
+                        {{> radarLog collection=(getLogs section.id)}}
+                    </div>
+                </div>
+            {{/each}}
         </div>
 
         <div class="row">
@@ -32,30 +44,15 @@
     </div>
 </template>
 
-<template name="combinedRadar">
-    {{#each quadrants}}
-        <div class="{{quadrantClass}} quadrant p-3 mt-4">
-            <div class="quadrant-title-container">
-                <h3 class="mt-0 mb-2 scaled-quadrant-title">{{name}}</h3>
-            </div>
-
-            <div class="quadrant-svg-wrapper">
-                <div>
-                    <svg id="{{id}}"></svg>
-                </div>
-            </div>
+<template name="radarLog">
+    {{#each log in collection}}
+        <div class="log-row d-flex overflow-hidden">
+            <span class="log-row-index">{{log.index}}</span>
+            <span class="log-row-timestamp">{{log.timestamp}}</span>
+            <span class="log-row-event">@Geekout</span>
+            <span class="log-row-technology">{{log.technology}}</span>
+            <span>got</span>
+            <span class="log-row-stage">{{log.stage}}</span>
         </div>
     {{/each}}
-</template>
-
-<template name="singleRadar">
-    <div class="col-12 quadrant p-3">
-        <div class="quadrant-title-container">
-            <h3 class="mt-0 mb-2 scaled-quadrant-title">{{quadrantData "name"}}</h3>
-        </div>
-
-        <div class="h-100">
-            <svg id="{{quadrantData "id"}}"></svg>
-        </div>
-    </div>
 </template>

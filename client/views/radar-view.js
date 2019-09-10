@@ -9,6 +9,9 @@ import _ from 'underscore';
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
     this.legends = new ReactiveVar();
+    this.selectedQuadrant = Sections.find(s => s.id === this.data);
+    this.logs = new ReactiveVar({frameworks: [], platforms: [], techniques: [], tools: []});
+    this.voteCounts = {};
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
@@ -21,15 +24,21 @@ Template.radar.onCreated(function () {
 });
 
 Template.radar.onRendered(function () {
-    let query = Keywords.find();
+    let query = Keywords.find({enabled: true});
+    const self = this;
 
     let handle = query.observeChanges({
         changed: function (id, data) {
             // when a new vote gets registered on an existing blip, re-draw
             draw();
+            appendLog(self, id, data);
         },
         added: function (id, data) {
-            // added stuff
+            // added keywords
+            self.voteCounts[id] = data.votes.length;
+        },
+        removed: function (id, data) {
+            // removed keywords
         }
     });
 
@@ -49,11 +58,8 @@ Template.radar.helpers({
         return Template.instance().blips.get();
     },
     isSingleQuadrantView: function () {
-        return Sections.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
-    }
-});
-
-Template.combinedRadar.helpers({
+        return Template.instance().selectedQuadrant !== undefined;
+    },
     stages: function() {
         return Stages;
     },
@@ -72,17 +78,11 @@ Template.combinedRadar.helpers({
                 return "col-12 col-sm-6 col-lg-3"
         }
     },
-});
-
-Template.singleRadar.onCreated(function () {
-    this.selectedQuadrant = Sections.find(quadrant => { return quadrant.id === this.data });
-});
-
-Template.singleRadar.helpers({
-    quadrantData: function (field) {
-        return Template.instance().selectedQuadrant[field];
+    getLogs: function (section) {
+        return Template.instance().logs.get()[section];
     },
 });
+
 
 Template.radar.onDestroyed(function() {
     $(window).off('resize', throttledOnWindowResize);
@@ -415,4 +415,45 @@ function getQuartile(score) {
     } else {
         return -1;
     }
+}
+
+
+function appendLog(template, id, data) {
+    const keyword = Keywords.findOne({_id: id});
+    const lastVoteCount = template.voteCounts[id];
+    template.voteCounts[id] = keyword.votes.length;
+
+    if (!data.votes.length || lastVoteCount > keyword.votes.length) {
+        // don't log vote removals
+        return;
+    }
+
+    const makeTimestamp = function () {
+        const now = new Date();
+        return now.getHours() + ':' + now.getMinutes();
+    };
+
+    const transformIndex = function (index) {
+        return (index < 10 ? '0' : '') + index;
+    };
+
+    const logs = template.logs.get();
+    const sectionLogs = logs[keyword.section];
+    const nextLogIndex = sectionLogs.length
+        ? parseInt(sectionLogs[sectionLogs.length - 1].index) + 1
+        : 0;
+
+    logs[keyword.section].push({
+        index: transformIndex(nextLogIndex),
+        timestamp: makeTimestamp(),
+        technology: keyword.name,
+        stage: keyword.votes[keyword.votes.length - 1].stage
+    });
+
+    // trim to last n entries
+    if (logs[keyword.section].length > 3) {
+        logs[keyword.section] = logs[keyword.section].slice(1, 4);
+    }
+
+    template.logs.set(logs);
 }
