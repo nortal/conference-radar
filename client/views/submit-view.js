@@ -1,6 +1,6 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords} from '../../imports/api/keywords.js';
+import {Keywords, Users} from '../../imports/api/keywords.js';
 import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
@@ -63,7 +63,7 @@ Template.submit.helpers({
 });
 
 Template.submit.events({
-    'click button.close'(event, template) {
+    'click button.close.remove'(event, template) {
         const id = $(event.currentTarget).data("value");
         const user = Users.findOne({_id: Session.get('userId')});
 
@@ -227,7 +227,14 @@ Template.submit.events({
 
                 // Already suggested but not enabled yet
                 if (!allKeywords[i].enabled) {
+                    Keywords.update(
+                        {_id: allKeywords[i]._id},
+                        {$addToSet: {votes: {email: user.email, stage: stage}}}
+                    );
                     template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+                    clearSuggestionForm(template);
+                    clearAutocomplete(template, false);
+                    clearForm(template);
                     return;
                 }
 
@@ -243,11 +250,10 @@ Template.submit.events({
             votes: [{email: user.email, stage: stage}]
         });
 
-        template.$('#suggestionText').val("");
-        template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
-        template.$('#suggestionStageDropdown')[0].selectedIndex = 0;
-        template.$("#suggestionModal").modal("hide");
         template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        clearSuggestionForm(template);
+        clearAutocomplete(template, false);
+        clearForm(template);
     }
 });
 
@@ -259,4 +265,11 @@ function clearForm(template) {
     template.$('#keywordText').val("");
     template.$("#stageDropdown").val("0");
     template.$("#sectionText").val("0");
+}
+
+function clearSuggestionForm(template) {
+    template.$('#suggestionText').val("");
+    template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
+    template.$('#suggestionStageDropdown')[0].selectedIndex = 0;
+    template.$("#suggestionModal").modal("hide");
 }
