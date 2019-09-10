@@ -11,49 +11,34 @@
     <div class="background-circle"></div>
 
     <div class="container-fluid main-section pt-4 px-5">
-        <div class="d-md-none d-block">
-            <div class="row pb-5">
+            <div class="row">
                 {{#if isAdmin}}
                     <a href="admin" class="styled-link">Admin panel</a>
                 {{/if}}
-                <div class="d-flex justify-content-between align-items-end pb-3">
+                <div class="d-md-none d-flex justify-content-between align-items-end pb-3">
                     <img src="/images/logo_geekout.png" width="25%" alt="">
                     <img src="/images/logo_nortal.png" width="25%" alt="">
                 </div>
+                <div class="d-none d-md-flex justify-content-between align-items-end pb-5">
+                    <img src="/images/logo_geekout.png" width="15%" alt="">
+                    <img src="/images/logo_techradar.png" width="25%" alt="">
+                    <img src="/images/logo_nortal.png" width="15%" alt="">
+                </div>
+
                 <div class="col-12 px-0">
-                    <div class="main-section-title col-12 p-0">
+                    <div class="d-md-none d-block main-section-title col-12 p-0">
                         <div class="row d-flex justify-content-between align-items-end pb-2">
                             <img class="col-6" src="/images/logo_techradar.png" alt="">
                             <span class="col-6 pl-0 my-0 text-right">Login & vote!</span>
                         </div>
+                    </div>
+                    <div class="d-none d-md-block main-section-title col-12 p-0">
+                        <span class="my-0">Login & vote!</span>
                     </div>
                     <div class="main-section-container col-12">
                         {{> yield}}
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="d-none d-md-block">
-            <div class="row">
-                <div class="d-flex justify-content-between align-items-end pb-5">
-                    <img src="/images/logo_geekout.png" width="15%" alt="">
-                    <img src="/images/logo_techradar.png" width="25%" alt="">
-                    <img src="/images/logo_nortal.png" width="15%" alt="">
-                </div>
-
-                {{#if isAdmin}}
-                    <a href="admin" class="styled-link">Admin panel</a>
-                {{/if}}
-
-                <div class="main-section-title col-12 p-0">
-                    <span class="my-0">Login & vote!</span>
-                </div>
-                <div class="main-section-container col-12">
-                    {{> yield}}
-                </div>
-            </div>
-        </div>
-
     </div>
 </template>
