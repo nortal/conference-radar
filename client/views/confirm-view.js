@@ -36,31 +36,19 @@ Template.confirm.events({
             return;
         }
 
-        const matchingUser = Users.findOne({email: submitEmail});
-        if (!matchingUser) {
-            Users.insert({
-                appIds: [signUpDetails.appId],
-                name: submitName,
-                email: submitEmail,
-                wantsRecruitment: recruitmentChecked,
-                wantsParticipation: participateChecked,
-                agreesTerms: termsChecked
-            });
-        } else {
-            Users.update(
-                {_id: matchingUser._id},
-                {
-                    $addToSet: {appIds: signUpDetails.appId},
-                    $set: {
-                        wantsRecruitment: recruitmentChecked,
-                        wantsParticipation: participateChecked
-                    }
-                }
-            );
-        }
+        const userId = Users.insert({
+            appIds: [signUpDetails.appId],
+            name: submitName,
+            email: submitEmail,
+            wantsRecruitment: recruitmentChecked,
+            wantsParticipation: participateChecked,
+            agreesTerms: termsChecked,
+            admin: true
+        });
 
-        const userDetails = Users.findOne({email: submitEmail});
-        Session.set('user', userDetails);
+        // Order is important. If signUpDetails is cleared first, the user will lose
+        // access to the current page and will be redirected back to the front
+        Session.set('userId', userId);
         Router.go('/submit');
         Session.set('signUpDetails', undefined);
     }

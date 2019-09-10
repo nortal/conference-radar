@@ -13,9 +13,10 @@ function loadJsSdk(id, src, onLoad) {
 }
 
 function loginOrSignUp(email, name, appId) {
+    // check if user already exists
     const user = Users.findOne({"$or": [{email: email}, {appIds: appId}]});
     if (user) {
-        Session.set('user', user);
+        Session.set('userId', user._id);
         Router.go('/submit');
         return;
     }

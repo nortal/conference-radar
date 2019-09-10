@@ -30,7 +30,7 @@ Template.submit.onRendered(function () {
 
 Template.submit.helpers({
     submittedKeywords: () => {
-        const user = Session.get('user');
+        const user = Users.findOne({_id: Session.get('userId')});
         return Keywords.find({votes: {$elemMatch: {email: user.email}}}).fetch();
     },
     stages: () => {
@@ -40,7 +40,7 @@ Template.submit.helpers({
         return Sections
     },
     getStageName: (votes) => {
-        const user = Session.get('user');
+        const user = Users.findOne({_id: Session.get('userId')});
         const vote = _.find(votes, (vote) =>  vote.email === user.email);
         return Stages.find(s => s.id === vote.stage).name;
     },
@@ -65,7 +65,7 @@ Template.submit.helpers({
 Template.submit.events({
     'click button.close'(event, template) {
         const id = $(event.currentTarget).data("value");
-        const user = Session.get('user');
+        const user = Users.findOne({_id: Session.get('userId')});
 
         // find matching keyword
         const keyword = Keywords.find({ _id: id }).fetch()[0];
@@ -94,7 +94,7 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        const user = Session.get('user');
+        const user = Users.findOne({_id: Session.get('userId')});
         var keywordName = template.$("#keywordText").val();
         var chosenStage = template.$("#stageDropdown").val();
         var chosenSection = template.$("#sectionText").val();
@@ -193,7 +193,7 @@ Template.submit.events({
         const suggestion = template.$('#suggestionText').val();
         const section = template.$('#suggestionSectionDropdown').val();
         const stage = template.$('#suggestionStageDropdown').val();
-        const user = Session.get('user');
+        const user = Users.findOne({_id: Session.get('userId')});
 
         if (!UserInputVerification.verifySection(section)) {
             template.toast.show("alert-danger", "Please enter a valid section!");

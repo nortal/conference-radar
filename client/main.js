@@ -15,6 +15,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import {DevelopFunctions} from '../imports/api/develop.js';
+import {Users} from "../imports/api/keywords";
 
 Router.configure({
     layoutTemplate: 'mainLayout'
@@ -29,6 +30,7 @@ Router.route('/login', function () {
 });
 
 Router.route('/confirm', function () {
+    // set in login page
     if (Session.get('signUpDetails')) {
         this.render('confirm');
     } else {
@@ -37,7 +39,8 @@ Router.route('/confirm', function () {
 });
 
 Router.route('/submit', function () {
-    if (Session.get('user')) {
+    // set in login or confirm page
+    if (Session.get('userId')) {
         this.render('submit');
     } else {
         Router.go('/');
@@ -60,9 +63,17 @@ Router.route('/radar/:mode', function () {
 });
 
 Router.route('/admin', function () {
-    const user = Session.get('user');
+    const userId = Session.get('userId');
+    if (!userId) {
+        Router.go('/');
+    }
 
-    if (user && user.admin) {
+    const user = Users.findOne({_id: userId});
+    if (!user) {
+        Router.go('/');
+    }
+
+    if (user.admin) {
         this.render('admin');
     } else {
         Router.go('/');
@@ -71,6 +82,11 @@ Router.route('/admin', function () {
 
 Template.registerHelper('isDevMode', DevelopFunctions.isDevMode);
 Template.registerHelper('isAdmin', function () {
-    const user = Session.get('user');
+    const userId = Session.get('userId');
+    if (!userId) {
+        return false;
+    }
+
+    const user = Users.findOne({_id: userId});
     return user && user.admin;
 });
