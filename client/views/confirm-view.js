@@ -36,15 +36,32 @@ Template.confirm.events({
             return;
         }
 
-        const userId = Users.insert({
-            appIds: [signUpDetails.appId],
-            name: submitName,
-            email: submitEmail,
-            wantsRecruitment: recruitmentChecked,
-            wantsParticipation: participateChecked,
-            agreesTerms: termsChecked,
-            admin: true
-        });
+        let userId;
+        // check if there is a user with that email
+        const matchingUser = Users.findOne({email: submitEmail});
+
+        if (matchingUser) {
+            userId = matchingUser._id;
+            Users.update(
+                {_id: matchingUser._id},
+                {
+                    $addToSet: {appIds: signUpDetails.appId},
+                    $set: {
+                        wantsRecruitment: recruitmentChecked,
+                        wantsParticipation: participateChecked
+                    }
+                }
+            );
+        } else {
+            userId = Users.insert({
+                appIds: [signUpDetails.appId],
+                name: submitName,
+                email: submitEmail,
+                wantsRecruitment: recruitmentChecked,
+                wantsParticipation: participateChecked,
+                agreesTerms: termsChecked
+            });
+        }
 
         // Order is important. If signUpDetails is cleared first, the user will lose
         // access to the current page and will be redirected back to the front
