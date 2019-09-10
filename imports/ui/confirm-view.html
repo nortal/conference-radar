@@ -1,43 +1,48 @@
 <template name="confirm">
 
-    <div class="row">
-        <div class="col-md-6 col-sm-12">
-            <input class="styled-input mb-3" id="nameText" type="text" name="nameText" placeholder="Your name"
-                   value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
-            <input class="styled-input mb-3" id="emailText" type="email" name="emailText" placeholder="Your e-mail"
-                   value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
-            <p>
-                <a class="styled-link" href="www.nortal.com">nortal.com</a>
-            </p>
+    <div class="row pt-4 mb-3">
+        <div class="col-md-6 col-12 mt-4 styled-input-group">
+            <input class="styled-input" id="nameText" type="text" name="nameText"
+                   value="{{getDetails 'name'}}" {{isDisabled 'name'}} required/>
+            <label>Name</label>
+        </div>
+        <div class="col-md-6 col-12 my-4 styled-input-group">
+            <input class="styled-input" id="emailText" type="email" name="emailText"
+                   value="{{getDetails 'email'}}" {{isDisabled 'email'}} required/>
+            <label>E-mail</label>
         </div>
 
-        <div class="col-md-6 col-sm-12">
+<!--        <p>-->
+<!--            <a class="styled-link" href="www.nortal.com">nortal.com</a>-->
+<!--        </p>-->
 
-            <div>
-                <label>
-                    <input type="checkbox" id="participateCheck">
+        <div class="col-12">
+
+            <div class="custom-control custom-checkbox mb-3">
+                <input type="checkbox" class="custom-control-input" id="participateCheck" name="participateCheck">
+                <label class="custom-control-label" for="participateCheck">
                     I want to be notified, when final Technology Radar is published
                 </label>
             </div>
 
-            <div>
-                <label>
-                    <input type="checkbox" id="recruitmentCheck"/>
+            <div class="custom-control custom-checkbox mb-3">
+                <input type="checkbox" class="custom-control-input" id="recruitmentCheck" name="recruitmentCheck">
+                <label class="custom-control-label" for="recruitmentCheck">
                     Nortal can contact me about future job opportunities for up to 3 years
                     <br/>
                     <a class="styled-link" href="https://nortal.com/recruitment-and-hiring-privacy-statement/">Privacy policy</a>
                 </label>
             </div>
 
-            <div>
-                <label>
-                    <input type="checkbox" id="termsCheck"/>
+            <div class="custom-control custom-checkbox mb-4">
+                <input type="checkbox" class="custom-control-input" id="termsCheck" name="termsCheck">
+                <label class="custom-control-label" for="termsCheck">
                     I agree to my data being stored and used to anonymously display statistics on Technology Radar
                 </label>
             </div>
 
-            <div class="text-right">
-                <button id="nextButton" type="button" class="submit-button">Next</button>
+            <div class="float-right">
+                <button id="nextButton" type="button" class="submit-button">Start voting!</button>
             </div>
 
         </div>

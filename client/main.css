@@ -60,10 +60,47 @@ body {
     background-color: #fff;
     border: 2px solid #EEF2F5;
     border-top: none;
-    height: 100%;
     padding-left: .5rem;
     padding-right: .5rem;
 }
+
+.styled-input {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid #AFB9BF;
+    display: block;
+    caret-color: #009639;
+    color: #009639;
+    font-size: 20px;
+    padding: 10px;
+    transition: border-bottom-color 150ms ease-in-out;
+    width: 100%;
+}
+
+.styled-input:focus {
+    border-bottom: 2px solid #009639;
+    outline: none;
+}
+
+.styled-input ~ label {
+    position: absolute;
+    pointer-events: none;
+    left: 25px;
+    top: 10px;
+    transition: 250ms ease all;
+}
+
+.styled-input:focus ~ label, .styled-input:valid ~ label {
+    top: -14px;
+    font-size: 12px;
+    color: #009639;
+}
+
+.styled-input:disabled {
+    background-color: #EEE;
+    color: #649685;
+}
+
 
 .login-button {
     background-color: white;
@@ -131,15 +168,11 @@ body {
     font-size: 16px
 }
 
-
-/* todo: All styles below are used only in submit page. Remove these once replaced by bootstrap. */
-
 .submit-button {
-    border-radius: 25px;
+    border-radius: 5px;
     background: #009639;
-    padding: 5px;
-    width: 150px;
-    height: 50px;
+    padding: 0.5rem 4rem 0.5rem 4rem;
+    height: 55px;
     font-weight: 100;
     font-size: 20px;
     color: white;
@@ -166,20 +199,10 @@ body {
     color: #009639;
 }
 
-.styled-input {
-    border: 0;
-    border-bottom: 2px solid #005C37;
-    width: 100%;
-    font-size: 20px;
-    text-align: left;
-    padding: 10px;
-    background: transparent;
-    color: #009639;
-}
-
-.styled-input:disabled {
-    background-color: #EEE;
-    color: #649685;
+.styled-checkbox {
+    height: 25px;
+    width: 25px;
+    background-color: #FFF;
 }
 
 .rounded {
