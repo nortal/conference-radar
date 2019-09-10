@@ -136,7 +136,7 @@ function initializeSvg(svg, data) {
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
     const lineSeparatorHeight = 6;
 
-    const calculateDataRowY = function (data, index) {
+    const calculateDataRowY = function (index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
         const itemIndexInColumn = Math.ceil(calculatedY / rowHeightWithPadding);
         return itemIndexInColumn * rowHeightWithPadding + headerHeight;
@@ -214,8 +214,8 @@ function initializeSvg(svg, data) {
             .attr("class", "radar-row");
 
         enter.append("line")
-            .attr("y1", (d, i) => calculateDataRowY(d, i) - verticalOffset)
-            .attr("y2", (d, i) => calculateDataRowY(d, i) - verticalOffset)
+            .attr("y1", (d, i) => calculateDataRowY(i) - verticalOffset)
+            .attr("y2", (d, i) => calculateDataRowY(i) - verticalOffset)
             .attr("class", "dotted-line")
             .attr("x1", 0)
             .attr("x2", dottedLineLength);
@@ -223,19 +223,19 @@ function initializeSvg(svg, data) {
         _.each([0,0.25,0.50,0.75,1], (placement) => {
             enter.append("rect")
                 .attr("x", placement * dottedLineLength)
-                .attr("y", (d, i) => calculateDataRowY(d, i) - verticalOffset - lineSeparatorHeight / 2)
+                .attr("y", (d, i) => calculateDataRowY(i) - verticalOffset - lineSeparatorHeight / 2)
                 .attr("height", lineSeparatorHeight)
                 .attr("class", "line-separator");
         });
 
         enter.append("text")
             .text(d => d.name)
-            .attr("y", (d, i) => calculateDataRowY(d, i))
+            .attr("y", (d, i) => calculateDataRowY(i))
             .attr("x", columnWidth - labelWidth)
             .attr("class", (d,i) => calculateTextColor(data, i));
 
         enter.append("circle")
-            .attr("cy", (d, i) => Math.max(calculateDataRowY(d, i) - verticalOffset),0)
+            .attr("cy", (d, i) => Math.max(calculateDataRowY(i) - verticalOffset),0)
             .attr("class", (d,i) => calculateCircleColor(data, i))
             .transition().duration(500)
             .attr("cx", (d, i) => calculateBlipX(d.graphScore))
@@ -323,7 +323,7 @@ function initializeSvg(svg, data) {
     });
 
     // find position of last element so we can append the footer
-    const footerOffset = calculateDataRowY(undefined, mainData.length - 1) - verticalOffset;
+    const footerOffset = calculateDataRowY(mainData.length - 1) - verticalOffset;
     buildHeader(svg, {
         parent: [columnWidth],
         child: headerFooterData,
