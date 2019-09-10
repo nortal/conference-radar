@@ -1,6 +1,6 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords} from '../../imports/api/keywords.js';
+import {Keywords, Users} from '../../imports/api/keywords.js';
 import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
