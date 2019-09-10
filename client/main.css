@@ -13,12 +13,23 @@ body {
     background-color: #fff !important;
 }
 
+.background-circle {
+    left: 0;
+    margin-left: -940px;
+    top: 430px;
+    width: 3800px;
+    height: 3800px;
+    border-radius: 3800px;
+    position: fixed;
+    background-color: #EEF2F5;
+}
+
 .main-section {
     max-width: 1200px;
 }
 
 .main-section-title {
-    border-bottom: 8px solid #47973A;
+    border-bottom: 8px solid #009639;
     font-weight: 700;
     text-transform: uppercase;
     position: absolute;
@@ -26,7 +37,7 @@ body {
 }
 
 .main-section-title {
-    border-bottom: 8px solid #47973A;
+    border-bottom: 8px solid #009639;
     font-weight: 700;
     text-transform: uppercase;
     position: absolute;
@@ -54,19 +65,13 @@ body {
     padding-right: .5rem;
 }
 
-.login-title {
-    color: #009639;
-    font-weight: bold;
-    text-align: center;
-}
-
 .login-button {
-    height: 40px;
+    background-color: white;
+    border: 2px solid #5B6064;
     border-radius: 5px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    height: 56px;
     transition: background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
     box-sizing: border-box;
-    color: #757575;
     cursor: pointer;
     outline: none;
     overflow: hidden;
@@ -79,32 +84,16 @@ body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
 }
 
-.google-login {
-    background: white;
-    color: #757575;
-}
-
-.google-login:active {
-    background-color: #e5e5e5;
-    box-shadow: none;
-    transition-duration: 10ms;
-}
-
-.facebook-login {
-    background: #4267b2;
-    color: white;
-}
-
 .login-button-icon {
     box-sizing: border-box;
     display: inline-block;
-    margin: 8px 0 8px 8px;
+    margin: 18px 0 18px 18px;
     vertical-align: middle;
 }
 
 .login-button-icon svg {
     display: block;
-    height: 24px;
+    height: 20px;
 }
 
 .login-button-text {
