@@ -1,11 +1,11 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords,Users} from '../../imports/api/keywords.js';
-import {Stages,Sections} from '../../imports/api/constants.js';
+import {Keywords} from '../../imports/api/keywords.js';
+import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
 
-Template.submit.onCreated(function() {
+Template.submit.onCreated(function () {
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
 });
@@ -68,7 +68,7 @@ Template.submit.events({
         const user = Session.get('user');
 
         // find matching keyword
-        const keyword = Keywords.find({ _id: id }).fetch()[0];
+        const keyword = Keywords.find({_id: id}).fetch()[0];
         if (!keyword) {
             template.toast.show("alert-danger", "Could not find that keyword!");
             return;
@@ -84,7 +84,7 @@ Template.submit.events({
         }
 
         Keywords.update(
-            { _id: id },
+            {_id: id},
             {
                 $pull: {votes: {email: user.email, stage: oldVote.stage}},
             });
@@ -121,7 +121,7 @@ Template.submit.events({
         //template.toast.hide();
         clearForm(template);
 
-        const keyword = Keywords.find({ name: keywordName, section: chosenSection }).fetch()[0];
+        const keyword = Keywords.find({name: keywordName, section: chosenSection}).fetch()[0];
         if (!keyword) {
             template.toast.show("alert-danger", "Invalid keyword!");
             return;
@@ -136,7 +136,7 @@ Template.submit.events({
         }
 
         Keywords.update(
-            { _id: keyword._id },
+            {_id: keyword._id},
             {
                 $addToSet: {votes: {email: user.email, stage: chosenStage}}
             });
@@ -154,16 +154,22 @@ Template.submit.events({
             return;
         }
 
+        const nameComparator = (name1, name2, value) => {
+            if (name1 === value) {
+                return -1;
+            } else if (name2 === value) {
+                return 1;
+            }
+            return name1 - name2;
+        };
+
         const value = event.target.value.toLowerCase();
 
-        // todo: improve search
-        const allKeywords = Keywords.find({enabled: true}).fetch();
-        _.each(allKeywords, function (keyword) {
-            if (keyword.name.toLowerCase().indexOf(value) >= 0 &&
-                template.autocomplete.get().matches.length <= 12) {
-                template.autocomplete.get().matches.push(keyword);
-            }
-        });
+        template.autocomplete.get().matches = Keywords
+            .find({ enabled: true, name: { $regex: value, $options: 'i' } })
+            .fetch()
+            .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
+            .slice(0, 11);
 
     }, 100),
 
