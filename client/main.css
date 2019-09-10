@@ -87,12 +87,6 @@ body {
     width: 1px;
 }
 
-.radar-row-header {
-    font-size: .6rem;
-    text-transform: uppercase;
-    fill: #757575;
-}
-
 .dotted-line-thick {
     stroke: #000;
     stroke-opacity: 0.8;
@@ -333,11 +327,20 @@ ul.list-group.list-group-flush > li.list-group-item  {
     width: 100%;
 }
 
-.radar-header-title {
+.radar-row-header,
+.radar-row-footer {
+    font-size: .6rem;
+    text-transform: uppercase;
+    fill: #757575;
+}
+
+.radar-row-header-title,
+.radar-row-footer-title {
     font-size: 10px;
     text-transform: uppercase;
     font-weight: 700;
 }
+
 .radar-row-name {
     fill: #5B6064;
     font-size: 10px;

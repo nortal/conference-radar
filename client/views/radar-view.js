@@ -248,12 +248,12 @@ function initializeSvg(svg, data) {
     };
 
     const buildHeader = function (selection, data) {
-        const nodes = selection.selectAll('g.radar-row-header')
+        const nodes = selection.selectAll('g.' + data.groupClass)
             .data(data.parent, (d) => d.toString());
 
         const enter = nodes.enter()
             .append('g')
-            .attr('class', 'radar-row-header')
+            .attr('class', data.groupClass)
             .call(d => buildHeaderTexts(d, data));
 
         nodes.merge(enter);
@@ -261,16 +261,16 @@ function initializeSvg(svg, data) {
     };
 
     const buildHeaderTexts = function (selection, data) {
-        const nodes = selection.selectAll('text.radar-header-title')
+        const nodes = selection.selectAll('text.' + data.textClass)
             .data(data.child);
 
-        const sectionLength = dottedLineLength / Stages.length;
+        const sectionLength = dottedLineLength / data.child.length;
         const centerOffset = sectionLength / 2;
 
         const enter = nodes.enter()
             .append('text')
-            .attr('class', (d) => 'radar-header-title color-' + d.name)
-            .attr("y", headerHeight * 1.3)
+            .attr('class', (d) => data.textClass + ' color-' + d.name)
+            .attr("y", data.yOffset + headerHeight * 1.3)
             .attr("x", (d,i) => i * sectionLength + centerOffset);
 
         enter.append('tspan')
@@ -281,9 +281,11 @@ function initializeSvg(svg, data) {
         nodes.exit().remove();
     };
 
-    const buildHeaderData = function(stages, width) {
-        stages = stages.reverse();
+    const buildHeaderData = function(width) {
+        // get stages
+        const stages = Stages.map(stage => stage.id).reverse();
 
+        // bind width to each stage
         const data = [];
         _.each(stages, function (stage) {
             data.push({
@@ -308,14 +310,26 @@ function initializeSvg(svg, data) {
     };
 
 
-    data = sortData(data, columnWidth);
+    const mainData = sortData(data, columnWidth);
+    const headerFooterData = buildHeaderData(columnWidth);
 
-    buildMain(svg, data);
-
-    const stages = Stages.map(stage => stage.id);
+    buildMain(svg, mainData);
     buildHeader(svg, {
         parent: [columnWidth],
-        child: buildHeaderData(stages, columnWidth)
+        child: headerFooterData,
+        yOffset: 0,
+        groupClass: 'radar-row-header',
+        textClass: 'radar-row-header-title'
+    });
+
+    // find position of last element so we can append the footer
+    const footerOffset = calculateDataRowY(undefined, mainData.length - 1) - verticalOffset;
+    buildHeader(svg, {
+        parent: [columnWidth],
+        child: headerFooterData,
+        yOffset: footerOffset,
+        groupClass: 'radar-row-footer',
+        textClass: 'radar-row-footer-title'
     });
 }
 
