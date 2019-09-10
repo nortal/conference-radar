@@ -17,45 +17,25 @@
         </div>
 
         <div class="row pb-4">
-            {{#if isSingleQuadrantView}}
-                {{> singleRadar}}
-            {{else}}
-                {{> combinedRadar}}
-            {{/if}}
+            {{#each quadrant in quadrants}}
+                <div class="{{quadrantClass}} quadrant p-3 mt-4">
+                    <div class="quadrant-title-container">
+                        <h3 class="mt-0 mb-2 scaled-quadrant-title">{{quadrant.name}}</h3>
+                    </div>
+
+                    <div class="quadrant-svg-wrapper">
+                        <div>
+                            <svg id="{{quadrant.id}}"></svg>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
         </div>
 
         <div class="row">
             <div class="col-12 text-center">
                 <div class="radar-footer-title">Add and vote for your candidate</div>
             </div>
-        </div>
-    </div>
-</template>
-
-<template name="combinedRadar">
-    {{#each quadrants}}
-        <div class="{{quadrantClass}} quadrant p-3 mt-4">
-            <div class="quadrant-title-container">
-                <h3 class="mt-0 mb-2 scaled-quadrant-title">{{name}}</h3>
-            </div>
-
-            <div class="quadrant-svg-wrapper">
-                <div>
-                    <svg id="{{id}}"></svg>
-                </div>
-            </div>
-        </div>
-    {{/each}}
-</template>
-
-<template name="singleRadar">
-    <div class="col-12 quadrant p-3">
-        <div class="quadrant-title-container">
-            <h3 class="mt-0 mb-2 scaled-quadrant-title">{{quadrantData "name"}}</h3>
-        </div>
-
-        <div class="h-100">
-            <svg id="{{quadrantData "id"}}"></svg>
         </div>
     </div>
 </template>

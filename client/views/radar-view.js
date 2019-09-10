@@ -9,6 +9,7 @@ import _ from 'underscore';
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
     this.legends = new ReactiveVar();
+    this.selectedQuadrant = Sections.find(s => s.id === this.data);
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
@@ -49,11 +50,8 @@ Template.radar.helpers({
         return Template.instance().blips.get();
     },
     isSingleQuadrantView: function () {
-        return Sections.find(quadrant => { return quadrant.id === Template.instance().data }) !== undefined;
-    }
-});
-
-Template.combinedRadar.helpers({
+        return Template.instance().selectedQuadrant !== undefined;
+    },
     stages: function() {
         return Stages;
     },
@@ -74,11 +72,7 @@ Template.combinedRadar.helpers({
     },
 });
 
-Template.singleRadar.onCreated(function () {
-    this.selectedQuadrant = Sections.find(quadrant => { return quadrant.id === this.data });
-});
-
-Template.singleRadar.helpers({
+Template.radar.helpers({
     quadrantData: function (field) {
         return Template.instance().selectedQuadrant[field];
     },
