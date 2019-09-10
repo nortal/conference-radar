@@ -17,16 +17,20 @@
         </div>
 
         <div class="row pb-4">
-            {{#each quadrant in quadrants}}
-                <div class="{{quadrantClass}} quadrant p-3 mt-4">
+            {{#each section in quadrants}}
+                <div class="{{quadrantClass}} quadrant d-flex flex-column p-3 mt-4">
                     <div class="quadrant-title-container">
-                        <h3 class="mt-0 mb-2 scaled-quadrant-title">{{quadrant.name}}</h3>
+                        <h3 class="mt-0 mb-2 scaled-quadrant-title">{{section.name}}</h3>
                     </div>
 
                     <div class="quadrant-svg-wrapper">
                         <div>
-                            <svg id="{{quadrant.id}}"></svg>
+                            <svg id="{{section.id}}"></svg>
                         </div>
+                    </div>
+
+                    <div class="quadrant-log p-3">
+                        {{> radarLog collection=(getLogs section.id)}}
                     </div>
                 </div>
             {{/each}}
@@ -38,4 +42,17 @@
             </div>
         </div>
     </div>
+</template>
+
+<template name="radarLog">
+    {{#each log in collection}}
+        <div class="log-row d-flex overflow-hidden">
+            <span class="log-row-index">{{log.index}}</span>
+            <span class="log-row-timestamp">{{log.timestamp}}</span>
+            <span class="log-row-event">@Geekout</span>
+            <span class="log-row-technology">{{log.technology}}</span>
+            <span>got</span>
+            <span class="log-row-stage">{{log.stage}}</span>
+        </div>
+    {{/each}}
 </template>

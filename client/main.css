@@ -352,3 +352,29 @@ ul.list-group.list-group-flush > li.list-group-item  {
     font-weight: 700;
     letter-spacing: 3px;
 }
+
+
+.quadrant-log {
+    background-color: #2D2C30;
+    font-size: 0.75rem;
+    color: #47973A;
+}
+
+.log-row > * {
+    padding-right: 0.25rem;
+    white-space: nowrap;
+}
+.log-row > .log-row-timestamp {
+    padding-right: 0;
+}
+.log-row > .log-row-index {
+    color: #A55200;
+    padding-right: 0.5rem;
+}
+.log-row > .log-row-technology,
+.log-row > .log-row-stage {
+    color: #EEF2F5;
+}
+.log-row > .log-row-stage {
+    text-transform: capitalize;
+}
