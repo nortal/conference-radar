@@ -4,12 +4,54 @@ html,body {
 }
 
 body {
+    color: #5B6064 !important;
     font-family: "Roboto",Arial,sans-serif !important;
     font-style: normal;
     font-weight: 200;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     background-color: #fff !important;
+}
+
+.main-section {
+    max-width: 1200px;
+}
+
+.main-section-title {
+    border-bottom: 8px solid #47973A;
+    font-weight: 700;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 0;
+}
+
+.main-section-title {
+    border-bottom: 8px solid #47973A;
+    font-weight: 700;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 0;
+    font-size: 1rem;
+}
+
+@media (min-width: 576px) {
+    .main-section-title {
+        font-size: 1.5rem;
+    }
+}
+
+.main-section-title span {
+    position: relative;
+    width: 100%;
+}
+
+.main-section-container {
+    background-color: #fff;
+    border: 2px solid #EEF2F5;
+    border-top: none;
+    height: 100%;
+    padding-left: .5rem;
+    padding-right: .5rem;
 }
 
 .login-title {
