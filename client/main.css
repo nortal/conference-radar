@@ -78,6 +78,14 @@ body {
     padding-right: .5rem;
 }
 
+.footer-title{
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    color: var(--nortal-green);
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
 .styled-input {
     background: transparent;
     border: 0;
@@ -101,7 +109,7 @@ body {
     pointer-events: none;
     left: 25px;
     top: 10px;
-    transition: 250ms ease all;
+    transition: 250ms ease all 100ms;
 }
 
 .styled-input:focus ~ label, .styled-input:disabled ~ label, .styled-input:not(.empty) ~ label {
@@ -240,4 +248,12 @@ body {
 .color-none {
     color: var(--medium-gray);
     fill: var(--medium-gray) !important;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

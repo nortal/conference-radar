@@ -63,3 +63,109 @@ ul.list-group > li.list-group-item:last-child {
 ul.list-group.list-group-flush > li.list-group-item  {
     border: none;
 }
+
+.stage-option {
+    align-items: center;
+    border: solid var(--medium-gray);
+    border-width: 2px 0 2px 2px;
+    cursor: pointer;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 3.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    position: relative;
+    text-transform: uppercase;
+    vertical-align: middle;
+    width: 25%;
+}
+
+.stage-option:first-of-type {
+    border-width: 2px 0 2px 2px;
+    border-radius: 4px 0 0 4px;
+}
+
+.stage-option:last-of-type {
+    border-width: 2px 2px 2px 2px;
+    border-radius: 0 4px 4px 0;
+}
+
+.adopt.stage-option.selected, .adopt.candidates-vote {
+    background-color: var(--nortal-green-light);
+}
+
+.trial.stage-option.selected, .trial.candidates-vote {
+    background-color: var(--trial-light);
+}
+
+.assess.stage-option.selected, .assess.candidates-vote {
+    background-color: var(--assess-light);
+}
+
+.avoid.stage-option.selected, .avoid.candidates-vote {
+    background-color: var(--avoid-light);
+}
+
+.stage-option-line {
+    position: absolute;
+    bottom: 5px;
+    width: 30%;
+}
+
+.adopt .stage-option-line {
+    border-bottom: 3px solid var(--nortal-green);
+}
+
+.trial .stage-option-line {
+    border-bottom: 3px solid var(--trial);
+}
+
+.assess .stage-option-line {
+    border-bottom: 3px solid var(--assess);
+}
+
+.avoid .stage-option-line {
+    border-bottom: 3px solid var(--avoid);
+}
+
+.candidates-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.candidates-vote {
+    align-items: center;
+    border-radius: 4px;
+    display: inline-flex;
+    float: left;
+    height: 3.5rem;
+    margin: 0 0.75rem 0.75rem 0;
+    padding: 0 0.75rem 0 0.75rem;
+    position: relative;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    width: auto;
+}
+
+.candidates-vote .close {
+    margin-left: 1rem;
+}
+
+.adopt.candidates-vote {
+    border: 2px solid var(--nortal-green);
+}
+
+.trial.candidates-vote {
+    border: 2px solid var(--trial);
+}
+
+.assess.candidates-vote {
+    border: 2px solid var(--assess);
+}
+
+.avoid.candidates-vote {
+    border: 2px solid var(--avoid);
+}

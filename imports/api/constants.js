@@ -5,10 +5,10 @@ export const Sections = [
     {name: "Tools", id: "tools"}
 ];
 export const Stages = [
-    {name: "Adopt", id: "adopt"},
-    {name: "Trial", id: "trial"},
-    {name: "Assess", id: "assess"},
-    {name: "Avoid", id: "avoid"}
+    {name: "Adopt", id: "adopt", value: 2},
+    {name: "Trial", id: "trial", value: 1},
+    {name: "Assess", id: "assess", value: -1},
+    {name: "Avoid", id: "avoid", value: -2}
 ];
 export const UserValidation = {
     email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
