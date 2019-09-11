@@ -52,16 +52,6 @@ Router.route('/radar', function () {
     this.render('radar');
 });
 
-Router.route('/radar/:mode', function () {
-    this.layout('radarLayout');
-
-    this.render('radar', {
-        data: function () {
-            return this.params.mode;
-        }
-    });
-});
-
 Router.route('/admin', function () {
     const userId = Session.get('userId');
     if (!userId) {
