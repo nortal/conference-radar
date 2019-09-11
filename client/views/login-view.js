@@ -1,6 +1,7 @@
 import {Template} from 'meteor/templating';
 import {DevelopFunctions} from "../../imports/api/develop";
 import {Users} from "../../imports/api/keywords";
+import '/imports/ui/login-view.css';
 
 function loadJsSdk(id, src, onLoad) {
     var fjs = document.getElementsByTagName('script')[0];

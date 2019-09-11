@@ -3,10 +3,18 @@ import {Users} from '../../imports/api/keywords.js';
 import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
+    this.nameText = new ReactiveVar();
+    this.emailText = new ReactiveVar();
     this.invalidInput = new ReactiveVar();
 });
 
 Template.confirm.events({
+    'keyup #nameText': function (event, template) {
+        template.nameText.set(template.$("#nameText").val());
+    },
+    'keyup #emailText': function (event, template) {
+        template.emailText.set(template.$("#emailText").val());
+    },
     'click #nextButton': function (event, template) {
 
         event.preventDefault();
@@ -72,6 +80,9 @@ Template.confirm.events({
 });
 
 Template.confirm.helpers({
+    isEmpty: function(inputName) {
+        return !Template.instance()[inputName].get();
+    },
     isDisabled: function (key) {
         const details = Session.get('signUpDetails');
         return details && details[key] ? 'disabled' : '';

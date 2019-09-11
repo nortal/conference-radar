@@ -4,6 +4,7 @@ import {Keywords, Users} from '../../imports/api/keywords.js';
 import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
+import '/imports/ui/submit-view.css';
 
 Template.submit.onCreated(function () {
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
