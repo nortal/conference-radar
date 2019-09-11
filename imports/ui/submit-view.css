@@ -1,0 +1,65 @@
+.typeahead {
+    background-color: var(--light-gray);
+    margin: 0;
+    min-width: 100px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 999;
+}
+
+.typeahead-results {
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid var(--medium-gray);
+    border-bottom: none;
+    border-top: none;
+    clear: both;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.typeahead-no-matches {
+    border-bottom: 1px solid var(--medium-gray);
+    background: transparent;
+    color: var(--nortal-green);
+    cursor: default;
+    display: block;
+    padding: 10px;
+}
+
+.typeahead-result {
+    display: block;
+    padding: 10px;
+    background: transparent;
+    color: var(--nortal-green);
+}
+
+.typeahead-result:last-of-type {
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.typeahead-result:hover {
+    background-color: var(--nortal-green);
+    color: white;
+}
+
+ul.list-group > li.list-group-item {
+    border: 1px solid rgb(169,169,169);
+}
+
+ul.list-group > li.list-group-item:first-child {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
+ul.list-group > li.list-group-item:last-child {
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+ul.list-group.list-group-flush > li.list-group-item  {
+    border: none;
+}

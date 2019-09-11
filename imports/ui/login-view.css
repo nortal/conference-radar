@@ -1,0 +1,37 @@
+.login-button {
+    background-color: white;
+    border: 2px solid var(--dark-gray);
+    border-radius: 5px;
+    height: 56px;
+    transition: background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.login-button:focus, .login-button:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.login-button-icon {
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 18px 0 18px 18px;
+    vertical-align: middle;
+}
+
+.login-button-icon svg {
+    display: block;
+    height: 20px;
+}
+
+.login-button-text {
+    display: inline-block;
+    font-weight: bold;
+    padding: 0 24px;
+    vertical-align: middle;
+}
