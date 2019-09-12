@@ -463,7 +463,7 @@ function appendLog(template, id, data) {
 function getLayoutParams() {
     const layout = {
         rowCount: 1,
-        sections: []
+        sections: Sections
     };
 
     let rows = GetQueryParam('rows');
@@ -473,12 +473,8 @@ function getLayoutParams() {
 
     let sections = GetQueryParam('sections');
     if (sections) {
-        _.each(sections.split(','), function (section) {
-            const match = Sections.find(s => s.id === section);
-            if (match) {
-                layout.sections.push(match);
-            }
-        })
+        const paramSections = sections.split(',');
+        layout.sections = Sections.filter(s => paramSections.includes(s.id));
     }
 
     return layout;
