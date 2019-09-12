@@ -316,10 +316,12 @@ function initializeSvg(svg, data) {
 
     const mainData = sortData(data, columnWidth);
     const headerFooterData = buildHeaderData(columnWidth);
+    const totalRowHeight = calculateDataRowY(mainData.length);
+    const titleDataBind = columnWidth.toString() + totalRowHeight;
 
     buildMain(svg, mainData);
     buildHeader(svg, {
-        parent: [columnWidth],
+        parent: [titleDataBind],
         child: headerFooterData,
         yOffset: 0,
         groupClass: 'radar-row-header',
@@ -329,7 +331,7 @@ function initializeSvg(svg, data) {
     // find position of last element so we can append the footer
     const footerOffset = calculateDataRowY(mainData.length - 1) - verticalOffset;
     buildHeader(svg, {
-        parent: [columnWidth],
+        parent: [titleDataBind],
         child: headerFooterData,
         yOffset: footerOffset,
         groupClass: 'radar-row-footer',
