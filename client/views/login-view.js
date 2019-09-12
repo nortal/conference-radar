@@ -76,6 +76,8 @@ Template.login.events({
 });
 
 Template.login.onCreated(function () {
+    Session.set('title', 'Login & vote!');
+
     this.inProgress = new ReactiveVar(false);
     const self = this;
 

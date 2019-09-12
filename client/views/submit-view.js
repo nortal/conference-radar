@@ -7,10 +7,13 @@ import _ from 'underscore';
 import '/imports/ui/submit-view.css';
 
 Template.submit.onCreated(function () {
+    Session.set('title', 'Vote!');
+
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
     this.keywordText = new ReactiveVar();
     this.selectedStage = new ReactiveVar();
+    this.showSuggestionForm = new ReactiveVar(false);
 });
 
 Template.submit.onRendered(function () {
@@ -53,9 +56,6 @@ Template.submit.helpers({
     getStage: (votes) => {
         return getStage(votes);
     },
-    getByStage: (votes, stage) => {
-        return votes.filter(vote => vote.stage === stage.id);
-    },
     matches: () => {
         return Template.instance().autocomplete.get().matches;
     },
@@ -66,11 +66,14 @@ Template.submit.helpers({
     getSelectWidth: () => {
         return Template.instance().selectWidth.get();
     },
-    isEmpty: function (key) {
+    isEmpty: (key) => {
         return !Template.instance()[key].get();
     },
-    isSelected: function (stage) {
+    isSelected: (stage) => {
         return Template.instance().selectedStage.get() === stage;
+    },
+    showSuggestionForm: () => {
+        return Template.instance().showSuggestionForm.get();
     }
 });
 
@@ -100,6 +103,137 @@ Template.submit.events({
             {
                 $pull: {votes: {email: user.email, stage: oldVote.stage}},
             });
+    },
+
+    'keyup #keywordText': _.debounce((event, template) => {
+        event.preventDefault();
+
+        template.keywordText.set(template.$("#keywordText").val());
+        template.selectWidth.set(event.target.getBoundingClientRect().width);
+        clearAutocomplete(template, true);
+
+        if (!event || !event.target || !event.target.value) {
+            return;
+        }
+
+        const nameComparator = (name1, name2, value) => {
+            if (name1 === value) {
+                return -1;
+            } else if (name2 === value) {
+                return 1;
+            }
+            return name1 - name2;
+        };
+
+        const value = event.target.value.toLowerCase();
+
+        template.autocomplete.get().matches = Keywords
+            .find({enabled: true, name: {$regex: value, $options: 'i'}})
+            .fetch()
+            .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
+            .slice(0, 11);
+
+    }, 100),
+
+    'mousedown .typeahead-result'(event) {
+        event.preventDefault();
+    },
+
+    'click .typeahead-result'(event, template) {
+        event.preventDefault();
+        const data = $(event.currentTarget).data();
+        clearAutocomplete(template, false);
+        template.$("#keywordText").val(data.name);
+        template.$("#sectionText").val(data.section);
+    },
+
+    'focusout #keywordText'(event, template) {
+        // is user clicked on a link that opens the suggestion modal
+        if (event.relatedTarget && event.relatedTarget.dataset.toggle === "modal") {
+            event.preventDefault();
+            return;
+        }
+
+        clearAutocomplete(template, false);
+    },
+
+    'click .stage-option'(event, template) {
+        const selectedStage = $(event.currentTarget).data().value;
+        if (selectedStage === template.selectedStage.get()) {
+            template.selectedStage.set();
+        } else {
+            template.selectedStage.set(selectedStage);
+        }
+    },
+
+    'click #cancelSuggestionButton'(event, template) {
+        template.showSuggestionForm.set(false);
+        clearForm(template);
+    },
+
+    'click #submitSuggestionButton'(event, template) {
+        const suggestion = template.$('#keywordText').val();
+        const section = template.$('#suggestionSectionDropdown').val();
+        const stage = template.selectedStage.get();
+        const user = Users.findOne({_id: Session.get('userId')});
+
+        if (!UserInputVerification.verifySection(section)) {
+            template.toast.show("alert-danger", "Please enter a valid section!");
+            return;
+        }
+        if (!UserInputVerification.verifyStage(stage)) {
+            template.toast.show("alert-danger", "Please enter a valid stage!");
+            return;
+        }
+
+        if (!suggestion || !suggestion.trim()) {
+            template.toast.show("alert-danger", "Please enter a suggestion!");
+            return;
+        }
+
+        const allKeywords = Keywords.find().fetch();
+        for (let i = 0; i < allKeywords.length; i++) {
+            if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
+
+                // Already suggested
+                if (allKeywords[i].votes.find((votes) => votes.email === user.email)) {
+                    template.toast.show("alert-danger", "You have already suggested this!");
+                    return;
+                }
+
+                // Already suggested but not enabled yet
+                if (!allKeywords[i].enabled) {
+                    Keywords.update(
+                        {_id: allKeywords[i]._id},
+                        {$addToSet: {votes: {email: user.email, stage: stage}}}
+                    );
+                    template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+                    clearAutocomplete(template, false);
+                    clearForm(template);
+                    return;
+                }
+
+                template.toast.show("alert-danger", "Technology already exists!");
+                return;
+            }
+        }
+
+        Keywords.insert({
+            name: suggestion,
+            section: section,
+            enabled: false,
+            votes: [{email: user.email, stage: stage}]
+        });
+
+        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        clearAutocomplete(template, false);
+        clearForm(template);
+        template.showSuggestionForm.set(false);
+    },
+
+    'click #suggestButton'(event, template) {
+        template.showSuggestionForm.set(true);
+        clearForm(template);
     },
 
     'click #submitButton'(event, template) {
@@ -155,128 +289,6 @@ Template.submit.events({
 
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
     },
-
-    'keyup #keywordText': _.debounce((event, template) => {
-        event.preventDefault();
-
-        template.keywordText.set(template.$("#keywordText").val());
-        template.selectWidth.set(event.target.getBoundingClientRect().width);
-        clearAutocomplete(template, true);
-
-        if (!event || !event.target || !event.target.value) {
-            return;
-        }
-
-        const nameComparator = (name1, name2, value) => {
-            if (name1 === value) {
-                return -1;
-            } else if (name2 === value) {
-                return 1;
-            }
-            return name1 - name2;
-        };
-
-        const value = event.target.value.toLowerCase();
-
-        template.autocomplete.get().matches = Keywords
-            .find({enabled: true, name: {$regex: value, $options: 'i'}})
-            .fetch()
-            .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
-            .slice(0, 11);
-
-    }, 100),
-
-    'mousedown .typeahead-result'(event) {
-        event.preventDefault();
-    },
-
-    'click .typeahead-result'(event, template) {
-        event.preventDefault();
-        const data = $(event.currentTarget).data();
-        clearAutocomplete(template, false);
-        template.$("#keywordText").val(data.name);
-        template.$("#sectionText").val(data.section);
-    },
-
-    'focusout #keywordText'(event, template) {
-        // is user clicked on a link that opens the suggestion modal
-        if (event.relatedTarget && event.relatedTarget.dataset.toggle === "modal") {
-            event.preventDefault();
-            return;
-        }
-
-        clearAutocomplete(template, false);
-    },
-
-    'click #suggestButton'(event, template) {
-        const suggestion = template.$('#suggestionText').val();
-        const section = template.$('#suggestionSectionDropdown').val();
-        const stage = template.$('#suggestionStageDropdown').val();
-        const user = Users.findOne({_id: Session.get('userId')});
-
-        if (!UserInputVerification.verifySection(section)) {
-            template.toast.show("alert-danger", "Please enter a valid section!");
-            return;
-        }
-        if (!UserInputVerification.verifyStage(stage)) {
-            template.toast.show("alert-danger", "Please enter a valid stage!");
-            return;
-        }
-
-        if (!suggestion || !suggestion.trim()) {
-            template.toast.show("alert-danger", "Please enter a suggestion!");
-            return;
-        }
-
-        const allKeywords = Keywords.find().fetch();
-        for (let i = 0; i < allKeywords.length; i++) {
-            if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
-
-                // Already suggested
-                if (allKeywords[i].votes.find((votes) => votes.email === user.email)) {
-                    template.toast.show("alert-danger", "You have already suggested this!");
-                    return;
-                }
-
-                // Already suggested but not enabled yet
-                if (!allKeywords[i].enabled) {
-                    Keywords.update(
-                        {_id: allKeywords[i]._id},
-                        {$addToSet: {votes: {email: user.email, stage: stage}}}
-                    );
-                    template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
-                    clearSuggestionForm(template);
-                    clearAutocomplete(template, false);
-                    clearForm(template);
-                    return;
-                }
-
-                template.toast.show("alert-danger", "Technology already exists!");
-                return;
-            }
-        }
-
-        Keywords.insert({
-            name: suggestion,
-            section: section,
-            enabled: false,
-            votes: [{email: user.email, stage: stage}]
-        });
-
-        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
-        clearSuggestionForm(template);
-        clearAutocomplete(template, false);
-        clearForm(template);
-    },
-
-    'click .stage-option'(event, template) {
-        const selectedStage = $(event.currentTarget).data().value;
-        if (selectedStage === template.selectedStage.get()) {
-            template.selectedStage.set();
-        } else {
-            template.selectedStage.set(selectedStage);
-        }
-    }
 });
 
 function getStage(votes) {
@@ -291,14 +303,9 @@ function clearAutocomplete(template, dirty) {
 function clearForm(template) {
     template.$('#keywordText').val("");
     template.keywordText.set();
-    template.selectedStage.set();
-    template.$("#stageDropdown").val("0");
+    if (template.$('#suggestionSectionDropdown').length) {
+        template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
+    }
     template.$("#sectionText").val("0");
-}
-
-function clearSuggestionForm(template) {
-    template.$('#suggestionText').val("");
-    template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
-    template.$('#suggestionStageDropdown')[0].selectedIndex = 0;
-    template.$("#suggestionModal").modal("hide");
+    template.selectedStage.set();
 }

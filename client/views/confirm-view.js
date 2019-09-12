@@ -3,6 +3,8 @@ import {Users} from '../../imports/api/keywords.js';
 import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
+    Session.set('title', 'Login & vote!');
+
     this.nameText = new ReactiveVar({text: '', valid: true});
     this.emailText = new ReactiveVar({text: '', valid: true});
     this.invalidInput = new ReactiveVar();

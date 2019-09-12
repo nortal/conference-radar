@@ -77,6 +77,7 @@ ul.list-group.list-group-flush > li.list-group-item  {
     font-weight: 700;
     position: relative;
     text-transform: uppercase;
+    transition: 200ms ease-in-out;
     vertical-align: middle;
     width: 25%;
 }

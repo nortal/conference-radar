@@ -15,8 +15,6 @@
                         </ul>
                         Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
                         <p>Share your point of view and vote for an existing placement or add a new one.</p>
-                        <p>If a technology is not on the list, you can suggest it
-                            <a href="#" class="styled-link" data-toggle="modal" data-target="#suggestionModal">here</a>.</p>
                         <p>
                             <a class="styled-link" href="www.nortal.com">nortal.com</a>
                         </p>
@@ -24,34 +22,40 @@
                         <hr class="d-block d-md-none"/>
                     </div>
                     <div class="col-12 pb-4">
-                        <div class="styled-input-group">
-                            <input class="styled-input {{#if isEmpty 'keywordText'}}empty{{/if}}"
-                                   id="keywordText" type="text" name="keywordText"/>
-                            <label>Your vote for candidate:</label>
-                        </div>
-                        <input hidden id="sectionText" type="text" name="sectionText" />
-                        <div class="typeahead" style="width: {{getSelectWidth}}px;">
-                            <div class="typeahead-results">
-                                {{#if noResults}}
-                                    <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
-                                        <div>No results</div>
-                                        <a class="styled-link" href="#" data-toggle="modal" data-target="#suggestionModal" style="font-size: 12px">
-                                            <span class="text-black-50">(</span>
-                                            <span>Add this</span>
-                                            <span class="text-black-50">)</span>
-                                        </a>
-                                    </div>
-                                {{else}}
-                                    {{#each match in matches}}
-                                        <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
-                                            <span>{{match.name}}</span>
-                                            <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                        <input class="styled-input {{#if isEmpty 'keywordText'}}empty{{/if}}"
+                               id="keywordText" type="text" name="keywordText"/>
+                        <label for="keywordText">Your vote for candidate</label>
+                        {{#unless showSuggestionForm}}
+                            <input hidden id="sectionText" type="text" name="sectionText" />
+                            <div class="typeahead" style="width: {{getSelectWidth}}px;">
+                                <div class="typeahead-results">
+                                    {{#if noResults}}
+                                        <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
+                                            <div>No results</div>
                                         </div>
-                                    {{/each}}
-                                {{/if}}
+                                    {{else}}
+                                        {{#each match in matches}}
+                                            <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
+                                                <span>{{match.name}}</span>
+                                                <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                                            </div>
+                                        {{/each}}
+                                    {{/if}}
+                                </div>
                             </div>
-                        </div>
+                        {{/unless}}
                     </div>
+                    {{#if showSuggestionForm}}
+                        <div class="col-12 pb-4">
+                                <select id="suggestionSectionDropdown" name="suggestionSectionDropdown" class="styled-select">
+                                    {{#each sections}}
+                                        <option value='{{id}}'>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                                <label for="suggestionSectionDropdown">Group for candidate</label>
+                                <span class="styled-select-arrow"></span>
+                        </div>
+                    {{/if}}
                     <div class="col-12 d-flex pb-4">
                         {{#each stages}}
                             <div class="noselect stage-option {{id}} {{#if isSelected id}}selected{{/if}}" data-value="{{id}}">
@@ -60,8 +64,14 @@
                             </div>
                         {{/each}}
                     </div>
-                    <div class="col-12 text-right">
-                        <button id="submitButton" type="button" class="submit-button col-12 col-md-6">Submit vote</button>
+                    <div class="col-12 justify-content-between">
+                        {{#if showSuggestionForm}}
+                            <button id="cancelSuggestionButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left">Cancel</button>
+                            <button id="submitSuggestionButton" type="button" class="submit-button col-12 col-md-5 float-right">Add candidate</button>
+                        {{else}}
+                            <button id="suggestButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left">Suggest candidate</button>
+                            <button id="submitButton" type="button" class="submit-button col-12 col-md-5 float-right">Submit vote</button>
+                        {{/if}}
                     </div>
                 </div>
             </div>
@@ -87,44 +97,6 @@
     <div class="toast hide fade" id="toast" data-delay="4000" style="z-index: 7000">
         <div class="toast-body alert-success">
             Contents
-        </div>
-    </div>
-
-    <div class="modal fade" id="suggestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add a new technology</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input class="styled-input" id="suggestionText" type="text" name="suggestionText" placeholder="Enter here" />
-                    </div>
-
-                    <div class="mb-3">
-                        <select id="suggestionSectionDropdown" name="suggestionSectionDropdown" class="styled-select">
-                            {{#each sections}}
-                                <option value='{{id}}'>{{name}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                    <div>
-                        <select id="suggestionStageDropdown" name="suggestionStageDropdown" class="styled-select">
-                            {{#each stages}}
-                                <option value='{{id}}'>{{name}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button id="suggestButton" type="button" class="submit-button">Submit</button>
-                </div>
-            </div>
         </div>
     </div>
 </template>

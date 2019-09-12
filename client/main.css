@@ -174,22 +174,58 @@ body {
     background-size: 65% 65% !important;
 }
 
-.styled-link {
+.styled-link, .styled-link:hover, .styled-link:active, .styled-link:visited {
     color: var(--nortal-green);
     text-decoration: none;
-    font-size: 16px
 }
 
 .styled-select {
-    height: 50px;
-    overflow: hidden;
-    width: 100%;
-    font-family: "Roboto",Arial,sans-serif;
-    font-weight: 300;
-    font-size: 20px;
-    text-align: center;
-    padding: 10px;
     background: transparent;
+    border: 0;
+    border-bottom: 2px solid var(--medium-gray);
+    display: block;
+    caret-color: var(--nortal-green);
+    color: var(--nortal-green);
+    font-size: 20px;
+    overflow: hidden;
+    padding: 10px;
+    transition: border-bottom-color 150ms ease-in-out;
+    width: 100%;
+    -moz-appearance: none;
+    -webkit-appearance:none;
+    appearance:none;
+}
+
+.styled-select-arrow {
+    content: '';
+    position: absolute;
+    right: 25px;
+    top: 10px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--dark-gray);
+    clear: both;
+
+}
+
+.styled-select:focus {
+    border-bottom: 2px solid var(--nortal-green);
+    outline: none;
+}
+
+.styled-select ~ label {
+    left: 25px;
+    position: absolute;
+    pointer-events: none;
+    top: 10px;
+    transition: 250ms ease all 100ms;
+}
+
+.styled-select:focus ~ label, .styled-select:not(.empty) ~ label {
+    top: -18px;
+    font-size: 12px;
     color: var(--nortal-green);
 }
 
@@ -215,32 +251,31 @@ body {
 }
 
 .submit-button {
-    border-radius: 5px;
     background: var(--nortal-green);
-    padding: 0.5rem 4rem 0.5rem 4rem;
-    height: 55px;
-    font-weight: 100;
-    font-size: 20px;
-    color: white;
     border: 0;
+    border-radius: 5px;
+    color: white;
+    font-size: 20px;
+    font-weight: 100;
+    height: 4rem;
+    padding: 0.5rem 4rem 0.5rem 4rem;
     transition: 0.3s;
 }
 
 .submit-button:hover {
-    background: #007d31; /*FIXME*/
+    background: #007d31;
     transition: 0.3s;
 }
 
 .secondary-button {
-    border-radius: 25px;
     background: white;
-    color: var(--nortal-green);
-    padding: 5px;
-    width: 150px;
-    height: 50px;
-    font-weight: 100;
-    font-size: 20px;
     border: 2px solid var(--nortal-green);
+    border-radius: 5px;
+    color: var(--nortal-green);
+    font-size: 20px;
+    font-weight: 100;
+    height: 4rem;
+    padding: 0.5rem 4rem 0.5rem 4rem;
     transition: 0.3s;
 }
 

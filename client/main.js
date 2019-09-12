@@ -80,3 +80,6 @@ Template.registerHelper('isAdmin', function () {
     const user = Users.findOne({_id: userId});
     return user && user.admin;
 });
+Template.registerHelper('getTitle', function () {
+    return Session.get('title');
+});

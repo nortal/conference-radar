@@ -1,12 +1,12 @@
 <template name="confirm">
     <div class="row pt-4 mb-3">
-        <div class="col-md-6 col-12 mt-4 styled-input-group">
+        <div class="col-md-6 col-12 mt-4">
             <input id="nameText" type="text" name="nameText" class="styled-input {{getClasses 'nameText'}}"
                    value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
             <label>Name</label>
             <span class="errorMessage">{{getInvalidInput}}</span>
         </div>
-        <div class="col-md-6 col-12 my-4 styled-input-group">
+        <div class="col-md-6 col-12 my-4">
             <input id="emailText" type="text" name="emailText" class="styled-input {{getClasses 'emailText'}}"
                    value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
             <label>E-mail</label>
