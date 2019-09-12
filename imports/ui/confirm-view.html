@@ -2,13 +2,13 @@
 
     <div class="row pt-4 mb-3">
         <div class="col-md-6 col-12 mt-4 styled-input-group">
-            <input class="styled-input" id="nameText" type="text" name="nameText"
-                   value="{{getDetails 'name'}}" {{isDisabled 'name'}} required/>
+            <input class="styled-input {{#if isEmpty 'nameText'}}empty{{/if}}" id="nameText" type="text" name="nameText"
+                   value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
             <label>Name</label>
         </div>
         <div class="col-md-6 col-12 my-4 styled-input-group">
-            <input class="styled-input" id="emailText" type="email" name="emailText"
-                   value="{{getDetails 'email'}}" {{isDisabled 'email'}} required/>
+            <input class="styled-input {{#if isEmpty 'emailText'}}empty{{/if}}" id="emailText" type="text" name="emailText"
+                   value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
             <label>E-mail</label>
         </div>
 
@@ -41,8 +41,8 @@
                 </label>
             </div>
 
-            <div class="float-right">
-                <button id="nextButton" type="button" class="submit-button">Start voting!</button>
+            <div class="float-right col-sm-12 col-md-4">
+                <button id="nextButton" type="button" class="submit-button col">Start voting!</button>
             </div>
 
         </div>

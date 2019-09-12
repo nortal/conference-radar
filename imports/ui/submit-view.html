@@ -1,90 +1,86 @@
 <template name="submit">
-    <form class="new-keyword" autocomplete="off">
-        <div class="row">
-
+    <form class="new-keyword pt-4" autocomplete="off">
+        <div class="row pt-2 mb-3">
             <div class="col-12 col-md-6">
-                <div>
-                    <p>Build Stuff Tech Radar</p>
-                    <p>Share your opinion!</p>
-                    <p>Each  on a radar is called a blip that is positioned in a quadrant:
+                <div class="row">
+                    <div class="col-12 pb-4">
+                        <p>Build Stuff Tech Radar</p>
+                        <p>Share your opinion!</p>
+                        <p>Each  on a radar is called a blip that is positioned in a quadrant:
                         <ul>
                             <li>Tools</li>
                             <li>Languages and Frameworks</li>
                             <li>Platforms</li>
                             <li>Techniques</li>
                         </ul>
-                            Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
-                    <p>Share your point of view and vote for an existing placement or add a new one.</p>
-                    <p>If a technology is not on the list, you can suggest it
-                        <a href="#" class="styled-link" data-toggle="modal" data-target="#suggestionModal">here</a>.</p>
-                    <p>
-                        <a class="styled-link" href="www.nortal.com">nortal.com</a>
-                    </p>
+                        Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
+                        <p>Share your point of view and vote for an existing placement or add a new one.</p>
+                        <p>If a technology is not on the list, you can suggest it
+                            <a href="#" class="styled-link" data-toggle="modal" data-target="#suggestionModal">here</a>.</p>
+                        <p>
+                            <a class="styled-link" href="www.nortal.com">nortal.com</a>
+                        </p>
 
-                    <hr class="d-block d-md-none"/>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6">
-                {{#with submittedKeywords}}
-                    {{#if this}}
-                        <ul class="list-group">
-                        {{#each keyword in this}}
-                            <li class="list-group-item d-flex justify-content-between py-2 px-3">
-                                <div class="d-block mr-2 text-left">
-                                    <div class="font-weight-bold styled-link">{{keyword.name}}</div>
-                                    <div class="text-black-50 small">{{getSectionName keyword.section}} - {{getStageName keyword.votes}}</div>
-                                </div>
-                                <button type="button" class="close remove" aria-label="Close" data-value="{{keyword._id}}">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </li>
-                        {{/each}}
-                        </ul>
-                        <hr>
-                    {{/if}}
-                {{/with}}
-
-                <div>
-                    <input class="styled-input" id="keywordText" type="text" name="keywordText" placeholder="Enter Here" />
-                    <input hidden id="sectionText" type="text" name="sectionText" />
-                    <div class="typeahead" style="width: {{getSelectWidth}}px;">
-                        <div class="typeahead-results">
-                            {{#if noResults}}
-                                <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
-                                    <div>No results</div>
-                                    <a class="styled-link" href="#" data-toggle="modal" data-target="#suggestionModal" style="font-size: 12px">
-                                        <span class="text-black-50">(</span>
-                                        <span>Add this</span>
-                                        <span class="text-black-50">)</span>
-                                    </a>
-                                </div>
-                            {{else}}
-                                {{#each match in matches}}
-                                    <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
-                                        <span>{{match.name}}</span>
-                                        <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                        <hr class="d-block d-md-none"/>
+                    </div>
+                    <div class="col-12 pb-4">
+                        <div class="styled-input-group">
+                            <input class="styled-input {{#if isEmpty 'keywordText'}}empty{{/if}}"
+                                   id="keywordText" type="text" name="keywordText"/>
+                            <label>Your vote for candidate:</label>
+                        </div>
+                        <input hidden id="sectionText" type="text" name="sectionText" />
+                        <div class="typeahead" style="width: {{getSelectWidth}}px;">
+                            <div class="typeahead-results">
+                                {{#if noResults}}
+                                    <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
+                                        <div>No results</div>
+                                        <a class="styled-link" href="#" data-toggle="modal" data-target="#suggestionModal" style="font-size: 12px">
+                                            <span class="text-black-50">(</span>
+                                            <span>Add this</span>
+                                            <span class="text-black-50">)</span>
+                                        </a>
                                     </div>
-                                {{/each}}
-                            {{/if}}
+                                {{else}}
+                                    {{#each match in matches}}
+                                        <div class="typeahead-result" data-name="{{match.name}}" data-section="{{match.section}}">
+                                            <span>{{match.name}}</span>
+                                            <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                                        </div>
+                                    {{/each}}
+                                {{/if}}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <select id="stageDropdown" name="stage" class="styled-select">
-                        <option value='0' disabled selected>Ring</option>
+                    <div class="col-12 d-flex pb-4">
                         {{#each stages}}
-                            <option value='{{id}}'>{{name}}</option>
+                            <div class="noselect stage-option {{id}} {{#if isSelected id}}selected{{/if}}" data-value="{{id}}">
+                                <div>{{name}}</div>
+                                <div class="stage-option-line"></div>
+                            </div>
                         {{/each}}
-                    </select>
-                </div>
-
-                <div class="text-right">
-                    <button id="submitButton" type="button" class="submit-button col-md-5 col-sm-12">Submit</button>
+                    </div>
+                    <div class="col-12 text-right">
+                        <button id="submitButton" type="button" class="submit-button col-12 col-md-6">Submit vote</button>
+                    </div>
                 </div>
             </div>
 
-
+            <div class="col-12 col-md-6 pt-5 pt-md-0">
+                <div class="candidates-title mb-3">YOUR CANDIDATES:</div>
+                {{#if submittedKeywords}}
+                    {{#each keyword in submittedKeywords}}
+                        <div class="candidates-vote {{getStage keyword.votes}}">
+                            <span class="noselect">{{keyword.name}}</span>
+                            <button type="button" class="close remove" aria-label="Close" data-value="{{keyword._id}}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <span>You haven't voted for any candidates yet!</span>
+                {{/if}}
+            </div>
         </div>
     </form>
 

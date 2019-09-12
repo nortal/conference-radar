@@ -4,10 +4,13 @@ import {Keywords, Users} from '../../imports/api/keywords.js';
 import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
+import '/imports/ui/submit-view.css';
 
 Template.submit.onCreated(function () {
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
+    this.keywordText = new ReactiveVar();
+    this.selectedStage = new ReactiveVar();
 });
 
 Template.submit.onRendered(function () {
@@ -31,21 +34,24 @@ Template.submit.onRendered(function () {
 Template.submit.helpers({
     submittedKeywords: () => {
         const user = Users.findOne({_id: Session.get('userId')});
-        return Keywords.find({votes: {$elemMatch: {email: user.email}}}).fetch();
+        if (!user) {
+            return null;
+        }
+        return Keywords.find({votes: {$elemMatch: {email: user.email}}}).fetch()
+            .sort((kw1, kw2) => {
+                const stage1 = Stages.find((stage) => stage.id === getStage(kw1.votes));
+                const stage2 = Stages.find((stage) => stage.id === getStage(kw2.votes));
+                return stage1 !== stage2 ? stage2.value - stage1.value : stage1.name - stage2.name;
+            });
     },
     stages: () => {
-        return Stages
+        return Stages.reverse();
     },
     sections: () => {
         return Sections
     },
-    getStageName: (votes) => {
-        const user = Users.findOne({_id: Session.get('userId')});
-        const vote = _.find(votes, (vote) =>  vote.email === user.email);
-        return Stages.find(s => s.id === vote.stage).name;
-    },
-    getSectionName: (id) => {
-        return Sections.find(s => s.id === id).name;
+    getStage: (votes) => {
+        return getStage(votes);
     },
     getByStage: (votes, stage) => {
         return votes.filter(vote => vote.stage === stage.id);
@@ -59,6 +65,12 @@ Template.submit.helpers({
     },
     getSelectWidth: () => {
         return Template.instance().selectWidth.get();
+    },
+    isEmpty: function (key) {
+        return !Template.instance()[key].get();
+    },
+    isSelected: function (stage) {
+        return Template.instance().selectedStage.get() === stage;
     }
 });
 
@@ -96,7 +108,7 @@ Template.submit.events({
 
         const user = Users.findOne({_id: Session.get('userId')});
         var keywordName = template.$("#keywordText").val();
-        var chosenStage = template.$("#stageDropdown").val();
+        var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
 
         if (!UserInputVerification.verifyStage(chosenStage)) {
@@ -147,6 +159,7 @@ Template.submit.events({
     'keyup #keywordText': _.debounce((event, template) => {
         event.preventDefault();
 
+        template.keywordText.set(template.$("#keywordText").val());
         template.selectWidth.set(event.target.getBoundingClientRect().width);
         clearAutocomplete(template, true);
 
@@ -166,7 +179,7 @@ Template.submit.events({
         const value = event.target.value.toLowerCase();
 
         template.autocomplete.get().matches = Keywords
-            .find({ enabled: true, name: { $regex: value, $options: 'i' } })
+            .find({enabled: true, name: {$regex: value, $options: 'i'}})
             .fetch()
             .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
             .slice(0, 11);
@@ -254,8 +267,22 @@ Template.submit.events({
         clearSuggestionForm(template);
         clearAutocomplete(template, false);
         clearForm(template);
+    },
+
+    'click .stage-option'(event, template) {
+        const selectedStage = $(event.currentTarget).data().value;
+        if (selectedStage === template.selectedStage.get()) {
+            template.selectedStage.set();
+        } else {
+            template.selectedStage.set(selectedStage);
+        }
     }
 });
+
+function getStage(votes) {
+    const user = Users.findOne({_id: Session.get('userId')});
+    return _.find(votes, (vote) => vote.email === user.email).stage;
+}
 
 function clearAutocomplete(template, dirty) {
     template.autocomplete.set({matches: [], dirty: dirty});
@@ -263,6 +290,8 @@ function clearAutocomplete(template, dirty) {
 
 function clearForm(template) {
     template.$('#keywordText').val("");
+    template.keywordText.set();
+    template.selectedStage.set();
     template.$("#stageDropdown").val("0");
     template.$("#sectionText").val("0");
 }

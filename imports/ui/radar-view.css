@@ -1,10 +1,103 @@
-.column {
-    float: left;
-    width: 50%;
+.position-marker {
+    fill: var(--medium-gray);
 }
 
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
+.dotted-line {
+    stroke: var(--medium-gray);
+    stroke-width: 1;
+    stroke-dasharray: 1, 1.5;
+}
+
+.line-separator {
+    fill: var(--medium-gray);
+    width: 1px;
+}
+
+.dotted-line-thick {
+    stroke: black;
+    stroke-opacity: 0.8;
+    stroke-width: 1;
+    stroke-dasharray: 2;
+}
+
+.radar-label {
+    background-color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    justify-content: flex-end;
+    padding: 1.5rem 1rem 0.5rem 1rem;
+}
+
+.scaled-main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.scaled-quadrant-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 0;
+    font-size: 1.25rem;
+}
+
+@media (min-width: 576px) {
+    .scaled-main-title {
+        font-size: 3.5rem;
+    }
+    .scaled-quadrant-title {
+        font-size: 1.25rem;
+    }
+}
+
+.quadrant-svg-wrapper {
+    background-color: white;
+    border: 2px solid var(--light-gray);
+    border-top: none;
+    height: 100%;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.quadrant .quadrant-title-container {
+    border-bottom: 8px solid var(--nortal-green);
+    position: relative;
+    width: 100%;
+}
+
+.radar-row-header-title,
+.radar-row-footer-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.radar-row-name {
+    fill: var(--dark-gray);
+    font-size: 10px;
+}
+
+.quadrant-log {
+    background-color: var(--terminal-background);
+    font-size: 0.75rem;
+    color: var(--nortal-green);
+}
+
+.log-row > * {
+    padding-right: 0.25rem;
+    white-space: nowrap;
+}
+.log-row > .log-row-timestamp {
+    padding-right: 0;
+}
+.log-row > .log-row-index {
+    color: var(--terminal-row-number);
+    padding-right: 0.5rem;
+}
+.log-row > .log-row-technology,
+.log-row > .log-row-stage {
+    color: var(--light-gray);
+}
+.log-row > .log-row-stage {
+    text-transform: capitalize;
 }

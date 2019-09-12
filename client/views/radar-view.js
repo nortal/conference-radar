@@ -5,6 +5,7 @@ import { Stages, Sections } from '../../imports/api/constants.js';
 import { GetQueryParam } from '../../imports/api/shared.js';
 import d3 from 'd3';
 import _ from 'underscore';
+import '/imports/ui/radar-view.css';
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
