@@ -13,6 +13,7 @@ Template.radar.onCreated(function () {
     this.selectedQuadrant = Sections.find(s => s.id === this.data);
     this.logs = new ReactiveVar({frameworks: [], platforms: [], techniques: [], tools: []});
     this.voteCounts = {};
+    this.layout = getLayoutParams();
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
@@ -65,18 +66,20 @@ Template.radar.helpers({
         return Stages;
     },
     quadrants: function() {
-        return Sections;
+        return Template.instance().layout.sections;
     },
     quadrantClass: function() {
-        switch (GetQueryParam["rows"]) {
-            case "1":
+        const layout = Template.instance().layout;
+
+        switch (layout.rowCount) {
+            case 1:
                 return "col-3";
-            case "2":
+            case 2:
                 return "col-6";
-            case "4":
+            case 4:
                 return "col-12";
             default:
-                return "col-12 col-sm-6 col-lg-3"
+                return "col-12 col-sm-6 col-xl-3"
         }
     },
     getLogs: function (section) {
@@ -313,10 +316,12 @@ function initializeSvg(svg, data) {
 
     const mainData = sortData(data, columnWidth);
     const headerFooterData = buildHeaderData(columnWidth);
+    const totalRowHeight = calculateDataRowY(mainData.length);
+    const titleDataBind = columnWidth.toString() + totalRowHeight;
 
     buildMain(svg, mainData);
     buildHeader(svg, {
-        parent: [columnWidth],
+        parent: [titleDataBind],
         child: headerFooterData,
         yOffset: 0,
         groupClass: 'radar-row-header',
@@ -326,7 +331,7 @@ function initializeSvg(svg, data) {
     // find position of last element so we can append the footer
     const footerOffset = calculateDataRowY(mainData.length - 1) - verticalOffset;
     buildHeader(svg, {
-        parent: [columnWidth],
+        parent: [titleDataBind],
         child: headerFooterData,
         yOffset: footerOffset,
         groupClass: 'radar-row-footer',
@@ -399,7 +404,6 @@ function initializeEntries(keywords) {
     return summarizedBlips;
 }
 
-
 const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
@@ -417,7 +421,6 @@ function getQuartile(score) {
         return -1;
     }
 }
-
 
 function appendLog(template, id, data) {
     const keyword = Keywords.findOne({_id: id});
@@ -457,4 +460,24 @@ function appendLog(template, id, data) {
     }
 
     template.logs.set(logs);
+}
+
+function getLayoutParams() {
+    const layout = {
+        rowCount: 0,
+        sections: Sections
+    };
+
+    let rows = GetQueryParam('rows');
+    if (rows) {
+        layout.rowCount = parseInt(rows);
+    }
+
+    let sections = GetQueryParam('sections');
+    if (sections) {
+        const paramSections = sections.split(',');
+        layout.sections = Sections.filter(s => paramSections.includes(s.id));
+    }
+
+    return layout;
 }
