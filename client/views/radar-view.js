@@ -132,7 +132,7 @@ function initializeSvg(svg, data) {
     // padding between entries
     const rowHeightWithPadding = 20;
     // width of labels, cut from line width
-    const labelWidth = 70;
+    const labelWidth = 90;
     // Magic number centers circle on the dotted line
     const headerHeight = 15;
     const verticalOffset = 3.5;
