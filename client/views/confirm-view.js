@@ -3,20 +3,19 @@ import {Users} from '../../imports/api/keywords.js';
 import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
-    this.nameText = new ReactiveVar();
-    this.emailText = new ReactiveVar();
+    this.nameText = new ReactiveVar({text: '', valid: true});
+    this.emailText = new ReactiveVar({text: '', valid: true});
     this.invalidInput = new ReactiveVar();
 });
 
 Template.confirm.events({
     'keyup #nameText': function (event, template) {
-        template.nameText.set(template.$("#nameText").val());
+        template.nameText.set({text: template.$("#nameText").val(), valid: true});
     },
     'keyup #emailText': function (event, template) {
-        template.emailText.set(template.$("#emailText").val());
+        template.emailText.set({text: template.$("#emailText").val(), valid: true});
     },
     'click #nextButton': function (event, template) {
-
         event.preventDefault();
 
         const signUpDetails = Session.get('signUpDetails');
@@ -25,6 +24,13 @@ Template.confirm.events({
         const recruitmentChecked = template.$('#recruitmentCheck').is(':checked');
         const participateChecked = template.$('#participateCheck').is(':checked');
         const termsChecked = template.$('#termsCheck').is(':checked');
+
+        template.nameText.set(
+            {text: template.$("#nameText").val(), valid: UserValidation.name.test(submitName)}
+        );
+        template.emailText.set(
+            {text: template.$("#emailText").val(), valid: UserValidation.email.test(submitEmail.toLowerCase())}
+        );
 
         if (!submitEmail || !UserValidation.email.test(submitEmail.toLowerCase())) {
             template.invalidInput.set("Invalid email");
@@ -80,8 +86,9 @@ Template.confirm.events({
 });
 
 Template.confirm.helpers({
-    isEmpty: function(inputName) {
-        return !Template.instance()[inputName].get();
+    getClasses: function (inputName) {
+        const input = Template.instance()[inputName].get();
+        return (input.text.length ? '' : 'empty') + (input.valid ? '' : ' error');
     },
     isDisabled: function (key) {
         const details = Session.get('signUpDetails');

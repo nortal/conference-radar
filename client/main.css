@@ -118,9 +118,30 @@ body {
     color: var(--nortal-green);
 }
 
+.styled-input.error {
+    border-bottom: 2px solid var(--avoid);
+    color: var(--avoid);
+}
+
+.styled-input.error ~ label {
+    color: var(--avoid);
+}
+
+.styled-input ~ .errorMessage {
+    display: none;
+}
+
+.styled-input.error ~ .errorMessage {
+    color: var(--avoid);
+    display: block;
+    font-size: 0.75rem;
+    left: 10px;
+    padding-top: 0.4rem;
+    position: relative;
+}
+
 .styled-input:disabled {
     background-color: var(--light-gray);
-    color: var(--nortal-green);
 }
 
 .custom-control-input:active ~ .custom-control-label::before {

@@ -1,15 +1,16 @@
 <template name="confirm">
-
     <div class="row pt-4 mb-3">
         <div class="col-md-6 col-12 mt-4 styled-input-group">
-            <input class="styled-input {{#if isEmpty 'nameText'}}empty{{/if}}" id="nameText" type="text" name="nameText"
+            <input id="nameText" type="text" name="nameText" class="styled-input {{getClasses 'nameText'}}"
                    value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
             <label>Name</label>
+            <span class="errorMessage">{{getInvalidInput}}</span>
         </div>
         <div class="col-md-6 col-12 my-4 styled-input-group">
-            <input class="styled-input {{#if isEmpty 'emailText'}}empty{{/if}}" id="emailText" type="text" name="emailText"
+            <input id="emailText" type="text" name="emailText" class="styled-input {{getClasses 'emailText'}}"
                    value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
             <label>E-mail</label>
+            <span class="errorMessage">{{getInvalidInput}}</span>
         </div>
 
 <!--        <p>-->
@@ -17,14 +18,12 @@
 <!--        </p>-->
 
         <div class="col-12">
-
             <div class="custom-control custom-checkbox mb-3">
                 <input type="checkbox" class="custom-control-input" id="participateCheck" name="participateCheck">
                 <label class="custom-control-label" for="participateCheck">
                     I want to be notified, when final Technology Radar is published
                 </label>
             </div>
-
             <div class="custom-control custom-checkbox mb-3">
                 <input type="checkbox" class="custom-control-input" id="recruitmentCheck" name="recruitmentCheck">
                 <label class="custom-control-label" for="recruitmentCheck">
@@ -33,21 +32,17 @@
                     <a class="styled-link" href="https://nortal.com/recruitment-and-hiring-privacy-statement/">Privacy policy</a>
                 </label>
             </div>
-
             <div class="custom-control custom-checkbox mb-4">
                 <input type="checkbox" class="custom-control-input" id="termsCheck" name="termsCheck">
                 <label class="custom-control-label" for="termsCheck">
                     I agree to my data being stored and used to anonymously display statistics on Technology Radar
                 </label>
             </div>
-
             <div class="float-right col-sm-12 col-md-4">
                 <button id="nextButton" type="button" class="submit-button col">Start voting!</button>
             </div>
-
         </div>
     </div>
-
     <div class="toast" id="toast" data-delay="4000">
         <div class="toast-body alert-danger mb-0">
             {{getInvalidInput}}
