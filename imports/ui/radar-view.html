@@ -1,20 +1,34 @@
 <template name="radarLayout">
-    <div class="container-fluid px-2 px-md-5 pt-md-3 radar">
-        {{> yield}}
+    <div class="background-circle">
+    </div>
+
+    <div class="container-fluid pt-4 px-5 radar">
+        <div class="row">
+            <div class="d-md-none d-flex justify-content-between align-items-end w-100 pb-3">
+                <img src="/images/logo_geekout.png" width="25%" alt="">
+                <img src="/images/logo_nortal.png" width="25%" alt="">
+            </div>
+            <div class="d-none d-md-flex justify-content-between align-items-end w-100 pb-3">
+                <img src="/images/logo_geekout.png" width="15%" alt="">
+                <img src="/images/logo_techradar.png" width="25%" alt="">
+                <img src="/images/logo_nortal.png" width="15%" alt="">
+            </div>
+
+            <div class="col-12 d-flex justify-content-md-center flex-column flex-md-row p-0 pb-4 pb-md-5">
+                <div class="radar-candidates-vote text-center">Vote for your candidate:</div>
+                <div class="radar-candidates-vote-link text-center">nortal.com/radar-vote</div>
+            </div>
+
+            <div class="col-12 px-0">
+                {{> yield}}
+            </div>
+        </div>
     </div>
 </template>
 
 
 <template name="radar">
     <div class="h-100">
-        <div class="d-flex justify-content-between align-items-center py-3 py-sm-0">
-            <div class="scaled-main-title">
-                TECHRADAR
-            </div>
-            <div>
-                <img src="/images/logo_nortal.png" width="200" alt="">
-            </div>
-        </div>
 
         <div class="row pb-4">
             {{#each section in quadrants}}
@@ -36,11 +50,6 @@
             {{/each}}
         </div>
 
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="footer-title">Add and vote for your candidate</div>
-            </div>
-        </div>
     </div>
 </template>
 
