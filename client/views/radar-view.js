@@ -72,15 +72,25 @@ Template.radar.helpers({
     quadrantClass: function() {
         const layout = Template.instance().layout;
 
-        switch (layout.rowCount) {
-            case 1:
-                return "col-3";
-            case 2:
-                return "col-6";
-            case 4:
+        if (layout.sections.length === 4) {
+            switch (layout.rowCount) {
+                case 1:
+                    return "col-3";
+                case 2:
+                    return "col-6";
+                case 4:
+                    return "col-12";
+                default:
+                    return "col-12 col-md-6 col-xl-3"
+            }
+        } else if (layout.sections.length === 2) {
+            if (layout.rowCount === 2) {
                 return "col-12";
-            default:
-                return "col-12 col-md-6 col-xl-3"
+            } else {
+                return "col-6";
+            }
+        } else {
+            return "col-12";
         }
     },
     getLogs: function (section) {
