@@ -38,6 +38,7 @@ Template.radar.onRendered(function () {
         added: function (id, data) {
             // added keywords
             self.voteCounts[id] = data.votes.length;
+            appendLog(self, id, data);
         },
         removed: function (id, data) {
             // removed keywords
@@ -461,17 +462,32 @@ function appendLog(template, id, data) {
         return (index < 10 ? '0' : '') + index;
     };
 
+    const stageColorClass = function (stage) {
+        switch (stage) {
+            case 'avoid':
+                return 'color-avoid';
+            case 'assess':
+                return 'color-assess';
+            case 'trial':
+                return 'color-trial';
+            case 'adopt':
+                return 'log-row-stage';
+        }
+    };
+
     const logs = template.logs.get();
     const sectionLogs = logs[keyword.section];
     const nextLogIndex = sectionLogs.length
         ? parseInt(sectionLogs[sectionLogs.length - 1].index) + 1
         : 0;
+    const stage =  keyword.votes[keyword.votes.length - 1].stage;
 
     logs[keyword.section].push({
         index: transformIndex(nextLogIndex),
         timestamp: makeTimestamp(),
         technology: keyword.name,
-        stage: keyword.votes[keyword.votes.length - 1].stage
+        stageClass: stageColorClass(stage),
+        stage: stage
     });
 
     // trim to last n entries

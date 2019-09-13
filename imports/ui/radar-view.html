@@ -61,7 +61,8 @@
             <span class="log-row-event">@Geekout</span>
             <span class="log-row-technology">{{log.technology}}</span>
             <span>got</span>
-            <span class="log-row-stage">{{log.stage}}</span>
+            <span class="{{log.stageClass}}">{{log.stage}}</span>
+            <span>vote</span>
         </div>
     {{/each}}
 </template>
