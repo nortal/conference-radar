@@ -56,8 +56,8 @@
     border: 2px solid var(--light-gray);
     border-top: none;
     height: 100%;
-    padding-left: .5rem;
-    padding-right: .5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .quadrant .quadrant-title-container {

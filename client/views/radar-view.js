@@ -79,7 +79,7 @@ Template.radar.helpers({
             case 4:
                 return "col-12";
             default:
-                return "col-12 col-sm-6 col-xl-3"
+                return "col-12 col-md-6 col-xl-3"
         }
     },
     getLogs: function (section) {
