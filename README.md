@@ -44,3 +44,13 @@ Adjust parameters according to use.
 [Documentation](https://developers.google.com/identity/sign-in/web/sign-in)
 1. Create Google API Console project [here](https://console.developers.google.com) and configure it for sign in
 3. Grab app client ID, update app's settings json
+
+## Radar page query parameters
+
+* `sections` - comma separated list of sections 
+* `rows` - number of rows to display the sections in
+* `filterTop` - get top n entries
+* `labelWidth` - width of labels in pixels
+* `logSize` - number of log entries to display
+
+An example: http://localhost/radar?sections=frameworks,tools&logSize=5&labelWidth=80&filterTop=30&rows=1
