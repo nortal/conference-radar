@@ -434,7 +434,7 @@ function appendLog(template, id, data) {
 
     const makeTimestamp = function () {
         const now = new Date();
-        return now.getHours() + ':' + now.getMinutes();
+        return ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
     };
 
     const transformIndex = function (index) {
