@@ -9,7 +9,6 @@ import '/imports/ui/radar-view.css';
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
-    this.legends = new ReactiveVar();
     this.selectedQuadrant = Sections.find(s => s.id === this.data);
     this.logs = new ReactiveVar({frameworks: [], platforms: [], techniques: [], tools: []});
     this.voteCounts = {};
@@ -143,13 +142,14 @@ function initializeSvg(svg, data) {
     // padding between entries
     const rowHeightWithPadding = 20;
     // width of labels, cut from line width
-    const labelWidth = 90;
+    const labelWidth = parseInt(GetQueryParam('labelWidth')) || 90;
     // Magic number centers circle on the dotted line
     const headerHeight = 15;
     const verticalOffset = 3.5;
     // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
     const lineSeparatorHeight = 6;
+    const filterTop = parseInt(GetQueryParam('filterTop')) || 15;
 
     const calculateDataRowY = function (index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
@@ -339,7 +339,7 @@ function initializeSvg(svg, data) {
         // votes descending
         data = _.sortBy(data, 'votes').reverse();
         // top 15
-        data = data.slice(0, GetQueryParam("top") || 15);
+        data = data.slice(0, filterTop);
         // score descending
         return _.sortBy(data, 'graphScore').reverse();
     };
@@ -500,9 +500,11 @@ function appendLog(template, id, data) {
         stage: stage
     });
 
+    const logSize = parseInt(GetQueryParam('logSize')) || 3;
+
     // trim to last n entries
-    if (logs[keyword.section].length > 3) {
-        logs[keyword.section] = logs[keyword.section].slice(1, 4);
+    if (logs[keyword.section].length > logSize) {
+        logs[keyword.section] = logs[keyword.section].slice(1, logSize + 1);
     }
 
     template.logs.set(logs);
