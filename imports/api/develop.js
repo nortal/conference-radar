@@ -66,7 +66,7 @@ export const DevelopFunctions = {
                 Keywords.update(
                     { _id: randomQuadrant._id },
                     {
-                        $addToSet: {votes: {email: email, stage: randomStage}}
+                        $addToSet: {votes: {email: email, stage: randomStage, time: Date.now()}}
                     });
             }
         }

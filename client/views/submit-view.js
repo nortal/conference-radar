@@ -205,7 +205,7 @@ Template.submit.events({
                 if (!allKeywords[i].enabled) {
                     Keywords.update(
                         {_id: allKeywords[i]._id},
-                        {$addToSet: {votes: {email: user.email, stage: stage}}}
+                        {$addToSet: {votes: {email: user.email, stage: stage, time: Date.now()}}}
                     );
                     template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
                     clearAutocomplete(template, false);
@@ -222,7 +222,7 @@ Template.submit.events({
             name: suggestion,
             section: section,
             enabled: false,
-            votes: [{email: user.email, stage: stage}]
+            votes: [{email: user.email, stage: stage, time: Date.now()}]
         });
 
         template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
@@ -284,7 +284,7 @@ Template.submit.events({
         Keywords.update(
             {_id: keyword._id},
             {
-                $addToSet: {votes: {email: user.email, stage: chosenStage}}
+                $addToSet: {votes: {email: user.email, stage: chosenStage, time: Date.now()}},
             });
 
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
