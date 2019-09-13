@@ -13,11 +13,12 @@
     width: 1px;
 }
 
+.line-separator-thick {
+    fill: var(--gray);
+}
+
 .dotted-line-thick {
-    stroke: black;
-    stroke-opacity: 0.8;
-    stroke-width: 1;
-    stroke-dasharray: 2;
+    stroke: var(--gray);
 }
 
 .radar-label {

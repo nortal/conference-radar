@@ -189,6 +189,26 @@ function initializeSvg(svg, data) {
         return circleRadius;
     };
 
+    const dottedLineClass = function (data, i) {
+        let lineClass = 'dotted-line';
+
+        if (isFirstOfStage(data, i)) {
+            lineClass += ' dotted-line-thick';
+        }
+
+        return lineClass;
+    };
+
+    const tickMarkClass = function (data, i) {
+        let lineClass = 'line-separator';
+
+        if (isFirstOfStage(data, i)) {
+            lineClass += ' line-separator-thick';
+        }
+
+        return lineClass;
+    };
+
     const isFirstOfStage = function (data, i) {
         const currentStage = getStage(data[i].graphScore);
         const blipsOnCurrentStage = data.filter(d => getStage(d.graphScore) === currentStage);
@@ -220,7 +240,7 @@ function initializeSvg(svg, data) {
         enter.append("line")
             .attr("y1", (d, i) => calculateDataRowY(i) - verticalOffset)
             .attr("y2", (d, i) => calculateDataRowY(i) - verticalOffset)
-            .attr("class", "dotted-line")
+            .attr("class", (d, i) => dottedLineClass(data, i))
             .attr("x1", 0)
             .attr("x2", dottedLineLength);
 
@@ -229,7 +249,7 @@ function initializeSvg(svg, data) {
                 .attr("x", placement * dottedLineLength)
                 .attr("y", (d, i) => calculateDataRowY(i) - verticalOffset - lineSeparatorHeight / 2)
                 .attr("height", lineSeparatorHeight)
-                .attr("class", "line-separator");
+                .attr("class", (d, i) => tickMarkClass(data, i));
         });
 
         enter.append("text")
