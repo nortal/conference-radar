@@ -1,8 +1,8 @@
-﻿import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var'
-import { Keywords } from '../../imports/api/keywords.js';
-import { Stages, Sections } from '../../imports/api/constants.js';
-import { GetQueryParam } from '../../imports/api/shared.js';
+﻿import {Template} from 'meteor/templating';
+import {ReactiveVar} from 'meteor/reactive-var'
+import {Keywords} from '../../imports/api/keywords.js';
+import {Sections, Stages} from '../../imports/api/constants.js';
+import {GetQueryParam} from '../../imports/api/shared.js';
 import d3 from 'd3';
 import _ from 'underscore';
 import '/imports/ui/radar-view.css';
@@ -62,13 +62,13 @@ Template.radar.helpers({
     isSingleQuadrantView: function () {
         return Template.instance().selectedQuadrant !== undefined;
     },
-    stages: function() {
+    stages: function () {
         return Stages;
     },
-    quadrants: function() {
+    quadrants: function () {
         return Template.instance().layout.sections;
     },
-    quadrantClass: function() {
+    quadrantClass: function () {
         const layout = Template.instance().layout;
 
         if (layout.sections.length === 4) {
@@ -98,7 +98,7 @@ Template.radar.helpers({
 });
 
 
-Template.radar.onDestroyed(function() {
+Template.radar.onDestroyed(function () {
     $(window).off('resize', throttledOnWindowResize);
 });
 
@@ -136,7 +136,7 @@ function resizeSvg(element) {
     svg.setAttribute("height", bbox.y + bbox.height + bbox.y);
 }
 
-function initializeSvg(svg, data) {
+function initializeSvg(svg, asdasd) {
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
     // padding between entries
@@ -145,6 +145,7 @@ function initializeSvg(svg, data) {
     const labelWidth = parseInt(GetQueryParam('labelWidth')) || 90;
     // Magic number centers circle on the dotted line
     const headerHeight = 15;
+    const headerOffset = headerHeight * 1.3; // magic number
     const verticalOffset = 3.5;
     // length of line
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
@@ -162,7 +163,7 @@ function initializeSvg(svg, data) {
         .domain([-4, 4])
         .range([circleRadius, dottedLineLength - circleRadius]);
 
-    const calculateTextColor = function (data, i) {
+    const labelClass = function (data, i) {
         let textClass = "radar-row-name";
 
         if (isFirstOfStage(data, i)) {
@@ -174,11 +175,13 @@ function initializeSvg(svg, data) {
         return textClass;
     };
 
-    const calculateCircleColor = function (data, i) {
+    const circleClass = function (data, i) {
         let circleClass = "position-marker";
 
         if (isFirstOfStage(data, i)) {
             const currentStage = getStage(data[i].graphScore);
+
+            console.log(data[i].name, 'is the first of stage', currentStage)
             circleClass += " color-" + currentStage;
         }
 
@@ -211,7 +214,7 @@ function initializeSvg(svg, data) {
         return blipsOnCurrentStage[0] === data[i];
     };
 
-    const getStage = function(graphScore) {
+    const getStage = function (graphScore) {
         const scorePercentage = calculateBlipX(graphScore) / dottedLineLength * 100;
 
         if (scorePercentage > 75) {
@@ -225,9 +228,28 @@ function initializeSvg(svg, data) {
         }
     };
 
-    const buildMain = function(selection, data) {
+    const buildCols = function (selection, data) {
+        const nodes = selection.selectAll('g.radar-col')
+            .data(data.columns, d => d);
+
+        const enter = nodes.enter()
+            .append('g')
+            .merge(nodes)
+            .attr('class', 'radar-col');
+
+        buildTitles(enter);
+        buildRows(enter);
+
+        nodes.exit().remove();
+    };
+
+    const buildRows = function (selection) {
+        let data;
         const nodes = selection.selectAll("g.radar-row")
-            .data(data, (d,i) => d.width + d.name + d.graphScore + i);
+            .data((d) => {
+                data = d.rows;
+                return d.rows;
+            }, d => d.key);
 
         const enter = nodes.enter()
             .append("g")
@@ -236,11 +258,11 @@ function initializeSvg(svg, data) {
         enter.append("line")
             .attr("y1", (d, i) => calculateDataRowY(i) - verticalOffset)
             .attr("y2", (d, i) => calculateDataRowY(i) - verticalOffset)
-            .attr("class", (d, i) => dottedLineClass(data, i))
+            .attr("class", (d, i, c) => dottedLineClass(c, i))
             .attr("x1", 0)
             .attr("x2", dottedLineLength);
 
-        _.each([0,0.25,0.50,0.75,1], (placement) => {
+        _.each([0, 0.25, 0.50, 0.75, 1], (placement) => {
             enter.append("rect")
                 .attr("x", placement * dottedLineLength)
                 .attr("y", (d, i) => calculateDataRowY(i) - verticalOffset - lineSeparatorHeight / 2)
@@ -252,107 +274,86 @@ function initializeSvg(svg, data) {
             .text(d => d.name)
             .attr("y", (d, i) => calculateDataRowY(i))
             .attr("x", columnWidth - labelWidth)
-            .attr("class", (d,i) => calculateTextColor(data, i));
+            .attr("class", (d, i) => labelClass(data, i));
 
         enter.append("circle")
-            .attr("cy", (d, i) => Math.max(calculateDataRowY(i) - verticalOffset),0)
-            .attr("class", (d,i) => calculateCircleColor(data, i))
+            .attr("cy", (d, i) => Math.max(calculateDataRowY(i) - verticalOffset), 0)
+            .attr("class", (d, i) => circleClass(data, i))
             .transition().duration(500)
             .attr("cx", (d, i) => calculateBlipX(d.graphScore))
             .attr("r", 2)
             .transition().duration(500)
             .attr("r", circleRadius);
 
-        nodes.merge(enter);
         nodes.exit().remove();
     };
 
-    const buildHeader = function (selection, data) {
-        const nodes = selection.selectAll('g.' + data.groupClass)
-            .data(data.parent, (d) => d.toString());
+    const buildTitles = function (selection) {
+        const nodes = selection.selectAll('g.radar-col-title')
+            .data((d) => d.titles, d => d);
 
         const enter = nodes.enter()
             .append('g')
-            .attr('class', data.groupClass)
-            .call(d => buildHeaderTexts(d, data));
+            .merge(nodes)
+            .attr('class', 'radar-col-title');
 
-        nodes.merge(enter);
+        buildTitleTexts(enter);
+
         nodes.exit().remove();
     };
 
-    const buildHeaderTexts = function (selection, data) {
-        const nodes = selection.selectAll('text.' + data.textClass)
-            .data(data.child);
+    const buildTitleTexts = function (selection) {
+        const nodes = selection.selectAll('text.radar-col-title')
+            .data((d) => d, d => d.key);
 
-        const sectionLength = dottedLineLength / data.child.length;
-        const centerOffset = sectionLength / 2;
+        const sectionLength = dottedLineLength / 4;
 
         const enter = nodes.enter()
             .append('text')
-            .attr('class', (d) => data.textClass + ' color-' + d.name)
-            .attr("y", data.yOffset + headerHeight * 1.3)
-            .attr("x", (d,i) => i * sectionLength + centerOffset);
+            .attr('class', (d) => 'radar-col-title color-' + d.id)
+            .attr("y", (d) => d.yOffset)
+            .attr("x", (d, i) => i * sectionLength + sectionLength / 2);
 
         enter.append('tspan')
-            .text(d => d.name)
+            .text(d => d.id)
             .attr("text-anchor", "middle");
 
-        nodes.merge(enter);
         nodes.exit().remove();
     };
 
-    const buildHeaderData = function(width) {
-        // get stages
-        const stages = Stages.map(stage => stage.id).reverse();
-
-        // bind width to each stage
-        const data = [];
-        _.each(stages, function (stage) {
-            data.push({
-                name: stage,
-                width: width
-            });
-        });
-
-        return data;
-    };
-
-
-    const sortData = function(data, width) {
-        // add width for binding
-        _.each(data, (d) => d.width = width);
+    const buildDataStructure = function (data) {
         // votes descending
         data = _.sortBy(data, 'votes').reverse();
         // top 15
         data = data.slice(0, filterTop);
         // score descending
-        return _.sortBy(data, 'graphScore').reverse();
+        data = _.sortBy(data, 'graphScore').reverse();
+        // add key for binding
+        _.each(data, (d, i) => (d.key = d.name + i + d.graphScore + window.innerWidth));
+
+        return {
+            columns: [
+                {
+                    titles: [
+                        Stages.map(s => ({
+                            id: s.id,
+                            yOffset: headerOffset,
+                            key: s + data.length + window.innerWidth
+                        })).reverse(),
+                        Stages.map(s => ({
+                            id: s.id,
+                            yOffset: calculateDataRowY(data.length),
+                            key: s + data.length + window.innerWidth
+                        })).reverse()
+                    ],
+                    rows: data
+                }
+            ]
+        };
     };
 
-
-    const mainData = sortData(data, columnWidth);
-    const headerFooterData = buildHeaderData(columnWidth);
-    const totalRowHeight = calculateDataRowY(mainData.length);
-    const titleDataBind = columnWidth.toString() + totalRowHeight;
-
-    buildMain(svg, mainData);
-    buildHeader(svg, {
-        parent: [titleDataBind],
-        child: headerFooterData,
-        yOffset: 0,
-        groupClass: 'radar-row-header',
-        textClass: 'radar-row-header-title'
-    });
-
-    // find position of last element so we can append the footer
-    const footerOffset = calculateDataRowY(mainData.length - 1) - verticalOffset;
-    buildHeader(svg, {
-        parent: [titleDataBind],
-        child: headerFooterData,
-        yOffset: footerOffset,
-        groupClass: 'radar-row-footer',
-        textClass: 'radar-row-footer-title'
-    });
+    const d3DataStructure = buildDataStructure(asdasd);
+    buildCols(svg, d3DataStructure);
 }
 
 /**
@@ -361,7 +362,7 @@ function initializeSvg(svg, data) {
 function mergeBlip(blip, mergedBlips) {
     var mergedBlip = mergedBlips[blip.name];
     if (!mergedBlip) {
-        mergedBlip = { "section": blip.section }
+        mergedBlip = {"section": blip.section}
     }
 
     _.each(blip.votes, function (vote) {
@@ -399,7 +400,12 @@ function initializeEntries(keywords) {
             summarizedBlips[value.section] = [];
         }
 
-        summarizedBlips[value.section].push({ "name": prop, "averageScore": averageScore, "totalScore": totalScore, "votes": totalVotes });
+        summarizedBlips[value.section].push({
+            "name": prop,
+            "averageScore": averageScore,
+            "totalScore": totalScore,
+            "votes": totalVotes
+        });
 
         if (!quartileMaxVotes.hasOwnProperty(value.section)) {
             quartileMaxVotes[value.section] = {0: 0, 1: 0, 2: 0, 3: 0};

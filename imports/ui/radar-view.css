@@ -66,8 +66,7 @@
     width: 100%;
 }
 
-.radar-row-header-title,
-.radar-row-footer-title {
+.radar-col-title {
     font-size: 10px;
     text-transform: uppercase;
     font-weight: 700;
