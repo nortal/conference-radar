@@ -1,6 +1,6 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords, Users} from '../../imports/api/keywords.js';
+import {Keywords} from '../../imports/api/keywords.js';
 import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserInputVerification} from "../../imports/api/shared";
 import _ from 'underscore';
@@ -14,6 +14,8 @@ Template.submit.onCreated(function () {
     this.keywordText = new ReactiveVar();
     this.selectedStage = new ReactiveVar();
     this.showSuggestionForm = new ReactiveVar(false);
+    this.submittedKeywords = new ReactiveVar();
+    setSubmittedKeywords(this);
 });
 
 Template.submit.onRendered(function () {
@@ -35,17 +37,8 @@ Template.submit.onRendered(function () {
 });
 
 Template.submit.helpers({
-    submittedKeywords: () => {
-        const user = Users.findOne({_id: Session.get('userId')});
-        if (!user) {
-            return null;
-        }
-        return Keywords.find({votes: {$elemMatch: {email: user.email}}}).fetch()
-            .sort((kw1, kw2) => {
-                const stage1 = Stages.find((stage) => stage.id === getStage(kw1.votes));
-                const stage2 = Stages.find((stage) => stage.id === getStage(kw2.votes));
-                return stage1 !== stage2 ? stage2.value - stage1.value : stage1.name - stage2.name;
-            });
+    getSubmittedKeywords() {
+        return Template.instance().submittedKeywords.get();
     },
     stages: () => {
         return Stages.reverse();
@@ -80,7 +73,6 @@ Template.submit.helpers({
 Template.submit.events({
     'click button.close.remove'(event, template) {
         const id = $(event.currentTarget).data("value");
-        const user = Users.findOne({_id: Session.get('userId')});
 
         // find matching keyword
         const keyword = Keywords.find({_id: id}).fetch()[0];
@@ -90,7 +82,7 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.email === user.email);
+        const oldVote = keyword.votes.find((vote) => vote.userId === Meteor.userId());
 
         // user has not voted for that
         if (!oldVote) {
@@ -98,11 +90,8 @@ Template.submit.events({
             return;
         }
 
-        Keywords.update(
-            {_id: id},
-            {
-                $pull: {votes: {email: user.email, stage: oldVote.stage}},
-            });
+        Meteor.call('removeVote', id, oldVote.stage);
+        setSubmittedKeywords(template);
     },
 
     'keyup #keywordText': _.debounce((event, template) => {
@@ -126,16 +115,13 @@ Template.submit.events({
         };
 
         const value = event.target.value.toLowerCase();
-        // todo replace with one-time lookup
-        const email = Users.findOne({_id: Session.get('userId')}).email;
 
         template.autocomplete.get().matches = Keywords
             .find({enabled: true, name: {$regex: value, $options: 'i'}})
             .fetch()
-            .filter(kw => !kw.votes.some(vote => vote.email === email))
+            .filter(kw => !kw.votes.some(vote => vote.userId === Meteor.userId()))
             .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
             .slice(0, 11);
-
     }, 100),
 
     'mousedown .typeahead-result'(event) {
@@ -178,7 +164,7 @@ Template.submit.events({
         const suggestion = template.$('#keywordText').val();
         const section = template.$('#suggestionSectionDropdown').val();
         const stage = template.selectedStage.get();
-        const user = Users.findOne({_id: Session.get('userId')});
+        const user = Meteor.users.findOne();
 
         if (!UserInputVerification.verifySection(section)) {
             template.toast.show("alert-danger", "Please enter a valid section!");
@@ -199,17 +185,15 @@ Template.submit.events({
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
                 // Already suggested
-                if (allKeywords[i].votes.find((votes) => votes.email === user.email)) {
+                if (allKeywords[i].votes.find((votes) => votes.userId === Meteor.userId())) {
                     template.toast.show("alert-danger", "You have already suggested this!");
                     return;
                 }
 
                 // Already suggested but not enabled yet
                 if (!allKeywords[i].enabled) {
-                    Keywords.update(
-                        {_id: allKeywords[i]._id},
-                        {$addToSet: {votes: {email: user.email, stage: stage, time: Date.now()}}}
-                    );
+                    Meteor.call('addVote', allKeywords[i]._id, stage);
+                    setSubmittedKeywords(template);
                     template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
                     clearAutocomplete(template, false);
                     clearForm(template);
@@ -221,12 +205,8 @@ Template.submit.events({
             }
         }
 
-        Keywords.insert({
-            name: suggestion,
-            section: section,
-            enabled: false,
-            votes: [{email: user.email, stage: stage, time: Date.now()}]
-        });
+        Meteor.call('addSuggestion', suggestion, section, stage);
+        setSubmittedKeywords(template);
 
         template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
         clearAutocomplete(template, false);
@@ -243,7 +223,7 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        const user = Users.findOne({_id: Session.get('userId')});
+        const user = Meteor.users.findOne();
         var keywordName = template.$("#keywordText").val();
         var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
@@ -277,26 +257,34 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.email === user.email);
+        const oldVote = keyword.votes.find((vote) => vote.userId === Meteor.userId());
 
         if (oldVote) {
             template.toast.show("alert-warning", "You have already voted for this option!");
             return;
         }
 
-        Keywords.update(
-            {_id: keyword._id},
-            {
-                $addToSet: {votes: {email: user.email, stage: chosenStage, time: Date.now()}},
-            });
+        Meteor.call('addVote', keyword._id, chosenStage);
+        setSubmittedKeywords(template);
 
         template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
     },
 });
 
 function getStage(votes) {
-    const user = Users.findOne({_id: Session.get('userId')});
-    return _.find(votes, (vote) => vote.email === user.email).stage;
+    return _.find(votes, (vote) => vote.userId === Meteor.userId()).stage;
+}
+
+function setSubmittedKeywords(template) {
+    Meteor.call('getSubmittedKeywords', (error, result) => {
+        if (!error && result) {
+            template.submittedKeywords.set(result.sort((kw1, kw2) => {
+                const stage1 = Stages.find((stage) => stage.id === getStage(kw1.votes));
+                const stage2 = Stages.find((stage) => stage.id === getStage(kw2.votes));
+                return stage1 !== stage2 ? stage2.value - stage1.value : stage1.name - stage2.name;
+            }));
+        }
+    });
 }
 
 function clearAutocomplete(template, dirty) {

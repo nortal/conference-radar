@@ -1,5 +1,4 @@
 import {Template} from 'meteor/templating';
-import {Users} from '../../imports/api/keywords.js';
 import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
@@ -52,36 +51,10 @@ Template.confirm.events({
             return;
         }
 
-        let userId;
-        // check if there is a user with that email
-        const matchingUser = Users.findOne({email: submitEmail});
-
-        if (matchingUser) {
-            userId = matchingUser._id;
-            Users.update(
-                {_id: matchingUser._id},
-                {
-                    $addToSet: {appIds: signUpDetails.appId},
-                    $set: {
-                        wantsRecruitment: recruitmentChecked,
-                        wantsParticipation: participateChecked
-                    }
-                }
-            );
-        } else {
-            userId = Users.insert({
-                appIds: [signUpDetails.appId],
-                name: submitName,
-                email: submitEmail,
-                wantsRecruitment: recruitmentChecked,
-                wantsParticipation: participateChecked,
-                agreesTerms: termsChecked
-            });
-        }
+        Meteor.call('updateUser', submitEmail, recruitmentChecked, participateChecked, termsChecked);
 
         // Order is important. If signUpDetails is cleared first, the user will lose
         // access to the current page and will be redirected back to the front
-        Session.set('userId', userId);
         Router.go('/submit');
         Session.set('signUpDetails', undefined);
     }

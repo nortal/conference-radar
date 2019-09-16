@@ -1,10 +1,10 @@
 import {Template} from 'meteor/templating';
-import {Keywords, Users} from "../../imports/api/keywords";
+import {Keywords} from "../../imports/api/keywords";
 import {DevelopFunctions} from "../../imports/api/develop";
 
 Template.admin.helpers({
     'getAllUsers'() {
-        return Users.find().fetch();
+        return Meteor.users.find();
     },
     'getEnabledKeywords'() {
         return Keywords.find({enabled: true}).fetch();
@@ -33,14 +33,14 @@ Template.adminKeywordVoteList.events({
         const target = $(event.currentTarget);
         const action = target.data('action');
         const stage = target.data('stage');
-        const email = target.data('email');
+        const userId = target.data('userId');
         const id = target.data('id');
 
         if (action === 'delete') {
             Keywords.update(
                 { _id: id },
                 {
-                    $pull: {votes: {email: email, stage: stage}},
+                    $pull: {votes: {userId: userId, stage: stage}},
                 });
         }
     }

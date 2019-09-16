@@ -15,7 +15,11 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import {DevelopFunctions} from '../imports/api/develop.js';
-import {Users} from "../imports/api/keywords";
+
+Tracker.autorun(() => {
+    Meteor.subscribe('user');
+    Meteor.subscribe('keywords');
+});
 
 Router.configure({
     layoutTemplate: 'mainLayout'
@@ -40,7 +44,7 @@ Router.route('/confirm', function () {
 
 Router.route('/submit', function () {
     // set in login or confirm page
-    if (Session.get('userId')) {
+    if (Meteor.userId()) {
         this.render('submit');
     } else {
         Router.go('/');
@@ -53,13 +57,7 @@ Router.route('/radar', function () {
 });
 
 Router.route('/admin', function () {
-    const userId = Session.get('userId');
-    if (!userId) {
-        Router.go('/');
-        return;
-    }
-
-    const user = Users.findOne({_id: userId});
+    const user = Meteor.users.findOne();;
     if (!user) {
         Router.go('/');
         return;

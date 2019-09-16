@@ -89,9 +89,9 @@
     <ul class="list-group list-group-flush px-3 pt-2">
         {{#each vote in keyword.votes}}
             <li class="list-group-item p-0">
-                <span>{{vote.email}} - {{vote.stage}}</span>
+                <span>{{vote.userId}} - {{vote.stage}}</span>
                 <button type="button" class="close" aria-label="Delete" data-id="{{keyword._id}}"
-                        data-email="{{vote.email}}" data-action="delete" data-stage="{{keyword.stage}}">
+                        data-userId="{{vote.userId}}" data-action="delete" data-stage="{{keyword.stage}}">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </li>
