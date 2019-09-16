@@ -15,10 +15,10 @@
     </div>
 
     <div class="row">
-        <div class="col-6">
+        <div class="col-12 col-md-6 order-1 order-md-0 pb-3">
             {{> adminKeywordList title='Enabled keywords' collection=getEnabledKeywords}}
         </div>
-        <div class="col-6">
+        <div class="col-12 col-md-6 order-0 order-md-1 pb-3">
             {{> adminKeywordList title='Pending keywords' collection=getDisabledKeywords}}
         </div>
     </div>
@@ -40,7 +40,7 @@
 
 <template name="adminKeywordList">
     <h1>{{title}}</h1>
-        <ul class="list-group">
+    <ul class="list-group">
             {{#if collection}}
                 {{#each keyword in collection}}
                     <li class="list-group-item">
