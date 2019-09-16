@@ -448,8 +448,8 @@ function appendLog(template, id, data) {
         return;
     }
 
-    const makeTimestamp = function () {
-        const now = new Date();
+    const makeTimestamp = function (lastVote) {
+        const now = new Date(lastVote.time);
         return ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
     };
 
@@ -475,14 +475,14 @@ function appendLog(template, id, data) {
     const nextLogIndex = sectionLogs.length
         ? parseInt(sectionLogs[sectionLogs.length - 1].index) + 1
         : 0;
-    const stage =  keyword.votes[keyword.votes.length - 1].stage;
+    const lastVote = keyword.votes[keyword.votes.length - 1];
 
     logs[keyword.section].push({
         index: transformIndex(nextLogIndex),
-        timestamp: makeTimestamp(),
+        timestamp: makeTimestamp(lastVote),
         technology: keyword.name,
-        stageClass: stageColorClass(stage),
-        stage: stage
+        stageClass: stageColorClass(lastVote.stage),
+        stage: lastVote.stage
     });
 
     const logSize = parseInt(GetQueryParam('logSize')) || 3;
