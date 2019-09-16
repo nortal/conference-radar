@@ -9,8 +9,8 @@ Meteor.startup(() => {
         initialDatabaseConfiguration(keywordClassifier);
     }
 
-    createServiceConfiguration('facebook', Meteor.settings.public.auth.facebook.appId, Meteor.settings.public.auth.facebook.secret);
-    createServiceConfiguration('google', Meteor.settings.public.auth.google.clientId, Meteor.settings.public.auth.google.secret);
+    createServiceConfiguration('facebook', Meteor.settings.private.auth.facebook.appId, Meteor.settings.private.auth.facebook.secret);
+    createServiceConfiguration('google', Meteor.settings.private.auth.google.clientId, Meteor.settings.private.auth.google.secret);
 
     Accounts.onCreateUser((options, user) => {
         if (user.services.google) {

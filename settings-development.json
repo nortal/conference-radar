@@ -1,13 +1,17 @@
 {
   "public": {
-    "environment": "development",
+    "environment": "development"
+  },
+  "private": {
     "auth": {
       "google": {
-        "clientId": ""
+        "clientId": "",
+        "secret": ""
       },
       "facebook": {
         "appId": "",
-        "apiVersion": ""
+        "apiVersion": "",
+        "secret": ""
       }
     }
   }
