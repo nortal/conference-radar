@@ -126,10 +126,13 @@ Template.submit.events({
         };
 
         const value = event.target.value.toLowerCase();
+        // todo replace with one-time lookup
+        const email = Users.findOne({_id: Session.get('userId')}).email;
 
         template.autocomplete.get().matches = Keywords
             .find({enabled: true, name: {$regex: value, $options: 'i'}})
             .fetch()
+            .filter(kw => !kw.votes.some(vote => vote.email === email))
             .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
             .slice(0, 11);
 
