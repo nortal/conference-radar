@@ -150,6 +150,7 @@ function initializeSvg(svg, data) {
     const dottedLineLength = columnWidth - labelWidth - 6; // Magic number adds spacing
     const lineSeparatorHeight = 6;
     const filterTop = parseInt(GetQueryParam('filterTop')) || 15;
+    const circleRadius = 5;
 
     const calculateDataRowY = function (index) {
         const calculatedY = (index + 1) * rowHeightWithPadding;
@@ -157,15 +158,9 @@ function initializeSvg(svg, data) {
         return itemIndexInColumn * rowHeightWithPadding + headerHeight;
     };
 
-    const calculateBlipX = function (score) {
-        const blipX = d3.scaleLinear()
-            .domain([-4, 4])
-            // We substract maximum score marker radius for spacing
-            .range([4, dottedLineLength - 4]);
-
-        return blipX(score);
-    };
-
+    const calculateBlipX = d3.scaleLinear()
+        .domain([-4, 4])
+        .range([circleRadius, dottedLineLength - circleRadius]);
 
     const calculateTextColor = function (data, i) {
         let textClass = "radar-row-name";
@@ -188,16 +183,6 @@ function initializeSvg(svg, data) {
         }
 
         return circleClass;
-    };
-
-    const calculateCircleSize = function (data, i) {
-        let circleRadius = 4;
-
-        if (isFirstOfStage(data, i)) {
-            circleRadius = 5;
-        }
-
-        return circleRadius;
     };
 
     const dottedLineClass = function (data, i) {
@@ -276,7 +261,7 @@ function initializeSvg(svg, data) {
             .attr("cx", (d, i) => calculateBlipX(d.graphScore))
             .attr("r", 2)
             .transition().duration(500)
-            .attr("r", (d,i) => calculateCircleSize(data,i));
+            .attr("r", circleRadius);
 
         nodes.merge(enter);
         nodes.exit().remove();
