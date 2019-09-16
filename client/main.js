@@ -72,12 +72,7 @@ Router.route('/admin', function () {
 
 Template.registerHelper('isDevMode', DevelopFunctions.isDevMode);
 Template.registerHelper('isAdmin', function () {
-    const userId = Session.get('userId');
-    if (!userId) {
-        return false;
-    }
-
-    const user = Users.findOne({_id: userId});
+    const user = Meteor.users.findOne();
     return user && user.admin;
 });
 Template.registerHelper('getTitle', function () {

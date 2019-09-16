@@ -1,4 +1,4 @@
-import {Keywords, Users} from "./keywords";
+import {Keywords} from "./keywords";
 import {Stages} from "./constants";
 
 export const DevelopFunctions = {
@@ -19,7 +19,7 @@ export const DevelopFunctions = {
     clearUsers: () => {
         DevelopFunctions.checkDevMode();
         console.log('clearing users...');
-        Users.find().fetch().forEach((user) => Users.remove({_id: user._id}));
+        Meteor.users.find().fetch().forEach((user) => Meteor.users.remove({_id: user._id}));
         console.log('users cleared');
     },
     clearVotes: () => {
