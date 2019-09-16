@@ -87,19 +87,8 @@
     padding-right: 0.25rem;
     white-space: nowrap;
 }
-.log-row > .log-row-timestamp {
-    padding-right: 0;
-}
-.log-row > .log-row-index {
-    color: var(--terminal-row-number);
-    padding-right: 0.5rem;
-}
-.log-row > .log-row-technology,
-.log-row > .log-row-stage {
+.log-row > .log-row-technology{
     color: var(--light-gray);
-}
-.log-row > .log-row-stage {
-    text-transform: capitalize;
 }
 
 .radar-candidates-vote {
