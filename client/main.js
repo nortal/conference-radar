@@ -56,11 +56,13 @@ Router.route('/admin', function () {
     const userId = Session.get('userId');
     if (!userId) {
         Router.go('/');
+        return;
     }
 
     const user = Users.findOne({_id: userId});
     if (!user) {
         Router.go('/');
+        return;
     }
 
     if (user.admin) {
