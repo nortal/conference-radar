@@ -136,7 +136,7 @@ function resizeSvg(element) {
     svg.setAttribute("height", bbox.y + bbox.height + bbox.y);
 }
 
-function initializeSvg(svg, asdasd) {
+function initializeSvg(svg, initialData) {
     // width of current column
     const columnWidth = svg.node().parentNode.getBoundingClientRect().width;
     // padding between entries
@@ -258,7 +258,7 @@ function initializeSvg(svg, asdasd) {
         enter.append("line")
             .attr("y1", (d, i) => calculateDataRowY(i) - verticalOffset)
             .attr("y2", (d, i) => calculateDataRowY(i) - verticalOffset)
-            .attr("class", (d, i, c) => dottedLineClass(c, i))
+            .attr("class", (d, i) => dottedLineClass(data, i))
             .attr("x1", 0)
             .attr("x2", dottedLineLength);
 
@@ -352,7 +352,7 @@ function initializeSvg(svg, asdasd) {
         };
     };
 
-    const d3DataStructure = buildDataStructure(asdasd);
+    const d3DataStructure = buildDataStructure(initialData);
     buildCols(svg, d3DataStructure);
 }
 
