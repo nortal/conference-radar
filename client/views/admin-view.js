@@ -1,6 +1,5 @@
 import {Template} from 'meteor/templating';
 import {Keywords} from "../../imports/api/keywords";
-import {DevelopFunctions} from "../../imports/api/develop";
 
 Template.admin.helpers({
     'getAllUsers'() {
@@ -50,15 +49,15 @@ Template.adminKeywordList.helpers({
 
 Template.adminControl.events({
     'click #randomGenButton'() {
-        DevelopFunctions.generateRandomData();
+        Meteor.call('generateRandomDataDev');
     },
     'click #databaseClearButton'() {
-        DevelopFunctions.clearDatabase();
+        Meteor.call('clearDatabaseDev');
     },
     'click #votesClearButton'() {
-        DevelopFunctions.clearVotes();
+        Meteor.call('clearVotesDev');
     },
     'click #usersClearButton'() {
-        DevelopFunctions.clearUsers();
+        Meteor.call('clearUsersDev');
     }
 });

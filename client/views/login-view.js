@@ -1,5 +1,4 @@
 import {Template} from 'meteor/templating';
-import {DevelopFunctions} from "../../imports/api/develop";
 import '/imports/ui/login-view.css';
 
 function loginOrSignUp() {
