@@ -56,8 +56,13 @@
 <template name="radarLog">
     {{#each log in collection}}
         <div class="log-row d-flex overflow-hidden">
-            <span>Geekout@{{log.timestamp}} voted</span>
-            <span class="log-row-technology">{{log.technology}} - <span class="text-capitalize">{{log.stage}}</span></span>
+            <span class="log-row-index">{{log.index}}</span>
+            <span class="pr-0">{{log.timestamp}}</span>
+            <span>@Geekout</span>
+            <span class="log-row-technology">{{log.technology}}</span>
+            <span>got</span>
+            <span class="text-capitalize color-{{log.stage}}">{{log.stage}}</span>
+            <span>vote</span>
         </div>
     {{/each}}
 </template>

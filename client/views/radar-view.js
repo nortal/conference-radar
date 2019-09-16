@@ -463,19 +463,6 @@ function appendLog(template, id, data) {
         return (index < 10 ? '0' : '') + index;
     };
 
-    const stageColorClass = function (stage) {
-        switch (stage) {
-            case 'avoid':
-                return 'color-avoid';
-            case 'assess':
-                return 'color-assess';
-            case 'trial':
-                return 'color-trial';
-            case 'adopt':
-                return 'log-row-stage';
-        }
-    };
-
     const logs = template.logs.get();
     const sectionLogs = logs[keyword.section];
     const nextLogIndex = sectionLogs.length
@@ -487,7 +474,6 @@ function appendLog(template, id, data) {
         index: transformIndex(nextLogIndex),
         timestamp: makeTimestamp(lastVote),
         technology: keyword.name,
-        stageClass: stageColorClass(lastVote.stage),
         stage: lastVote.stage
     });
 

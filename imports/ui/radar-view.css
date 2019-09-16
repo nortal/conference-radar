@@ -83,12 +83,28 @@
     color: var(--nortal-green);
 }
 
-.log-row > * {
+.log-row > .color-assess {
+    color: #8B67AD;
+}
+.log-row > .color-trial {
+    color: #0098DB;
+}
+.log-row > .color-adopt {
+    color: var(--light-gray);
+}
+.log-row > span {
     padding-right: 0.25rem;
     white-space: nowrap;
 }
-.log-row > .log-row-technology{
+.log-row > .log-row-index {
+    color: var(--terminal-row-number);
+    padding-right: 0.5rem;
+}
+.log-row > .log-row-technology {
     color: var(--light-gray);
+}
+.log-row > .log-row-stage {
+    text-transform: capitalize;
 }
 
 .radar-candidates-vote {
