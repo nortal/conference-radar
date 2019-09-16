@@ -15,15 +15,15 @@ Template.admin.helpers({
 });
 
 Template.adminKeywordList.events({
-    'click button[data-action]'(event, template) {
+    'click button[data-action]'(event) {
         const target = $(event.target);
         const action = target.data('action');
         const id = target.data('id');
 
         if (action === 'delete') {
-            Keywords.remove({_id: id});
+            Meteor.call('removeKeywordAdmin', id);
         } else {
-            Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
+            Meteor.call('updateKeywordAdmin', id, action);
         }
     }
 });
@@ -37,11 +37,7 @@ Template.adminKeywordVoteList.events({
         const id = target.data('id');
 
         if (action === 'delete') {
-            Keywords.update(
-                { _id: id },
-                {
-                    $pull: {votes: {userId: userId, stage: stage}},
-                });
+            Meteor.call('removeVoteAdmin', id, userId, stage)
         }
     }
 });
