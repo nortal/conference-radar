@@ -35,4 +35,12 @@ export const UserInputVerification = {
         const keywords = Keywords.find({ name: keyword, section: section }).fetch();
         return keywords.length;
     },
+    verifySuggestion(keyword) {
+        if (!keyword) {
+            return false;
+        }
+
+        keyword = keyword.trim();
+        return keyword && keyword.length < 32;
+    },
 };

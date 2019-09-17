@@ -11,6 +11,16 @@ Meteor.methods({
         if (isAdmin(this.userId)) {
             Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
         }
+    },
+    addKeywordAdmin(name, section) {
+        if (isAdmin(this.userId)) {
+            Keywords.insert({
+                name: name,
+                section: section,
+                enabled: false,
+                votes: []
+            });
+        }
     }
 });
 

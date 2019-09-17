@@ -1,5 +1,6 @@
 import {Template} from 'meteor/templating';
 import {Keywords} from "../../imports/api/keywords";
+import {UserInputVerification} from "../../imports/api/shared";
 
 Template.admin.helpers({
     'getAllUsers'() {
@@ -24,6 +25,26 @@ Template.adminKeywordList.events({
         } else {
             Meteor.call('updateKeywordAdmin', id, action);
         }
+    }
+});
+
+Template.adminAddKeyword.events({
+    'click #addKeywordButton'() {
+        const name = $('#addKeywordName');
+        const section = $('#addKeywordSection');
+
+        if (!UserInputVerification.verifySection(section.val())) {
+            console.log('Invalid section');
+            return;
+        }
+        if (!UserInputVerification.verifySuggestion(name.val())) {
+            console.log('Invalid name');
+            return;
+        }
+
+        Meteor.call('addKeywordAdmin', name.val(), section.val());
+        name.val('');
+        section.val('');
     }
 });
 
