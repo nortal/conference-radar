@@ -56,7 +56,7 @@ Meteor.methods({
                 Keywords.update(
                     {_id: randomQuadrant._id},
                     {
-                        $addToSet: {votes: {email: email, stage: randomStage, time: Date.now()}}
+                        $addToSet: {votes: {userId: "email", stage: randomStage, time: Date.now()}}
                     });
             }
         }

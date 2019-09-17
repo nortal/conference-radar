@@ -32,7 +32,7 @@ Template.adminKeywordVoteList.events({
         const target = $(event.currentTarget);
         const action = target.data('action');
         const stage = target.data('stage');
-        const userId = target.data('userId');
+        const userId = target.data('userid');
         const id = target.data('id');
 
         if (action === 'delete') {

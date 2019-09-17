@@ -2,7 +2,7 @@ import {Meteor} from "meteor/meteor";
 import {Keywords} from "../imports/api/keywords";
 
 Meteor.methods({
-    removeKeywordAdmin() {
+    removeKeywordAdmin(id) {
         if (isAdmin(this.userId)) {
             Keywords.remove({_id: id});
         }
