@@ -36,9 +36,6 @@ Meteor.publish('user', function () {
 });
 
 Meteor.publish('keywords', function () {
-    if (!this.userId) {
-        return this.ready();
-    }
     return Keywords.find();
 });
 
