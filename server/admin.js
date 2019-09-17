@@ -11,15 +11,6 @@ Meteor.methods({
         if (isAdmin(this.userId)) {
             Keywords.update({_id: id}, {$set: {enabled: action === 'enable'}});
         }
-    },
-    removeVoteAdmin(id, userId, stage) {
-        if (isAdmin(this.userId)) {
-            Keywords.update(
-                { _id: id },
-                {
-                    $pull: {votes: {userId: userId, stage: stage}},
-                });
-        }
     }
 });
 

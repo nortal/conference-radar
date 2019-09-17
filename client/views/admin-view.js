@@ -27,20 +27,6 @@ Template.adminKeywordList.events({
     }
 });
 
-Template.adminKeywordVoteList.events({
-    'click button[data-action]'(event, template) {
-        const target = $(event.currentTarget);
-        const action = target.data('action');
-        const stage = target.data('stage');
-        const userId = target.data('userid');
-        const id = target.data('id');
-
-        if (action === 'delete') {
-            Meteor.call('removeVoteAdmin', id, userId, stage)
-        }
-    }
-});
-
 Template.adminKeywordList.helpers({
     'keywordColorClass'(enabled) {
         return enabled ? 'text-success' : 'text-danger';
