@@ -4,34 +4,21 @@
             <div class="col-12 col-md-6">
                 <div class="row">
                     <div class="col-12 pb-4">
-                        <p>Build Stuff Tech Radar</p>
-                        <p>Share your opinion!</p>
-                        <p>Each  on a radar is called a blip that is positioned in a quadrant:
-                        <ul>
-                            <li>Tools</li>
-                            <li>Languages and Frameworks</li>
-                            <li>Platforms</li>
-                            <li>Techniques</li>
-                        </ul>
-                        Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p>
-                        <p>Share your point of view and vote for an existing placement or add a new one.</p>
-                        <p>
-                            <a class="styled-link" href="www.nortal.com">nortal.com</a>
-                        </p>
-
+                        {{{_ "submit.description"}}}
+                        <p><a class="styled-link" href="www.nortal.com">nortal.com</a></p>
                         <hr class="d-block d-md-none"/>
                     </div>
                     <div class="col-12 pb-4">
                         <input class="styled-input {{#if isEmpty 'keywordText'}}empty{{/if}}"
                                id="keywordText" type="text" name="keywordText"/>
-                        <label for="keywordText">Your vote for candidate</label>
+                        <label for="keywordText">{{_ "submit.your_vote"}}</label>
                         {{#unless showSuggestionForm}}
                             <input hidden id="sectionText" type="text" name="sectionText" />
                             <div class="typeahead" style="width: {{getSelectWidth}}px;">
                                 <div class="typeahead-results">
                                     {{#if noResults}}
                                         <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
-                                            <div>No results</div>
+                                            <div>{{_ "no_results"}}</div>
                                         </div>
                                     {{else}}
                                         {{#each match in matches}}
@@ -52,7 +39,7 @@
                                         <option value='{{id}}'>{{name}}</option>
                                     {{/each}}
                                 </select>
-                                <label for="suggestionSectionDropdown">Group for candidate</label>
+                                <label for="suggestionSectionDropdown">{{_ "submit.group"}}</label>
                                 <span class="styled-select-arrow"></span>
                         </div>
                     {{/if}}
@@ -66,18 +53,18 @@
                     </div>
                     <div class="col-12 justify-content-between">
                         {{#if showSuggestionForm}}
-                            <button id="cancelSuggestionButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">Cancel</button>
-                            <button id="submitSuggestionButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">Add candidate</button>
+                            <button id="cancelSuggestionButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.cancel"}}</button>
+                            <button id="submitSuggestionButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_suggestion"}}</button>
                         {{else}}
-                            <button id="suggestButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">Suggest candidate</button>
-                            <button id="submitButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">Submit vote</button>
+                            <button id="suggestButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.add_suggestion"}}</button>
+                            <button id="submitButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_vote"}}</button>
                         {{/if}}
                     </div>
                 </div>
             </div>
 
             <div class="col-12 col-md-6 pt-5 pt-md-0">
-                <div class="candidates-title mb-3">YOUR CANDIDATES:</div>
+                <div class="candidates-title mb-3">{{_ "submit.your_votes"}}</div>
                 {{#if getSubmittedKeywords}}
                     {{#each keyword in getSubmittedKeywords}}
                         <div class="candidates-vote {{getStage keyword.votes}}">
@@ -88,7 +75,7 @@
                         </div>
                     {{/each}}
                 {{else}}
-                    <span>You haven't voted for any candidates yet!</span>
+                    <span>{{_ "submit.no_votes"}}</span>
                 {{/if}}
             </div>
         </div>
@@ -96,7 +83,7 @@
 
     <div class="toast hide fade" id="toast" data-delay="4000" style="z-index: 7000">
         <div class="toast-body alert-success">
-            Contents
+            {{{_ "Contents"}}}
         </div>
     </div>
 </template>

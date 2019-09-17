@@ -1,0 +1,73 @@
+{
+  "admin": {
+    "add_new_keyword": "Add a new keyword",
+    "clear_keywords": "Clear keywords",
+    "clear_users": "Clear users",
+    "clear_votes": "Clear votes",
+    "delete": "Delete",
+    "developer_controls": "Developer controls",
+    "disable": "Disable",
+    "enable": "Enable",
+    "enabled_keywords": "Enabled keywords",
+    "generate_votes": "Gen random votes",
+    "keyword": "Keyword",
+    "panel": "Admin panel",
+    "pending_keywords": "Pending keywords",
+    "role": "(Admin)",
+    "save": "Save",
+    "section": "Section",
+    "users": "Users",
+    "votes": "%s votes"
+  },
+  "confirm": {
+    "email": "E-mail",
+    "email_invalid": "Invalid e-mail",
+    "name": "Name",
+    "name_invalid": "Invalid name",
+    "participate": "I want to be notified, when final Technology Radar is published",
+    "privacy_policy": "Privacy policy",
+    "recruitment": "Nortal can contact me about future job opportunities for up to 3 years",
+    "start_voting": "Start voting!",
+    "terms": "I agree to my data being stored and used to anonymously display statistics on Technology Radar",
+    "terms_invalid": "You must accept the terms before proceeding"
+  },
+  "footer": "Add and vote for your candidate!",
+  "login": {
+    "description": "You are signing in to Nortal TechRadar website.",
+    "facebook": "Login with Facebook",
+    "google": "Login with Google",
+    "loading": "Loading..."
+  },
+  "no_results": "No results",
+  "submit": {
+    "add_suggestion": "Suggest candidate",
+    "already_exists": "Technology already exists!",
+    "already_suggested": "You have already suggested this!",
+    "already_voted": "You have already voted for this option!",
+    "cancel": "Cancel",
+    "description": "<p>Build Stuff Tech Radar</p><p>Share your opinion!</p><p>Each  on a radar is called a blip that is positioned in a quadrant:<ul><li>Tools</li><li>Languages and Frameworks</li><li>Platforms</li><li>Techniques</li></ul>Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p><p>Share your point of view and vote for an existing placement or add a new one.</p>",
+    "enter_valid_section": "Please enter a valid section!",
+    "enter_valid_stage": "Please enter a valid stage!",
+    "enter_valid_suggestion": "Please enter a suggestion!",
+    "group": "Group of candidate",
+    "invalid_section": "Invalid section!",
+    "invalid_stage": "Invalid stage!",
+    "invalid_keyword": "Invalid keyword!",
+    "no_votes": "You haven't voted for any candidates yet!",
+    "not_found": "Could not find that keyword!",
+    "not_voted": "You have not voted for that option!",
+    "opinion_saved": "Thank you!<br>Your opinion has been saved.",
+    "submit_suggestion": "Add candidate",
+    "submit_vote": "Submit vote",
+    "suggestion_saved": "Thank you!<br>Your suggestion has been saved.",
+    "your_vote": "Your vote from candidate",
+    "your_votes": "YOUR CANDIDATES:"
+  },
+  "radar": {
+    "vote": "Vote for your candidate:"
+  },
+  "title": {
+    "login_and_vote": "Login & Vote!",
+    "vote": "Vote!"
+  }
+}

@@ -2,7 +2,7 @@ import {Template} from 'meteor/templating';
 import {UserValidation} from '../../imports/api/constants.js';
 
 Template.confirm.onCreated(function () {
-    Session.set('title', 'Login & vote!');
+    Session.set('title', 'title.login_and_vote');
 
     this.nameText = new ReactiveVar({text: '', valid: true});
     this.emailText = new ReactiveVar({text: '', valid: true});
@@ -34,19 +34,19 @@ Template.confirm.events({
         );
 
         if (!submitEmail || !UserValidation.email.test(submitEmail.toLowerCase())) {
-            template.invalidInput.set("Invalid email");
+            template.invalidInput.set("confirm.email_invalid");
             $("#toast").toast("show");
             return;
         }
 
         if (!submitName || !UserValidation.name.test(submitName)) {
-            template.invalidInput.set("Invalid name");
+            template.invalidInput.set("confirm.name_invalid");
             $("#toast").toast("show");
             return;
         }
 
         if (!termsChecked) {
-            template.invalidInput.set("You must accept the terms before proceeding");
+            template.invalidInput.set("confirm.terms_invalid");
             $("#toast").toast("show");
             return;
         }

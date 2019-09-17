@@ -3,14 +3,14 @@
         <div class="col-md-6 col-12 mt-4">
             <input id="nameText" type="text" name="nameText" class="styled-input {{getClasses 'nameText'}}"
                    value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
-            <label>Name</label>
-            <span class="errorMessage">{{getInvalidInput}}</span>
+            <label>{{_ "confirm.name"}}</label>
+            <span class="errorMessage">{{_ getInvalidInput}}</span>
         </div>
         <div class="col-md-6 col-12 my-4">
             <input id="emailText" type="text" name="emailText" class="styled-input {{getClasses 'emailText'}}"
                    value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
-            <label>E-mail</label>
-            <span class="errorMessage">{{getInvalidInput}}</span>
+            <label>{{_ "confirm.email"}}</label>
+            <span class="errorMessage">{{_ getInvalidInput}}</span>
         </div>
 
 <!--        <p>-->
@@ -21,31 +21,31 @@
             <div class="custom-control custom-checkbox mb-3">
                 <input type="checkbox" class="custom-control-input" id="participateCheck" name="participateCheck">
                 <label class="custom-control-label" for="participateCheck">
-                    I want to be notified, when final Technology Radar is published
+                    {{_ "confirm.participate"}}
                 </label>
             </div>
             <div class="custom-control custom-checkbox mb-3">
                 <input type="checkbox" class="custom-control-input" id="recruitmentCheck" name="recruitmentCheck">
                 <label class="custom-control-label" for="recruitmentCheck">
-                    Nortal can contact me about future job opportunities for up to 3 years
+                    {{_ "confirm.recruitment"}}
                     <br/>
-                    <a class="styled-link" href="https://nortal.com/recruitment-and-hiring-privacy-statement/">Privacy policy</a>
+                    <a class="styled-link" href="https://nortal.com/recruitment-and-hiring-privacy-statement/">{{_ "confirm.privacy_policy"}}</a>
                 </label>
             </div>
             <div class="custom-control custom-checkbox mb-4">
                 <input type="checkbox" class="custom-control-input" id="termsCheck" name="termsCheck">
                 <label class="custom-control-label" for="termsCheck">
-                    I agree to my data being stored and used to anonymously display statistics on Technology Radar
+                    {{_ "confirm.terms"}}
                 </label>
             </div>
             <div class="float-right col-sm-12 col-md-4">
-                <button id="nextButton" type="button" class="submit-button col">Start voting!</button>
+                <button id="nextButton" type="button" class="submit-button col">{{_ "confirm.start_voting"}}</button>
             </div>
         </div>
     </div>
     <div class="toast" id="toast" data-delay="4000">
         <div class="toast-body alert-danger mb-0">
-            {{getInvalidInput}}
+            {{_ getInvalidInput}}
         </div>
     </div>
 </template>
