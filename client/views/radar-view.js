@@ -195,7 +195,8 @@ function appendLog(template, id, data) {
         index: transformIndex(nextLogIndex),
         timestamp: makeTimestamp(lastVote),
         technology: keyword.name,
-        stage: lastVote.stage
+        stage: lastVote.stage,
+        conference: Meteor.settings.public.conferenceName
     });
 
     const logSize = parseInt(GetQueryParam('logSize')) || 3;

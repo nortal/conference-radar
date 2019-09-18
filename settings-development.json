@@ -1,7 +1,8 @@
 {
   "public": {
     "environment": "development",
-    "conferenceLogo": "logo_geekout.png"
+    "conferenceLogo": "logo_geekout.png",
+    "conferenceName": "Geekout"
   },
   "private": {
     "auth": {
