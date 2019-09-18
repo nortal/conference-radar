@@ -32,21 +32,21 @@
     "terms": "I agree to my data being stored and used to anonymously display statistics on Technology Radar",
     "terms_invalid": "You must accept the terms before proceeding"
   },
-  "footer": "Add and vote for your candidate!",
+  "footer": "Share your opinion!",
   "login": {
-    "description": "You are signing in to Nortal TechRadar website.",
+    "description": "Sign in to Nortal TechRadar 2019",
     "facebook": "Login with Facebook",
     "google": "Login with Google",
     "loading": "Loading..."
   },
   "no_results": "No results",
   "submit": {
-    "add_suggestion": "Suggest candidate",
+    "add_suggestion": "Add new item",
     "already_exists": "Technology already exists!",
     "already_suggested": "You have already suggested this!",
     "already_voted": "You have already voted for this option!",
     "cancel": "Cancel",
-    "description": "<p>Build Stuff Tech Radar</p><p>Share your opinion!</p><p>Each  on a radar is called a blip that is positioned in a quadrant:<ul><li>Tools</li><li>Languages and Frameworks</li><li>Platforms</li><li>Techniques</li></ul>Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p><p>Share your point of view and vote for an existing placement or add a new one.</p>",
+    "description": "<p>GeekOut TechRadar 2019</p><p>Items are divided into four groups - tools, languages and frameworks, platforms, techniques.</p><p>Your vote represents a sentiment towards an item - is it one to avoid, assess, trial or adopt?</p><p>Pick up a flyer from Nortal's booth to find out more!</p>",
     "enter_stage": "Please enter a stage!",
     "enter_valid_stage": "Please enter a valid stage!",
     "enter_section": "Please select a section!",
@@ -64,11 +64,12 @@
     "not_found": "Could not find that keyword!",
     "not_voted": "You have not voted for that option!",
     "opinion_saved": "Thank you!<br>Your opinion has been saved.",
-    "submit_suggestion": "Add candidate",
+    "submit_suggestion": "Add item",
     "submit_vote": "Submit vote",
+    "suggest_this": "(Suggest this)",
     "suggestion_saved": "Thank you!<br>Your suggestion has been saved.",
-    "your_vote": "Your vote from candidate",
-    "your_votes": "YOUR CANDIDATES:"
+    "your_vote": "Type here",
+    "your_votes": "YOUR VOTES:"
   },
   "radar": {
     "vote": "Vote for your candidate:"

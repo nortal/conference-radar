@@ -5,7 +5,6 @@
                 <div class="row">
                     <div class="col-12 pb-4">
                         {{{_ "submit.description"}}}
-                        <p><a class="styled-link" href="www.nortal.com">nortal.com</a></p>
                         <hr class="d-block d-md-none"/>
                     </div>
                     <div class="col-12 pb-4">
@@ -19,7 +18,7 @@
                                     {{#if noResults}}
                                         <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
                                             <div>{{_ "no_results"}}</div>
-                                            <a id="suggestButton" class="styled-link text-black-50" style="cursor: pointer">(Suggest this)</a>
+                                            <a id="suggestButton" class="styled-link text-black-50" style="cursor: pointer">{{_ "submit.suggest_this"}}</a>
                                         </div>
                                     {{else}}
                                         {{#each match in matches}}
@@ -54,11 +53,11 @@
                     </div>
                     <div class="col-12 justify-content-between">
                         {{#if showSuggestionForm}}
-                            <button id="cancelSuggestionButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.cancel"}}</button>
-                            <button id="submitSuggestionButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_suggestion"}}</button>
+                            <button id="submitSuggestionButton" type="button" class="submit-button col-12 col-md-5 mb-3 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_suggestion"}}</button>
+                            <button id="cancelSuggestionButton" type="button" class="secondary-button col-12 col-md-5 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.cancel"}}</button>
                         {{else}}
-                            <button id="suggestButton" type="button" class="secondary-button col-12 col-md-5 mb-3 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.add_suggestion"}}</button>
-                            <button id="submitButton" type="button" class="submit-button col-12 col-md-5 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_vote"}}</button>
+                            <button id="submitButton" type="button" class="submit-button col-12 col-md-5 mb-3 float-right d-flex align-items-center justify-content-center py-0">{{_ "submit.submit_vote"}}</button>
+                            <button id="suggestButton" type="button" class="secondary-button col-12 col-md-5 float-left d-flex align-items-center justify-content-center py-0">{{_ "submit.add_suggestion"}}</button>
                         {{/if}}
                     </div>
                 </div>
