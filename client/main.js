@@ -14,8 +14,6 @@ import './views/admin-view.js';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
-import {DevelopFunctions} from '../imports/api/develop.js';
-
 Tracker.autorun(() => {
     Meteor.subscribe('user');
     Meteor.subscribe('keywords');
@@ -70,7 +68,9 @@ Router.route('/admin', function () {
     }
 });
 
-Template.registerHelper('isDevMode', DevelopFunctions.isDevMode);
+Template.registerHelper('isDevMode', function () {
+    return Meteor.settings.public.environment === "development"
+});
 Template.registerHelper('isAdmin', function () {
     const user = Meteor.users.findOne();
     return user && user.admin;
