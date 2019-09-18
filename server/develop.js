@@ -1,5 +1,6 @@
 import {Keywords} from "../imports/api/keywords";
 import {Stages} from "../imports/api/constants";
+import {Meteor} from "meteor/meteor";
 
 Meteor.methods({
     clearDatabaseDev() {
@@ -56,7 +57,14 @@ Meteor.methods({
                 Keywords.update(
                     {_id: randomQuadrant._id},
                     {
-                        $addToSet: {votes: {userId: "email", stage: randomStage, time: Date.now()}}
+                        $addToSet: {
+                            votes: {
+                                userId: "email",
+                                stage: randomStage,
+                                time: Date.now(),
+                                conference: Meteor.settings.public.conferenceName
+                            }
+                        }
                     });
             }
         }

@@ -48,7 +48,8 @@ Meteor.methods({
                     email: email,
                     wantsRecruitment: wantsRecruitment,
                     wantsParticipation: wantsParticipation,
-                    agreesTerms: agreesTerms
+                    agreesTerms: agreesTerms,
+                    conference: Meteor.settings.public.conferenceName
                 }
             }
         )
@@ -64,7 +65,16 @@ Meteor.methods({
     addVote(id, stage) {
         Keywords.update(
             {_id: id},
-            {$addToSet: {votes: {userId: this.userId, stage: stage, time: Date.now()}}}
+            {
+                $addToSet: {
+                    votes: {
+                        userId: this.userId,
+                        stage: stage,
+                        time: Date.now(),
+                        conference: Meteor.settings.public.conferenceName
+                    }
+                }
+            }
         );
     },
     addSuggestion(name, section, stage) {
@@ -72,7 +82,12 @@ Meteor.methods({
             name: name,
             section: section,
             enabled: false,
-            votes: [{userId: this.userId, stage: stage, time: Date.now()}]
+            votes: [{
+                    userId: this.userId,
+                    stage: stage,
+                    time: Date.now(),
+                    conference: Meteor.settings.public.conferenceName
+                }]
         });
     }
 });
