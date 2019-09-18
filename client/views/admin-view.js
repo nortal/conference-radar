@@ -35,13 +35,13 @@ Template.adminAddKeyword.events({
 
         const sectionResult = UserInputVerification.verifySection(section.val());
         if (!sectionResult.ok) {
-            console.log(sectionResult.message);
+            console.log(TAPi18n.__(sectionResult.message));
             return;
         }
 
         const suggestionResult = UserInputVerification.verifySuggestion(name.val());
         if (!suggestionResult.ok) {
-            console.log(suggestionResult.message);
+            console.log(TAPi18n.__(sectionResult.message));
             return;
         }
 
