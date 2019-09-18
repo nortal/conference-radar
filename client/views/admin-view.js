@@ -33,12 +33,15 @@ Template.adminAddKeyword.events({
         const name = $('#addKeywordName');
         const section = $('#addKeywordSection');
 
-        if (!UserInputVerification.verifySection(section.val())) {
-            console.log('Invalid section');
+        const sectionResult = UserInputVerification.verifySection(section.val());
+        if (!sectionResult.ok) {
+            console.log(sectionResult.message);
             return;
         }
-        if (!UserInputVerification.verifySuggestion(name.val())) {
-            console.log('Invalid name');
+
+        const suggestionResult = UserInputVerification.verifySuggestion(name.val());
+        if (!suggestionResult.ok) {
+            console.log(suggestionResult.message);
             return;
         }
 

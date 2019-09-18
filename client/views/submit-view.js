@@ -166,17 +166,21 @@ Template.submit.events({
         const stage = template.selectedStage.get();
         const user = Meteor.users.findOne();
 
-        if (!UserInputVerification.verifySection(section)) {
-            template.toast.show("alert-danger", "Please enter a valid section!");
-            return;
-        }
-        if (!UserInputVerification.verifyStage(stage)) {
-            template.toast.show("alert-danger", "Please enter a valid stage!");
+        const sectionResult = UserInputVerification.verifySection(section);
+        if (!sectionResult.ok) {
+            template.toast.show("alert-danger", sectionResult.message);
             return;
         }
 
-        if (!suggestion || !suggestion.trim()) {
-            template.toast.show("alert-danger", "Please enter a suggestion!");
+        const stageResult = UserInputVerification.verifyStage(stage);
+        if (!stageResult.ok) {
+            template.toast.show("alert-danger", stageResult.message);
+            return;
+        }
+
+        const suggestionResult = UserInputVerification.verifySuggestion(suggestion);
+        if (!suggestionResult.ok) {
+            template.toast.show("alert-danger", suggestionResult.message);
             return;
         }
 
@@ -228,18 +232,21 @@ Template.submit.events({
         var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
 
-        if (!UserInputVerification.verifyStage(chosenStage)) {
-            template.toast.show("alert-danger", "Invalid stage!");
+        const stageResult = UserInputVerification.verifyStage(chosenStage);
+        if (!stageResult.ok) {
+            template.toast.show("alert-danger", stageResult.message);
             return;
         }
 
-        if (!UserInputVerification.verifySection(chosenSection)) {
-            template.toast.show("alert-danger", "Invalid section!");
+        const sectionResult = UserInputVerification.verifySection(chosenSection);
+        if (!sectionResult.ok) {
+            template.toast.show("alert-danger", sectionResult.message);
             return;
         }
 
-        if (!UserInputVerification.verifyKeyword(chosenSection, keywordName)) {
-            template.toast.show("alert-danger", "Invalid keyword!");
+        const keywordResult = UserInputVerification.verifyKeyword(chosenSection, keywordName);
+        if (!keywordResult.ok) {
+            template.toast.show("alert-danger", keywordResult.message);
             return;
         }
 
