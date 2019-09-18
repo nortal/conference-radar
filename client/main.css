@@ -92,16 +92,17 @@ body {
     border-bottom: 2px solid var(--medium-gray);
     display: block;
     caret-color: var(--nortal-green);
-    color: var(--nortal-green);
+    color: var(--medium-gray);
     font-size: 20px;
     padding: 10px;
-    transition: border-bottom-color 150ms ease-in-out;
+    transition: 150ms ease-in-out;
     width: 100%;
 }
 
 .styled-input:focus {
     border-bottom: 2px solid var(--nortal-green);
     outline: none;
+    color: var(--nortal-green);
 }
 
 .styled-input ~ label {
@@ -110,12 +111,17 @@ body {
     left: 25px;
     top: 10px;
     transition: 250ms ease all 100ms;
+    color: var(--medium-gray);
 }
 
 .styled-input:focus ~ label, .styled-input:disabled ~ label, .styled-input:not(.empty) ~ label {
     top: -18px;
     font-size: 12px;
     color: var(--nortal-green);
+}
+
+.styled-input:not(:focus) ~ label {
+    color: var(--medium-gray);
 }
 
 .styled-input.error {
