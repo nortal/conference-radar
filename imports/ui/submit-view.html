@@ -19,6 +19,7 @@
                                     {{#if noResults}}
                                         <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
                                             <div>{{_ "no_results"}}</div>
+                                            <a id="suggestButton" class="styled-link text-black-50" style="cursor: pointer">(Suggest this)</a>
                                         </div>
                                     {{else}}
                                         {{#each match in matches}}
