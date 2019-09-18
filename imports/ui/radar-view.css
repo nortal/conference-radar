@@ -56,8 +56,19 @@
     border: 2px solid var(--light-gray);
     border-top: none;
     height: 100%;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 1200px) and (max-width: 1300px) {
+    .quadrant-svg-wrapper {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .radar-col-title {
+        font-size: 9px !important;
+    }
 }
 
 .quadrant .quadrant-title-container {
