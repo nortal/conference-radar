@@ -47,7 +47,6 @@
     "already_voted": "You have already voted for this option!",
     "cancel": "Cancel",
     "description": "<p>Build Stuff Tech Radar</p><p>Share your opinion!</p><p>Each  on a radar is called a blip that is positioned in a quadrant:<ul><li>Tools</li><li>Languages and Frameworks</li><li>Platforms</li><li>Techniques</li></ul>Each quadrant is divided into four rings: Avoid, Assess, Trial and Adopt.</p><p>Share your point of view and vote for an existing placement or add a new one.</p>",
-
     "enter_stage": "Please enter a stage!",
     "enter_valid_stage": "Please enter a valid stage!",
     "enter_section": "Please select a section!",
@@ -57,9 +56,6 @@
     "enter_long_suggestion": "Please enter 32 characters at maximum",
     "enter_keyword": "Please enter a keyword!",
     "enter_valid_keyword": "Please enter a valid keyword!",
-
-
-
     "group": "Group of candidate",
     "invalid_section": "Invalid section!",
     "invalid_stage": "Invalid stage!",

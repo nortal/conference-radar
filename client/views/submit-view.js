@@ -204,7 +204,7 @@ Template.submit.events({
                     return;
                 }
 
-                template.toast.show("alert-danger", TAPi18n.__("submit.already.exists"));
+                template.toast.show("alert-danger", TAPi18n.__("submit.already_exists"));
                 return;
             }
         }
@@ -220,7 +220,6 @@ Template.submit.events({
 
     'click #suggestButton'(event, template) {
         template.showSuggestionForm.set(true);
-        clearForm(template);
     },
 
     'click #submitButton'(event, template) {
