@@ -10,7 +10,7 @@
 
     <div class="row pb-3">
         <div class="col">
-            {{> adminUserList title=(_ "admin.users") collection=getAllUsers}}
+            {{> adminUserList title=(_ "admin.users")}}
         </div>
     </div>
 
@@ -94,19 +94,25 @@
 <template name="adminUserList">
     <h1>{{title}}</h1>
     <ul class="list-group">
-        {{#each user in collection}}
-            <li class="list-group-item d-flex align-items-center">
-                <div class="text-success pr-3">
-                    <span class="font-weight-bold mr-1">{{user.name}}</span>
-                    {{#if (user.admin)}}
-                        <span class="text-black-50">{{_ "admin.role"}}</span>
-                    {{/if}}
-                </div>
 
-                <div class="text-black-50">
-                    {{user.email}}
-                </div>
-            </li>
-        {{/each}}
+        {{#if showUsers}}
+            {{#each user in getAllUsers}}
+                <li class="list-group-item d-flex align-items-center">
+                    <div class="text-success pr-3">
+                        <span class="font-weight-bold mr-1">{{user.name}}</span>
+                        {{#if (user.admin)}}
+                            <span class="text-black-50">{{_ "admin.role"}}</span>
+                        {{/if}}
+                    </div>
+
+                    <div class="text-black-50">
+                        {{user.email}}
+                    </div>
+                </li>
+            {{/each}}
+        {{else}}
+            <button id="showUsersButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.show_users"}}</button>
+        {{/if}}
+
     </ul>
 </template>

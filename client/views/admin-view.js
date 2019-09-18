@@ -1,16 +1,33 @@
 import {Template} from 'meteor/templating';
 import {Keywords} from "../../imports/api/keywords";
 import {UserInputVerification} from "../../imports/api/shared";
+import {Meteor} from "meteor/meteor";
 
 Template.admin.helpers({
-    'getAllUsers'() {
-        return Meteor.users.find();
-    },
     'getEnabledKeywords'() {
         return Keywords.find({enabled: true}).fetch();
     },
     'getDisabledKeywords'() {
         return Keywords.find({enabled: false}).fetch();
+    }
+});
+
+Template.adminUserList.onCreated(function () {
+    this.showUsers = new ReactiveVar(false);
+});
+
+Template.adminUserList.helpers({
+    'getAllUsers'() {
+        return Meteor.users.find();
+    },
+    'showUsers'() {
+        return Template.instance().showUsers.get();
+    }
+});
+
+Template.adminUserList.events({
+    'click #showUsersButton'(event, template) {
+        template.showUsers.set(true);
     }
 });
 
