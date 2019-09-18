@@ -50,7 +50,7 @@ Template.login.events({
 });
 
 Template.login.onCreated(function () {
-    Session.set('title', 'Login & vote!');
+    Session.set('title', 'title.login_and_vote');
 
     this.inProgress = new ReactiveVar(false);
 });

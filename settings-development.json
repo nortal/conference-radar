@@ -1,6 +1,7 @@
 {
   "public": {
-    "environment": "development"
+    "environment": "development",
+    "conferenceLogo": "logo_geekout.png"
   },
   "private": {
     "auth": {
@@ -10,7 +11,6 @@
       },
       "facebook": {
         "appId": "",
-        "apiVersion": "",
         "secret": ""
       }
     }

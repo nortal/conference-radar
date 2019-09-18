@@ -37,13 +37,13 @@ Adjust parameters according to use.
 [Documentation](https://developers.facebook.com/docs/facebook-login/web)
 1. Create facebook app [here](https://developers.facebook.com/apps/) (requires developer account)
 2. Add login functionality
-3. Grab app ID and API version, update app's settings json
+3. Grab app ID and secret, update app's settings json
 
 ### Google
         
 [Documentation](https://developers.google.com/identity/sign-in/web/sign-in)
 1. Create Google API Console project [here](https://console.developers.google.com) and configure it for sign in
-3. Grab app client ID, update app's settings json
+3. Grab app client ID and secret, update app's settings json
 
 ## Radar page query parameters
 

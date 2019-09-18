@@ -3,14 +3,14 @@
     {{#if isDevMode}}
     <div class="row pb-3">
         <div class="col">
-            {{> adminControl title='Developer controls'}}
+            {{> adminControl title=(_ "admin.developer_controls")}}
         </div>
     </div>
     {{/if}}
 
     <div class="row pb-3">
         <div class="col">
-            {{> adminUserList title='Users' collection=getAllUsers}}
+            {{> adminUserList title=(_ "admin.users") collection=getAllUsers}}
         </div>
     </div>
 
@@ -22,23 +22,23 @@
 
     <div class="row">
         <div class="col-12 col-md-6 order-1 order-md-0 pb-3">
-            {{> adminKeywordList title='Enabled keywords' collection=getEnabledKeywords}}
+            {{> adminKeywordList title=(_ "admin.enabled_keywords") collection=getEnabledKeywords}}
         </div>
         <div class="col-12 col-md-6 order-0 order-md-1 pb-3">
-            {{> adminKeywordList title='Pending keywords' collection=getDisabledKeywords}}
+            {{> adminKeywordList title=(_ "admin.pending_keywords") collection=getDisabledKeywords}}
         </div>
     </div>
 
 </template>
 
 <template name="adminAddKeyword">
-    <h1>Add a new keyword</h1>
+    <h1>{{_ "admin.add_new_keyword"}}</h1>
 
     <div class="input-group">
-        <input id="addKeywordName" type="text" placeholder="Keyword" aria-label="Keyword name" class="form-control">
-        <input id="addKeywordSection" type="text" placeholder="Section" aria-label="Section name" class="form-control">
+        <input id="addKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" aria-label="Keyword name" class="form-control">
+        <input id="addKeywordSection" type="text" placeholder="{{_ "admin.section"}}" aria-label="Section name" class="form-control">
         <div class="input-group-append">
-            <button id="addKeywordButton" type="button" class="btn btn-sm btn-outline-success">Save</button>
+            <button id="addKeywordButton" type="button" class="btn btn-sm btn-outline-success">{{_ "admin.save"}}</button>
         </div>
     </div>
 </template>
@@ -48,10 +48,10 @@
     <h1>{{title}}</h1>
 
     <div>
-        <button id="randomGenButton" type="button" class="btn btn-sm btn-outline-danger">Gen random votes</button>
-        <button id="votesClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear votes</button>
-        <button id="usersClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear users</button>
-        <button id="databaseClearButton" type="button" class="btn btn-sm btn-outline-danger">Clear keywords</button>
+        <button id="randomGenButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.generate_votes"}}</button>
+        <button id="votesClearButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.clear_votes"}}</button>
+        <button id="usersClearButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.clear_users"}}</button>
+        <button id="databaseClearButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.clear_keywords"}}</button>
     </div>
 </template>
 
@@ -70,23 +70,23 @@
                                 </div>
                                 <div class="text-black-50">
                                     {{#if (keyword.votes.length)}}
-                                        <span>{{keyword.votes.length}} votes</span>
+                                        <span>{{_ "admin.votes" keyword.votes.length}}</span>
                                     {{/if}}
                                 </div>
                             </div>
                             <div>
                                 {{#if (keyword.enabled)}}
-                                    <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">Disable</button>
+                                    <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">{{_ "admin.disable"}}</button>
                                 {{else}}
-                                    <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">Enable</button>
-                                    <button data-id="{{keyword._id}}" data-action="delete" class="btn btn-outline-danger">Delete</button>
+                                    <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">{{_ "admin.enable"}}</button>
+                                    <button data-id="{{keyword._id}}" data-action="delete" class="btn btn-outline-danger">{{_ "admin.delete"}}</button>
                                 {{/if}}
                             </div>
                         </div>
                     </li>
                 {{/each}}
             {{else}}
-                <li class="list-group-item text-center">No results</li>
+                <li class="list-group-item text-center">{{_ "no_results"}}</li>
             {{/if}}
         </ul>
 </template>
@@ -99,7 +99,7 @@
                 <div class="text-success pr-3">
                     <span class="font-weight-bold mr-1">{{user.name}}</span>
                     {{#if (user.admin)}}
-                        <span class="text-black-50">(Admin)</span>
+                        <span class="text-black-50">{{_ "admin.role"}}</span>
                     {{/if}}
                 </div>
 

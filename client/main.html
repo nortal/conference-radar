@@ -13,14 +13,14 @@
     <div class="container-fluid main-section pt-4 px-5 pb-3">
             <div class="row">
                 {{#if isAdmin}}
-                    <a href="admin" class="styled-link">Admin panel</a>
+                    <a href="admin" class="styled-link">{{_ "admin.panel"}}</a>
                 {{/if}}
                 <div class="d-md-none d-flex justify-content-between align-items-end pb-3">
-                    <img src="/images/logo_geekout.png" width="25%" alt="">
+                    <img src="/images/{{getConferenceLogo}}" width="25%" alt="">
                     <img src="/images/logo_nortal.png" width="25%" alt="">
                 </div>
                 <div class="d-none d-md-flex justify-content-between align-items-end pb-5">
-                    <img src="/images/logo_geekout.png" width="15%" alt="">
+                    <img src="/images/{{getConferenceLogo}}" width="15%" alt="">
                     <img src="/images/logo_techradar.png" width="25%" alt="">
                     <img src="/images/logo_nortal.png" width="15%" alt="">
                 </div>
@@ -29,11 +29,11 @@
                     <div class="d-md-none d-block main-section-title col-12 p-0">
                         <div class="row d-flex justify-content-between align-items-end pb-2">
                             <img class="col-6" src="/images/logo_techradar.png" alt="">
-                            <span class="col-6 pl-0 my-0 text-right">{{getTitle}}</span>
+                            <span class="col-6 pl-0 my-0 text-right">{{_ getTitle}}</span>
                         </div>
                     </div>
                     <div class="d-none d-md-block main-section-title col-12 p-0">
-                        <span class="my-0">{{getTitle}}</span>
+                        <span class="my-0">{{_ getTitle}}</span>
                     </div>
                     <div class="main-section-container col-12">
                         {{> yield}}
@@ -45,7 +45,7 @@
     <div class="container-fluid px-5 mb-3">
         <div class="row">
             <div class="col-12 p-0 text-center">
-                <div class="footer-title">Add and vote for your candidate!</div>
+                <div class="footer-title">{{_ "footer"}}</div>
             </div>
         </div>
     </div>

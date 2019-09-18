@@ -78,3 +78,6 @@ Template.registerHelper('isAdmin', function () {
 Template.registerHelper('getTitle', function () {
     return Session.get('title');
 });
+Template.registerHelper('getConferenceLogo', function() {
+    return Meteor.settings.public.conferenceLogo;
+});

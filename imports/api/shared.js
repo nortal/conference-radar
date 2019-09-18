@@ -15,26 +15,26 @@ export const GetQueryParam = function (key) {
 export const UserInputVerification = {
     verifyStage(stage) {
         if (!stage) {
-            return new Result(false, 'Please select a stage');
+            return new Result(false, 'submit.enter_stage');
         }
 
         stage = stage.trim().toLowerCase();
         if (Stages.some(s => s.id === stage)) {
             return new Result(true);
         } else {
-            return new Result(false, 'Please select a valid stage');
+            return new Result(false, 'submit.enter_valid_stage');
         }
     },
     verifySection(section) {
         if (!section) {
-            return new Result(false, 'Please enter a section');
+            return new Result(false, 'submit.enter_section');
         }
 
         section = section.trim().toLowerCase();
         if (Sections.some(s => s.id === section)) {
             return new Result(true);
         } else {
-            return new Result(false, 'Please select a valid section');
+            return new Result(false, 'submit.enter_valid_section');
         }
     },
     verifyKeyword(section, keyword) {
@@ -44,7 +44,7 @@ export const UserInputVerification = {
         }
 
         if (!keyword) {
-            return new Result(false, 'Please enter a keyword');
+            return new Result(false, 'submit.enter_keyword');
         }
 
         keyword = keyword.trim();
@@ -52,19 +52,19 @@ export const UserInputVerification = {
         if (keywords.length) {
             return new Result(true);
         } else {
-            return new Result(false, 'Please select a valid keyword');
+            return new Result(false, 'submit.enter_valid_keyword');
         }
     },
     verifySuggestion(keyword) {
         if (!keyword) {
-            return new Result(false, 'Please enter a suggestion');
+            return new Result(false, 'submit.enter_suggestion');
         }
 
         keyword = keyword.trim();
         if (!keyword) {
-            return new Result(false, 'Please select a valid suggestion');
+            return new Result(false, 'submit.enter_valid_suggestion');
         } else if (keyword.length > 32) {
-            return new Result(false, 'Please enter 32 characters at maximum');
+            return new Result(false, 'submit.enter_long_suggestion');
         } else {
             return new Result(true);
         }

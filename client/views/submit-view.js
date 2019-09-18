@@ -7,7 +7,7 @@ import _ from 'underscore';
 import '/imports/ui/submit-view.css';
 
 Template.submit.onCreated(function () {
-    Session.set('title', 'Vote!');
+    Session.set('title', 'title.vote');
 
     this.autocomplete = new ReactiveVar({matches: [], dirty: false});
     this.selectWidth = new ReactiveVar();
@@ -77,7 +77,7 @@ Template.submit.events({
         // find matching keyword
         const keyword = Keywords.find({_id: id}).fetch()[0];
         if (!keyword) {
-            template.toast.show("alert-danger", "Could not find that keyword!");
+            template.toast.show("alert-danger", TAPi18n.__("submit.not_found"));
             return;
         }
 
@@ -86,7 +86,7 @@ Template.submit.events({
 
         // user has not voted for that
         if (!oldVote) {
-            template.toast.show("alert-danger", "You have not voted for that option!");
+            template.toast.show("alert-danger", TAPi18n.__("submit.not_voted"));
             return;
         }
 
@@ -168,19 +168,19 @@ Template.submit.events({
 
         const sectionResult = UserInputVerification.verifySection(section);
         if (!sectionResult.ok) {
-            template.toast.show("alert-danger", sectionResult.message);
+            template.toast.show("alert-danger", TAPi18n.__(sectionResult.message));
             return;
         }
 
         const stageResult = UserInputVerification.verifyStage(stage);
         if (!stageResult.ok) {
-            template.toast.show("alert-danger", stageResult.message);
+            template.toast.show("alert-danger", TAPi18n.__(stageResult.message));
             return;
         }
 
         const suggestionResult = UserInputVerification.verifySuggestion(suggestion);
         if (!suggestionResult.ok) {
-            template.toast.show("alert-danger", suggestionResult.message);
+            template.toast.show("alert-danger", TAPi18n.__(suggestionResult.message));
             return;
         }
 
@@ -190,7 +190,7 @@ Template.submit.events({
 
                 // Already suggested
                 if (allKeywords[i].votes.find((votes) => votes.userId === Meteor.userId())) {
-                    template.toast.show("alert-danger", "You have already suggested this!");
+                    template.toast.show("alert-danger", TAPi18n.__("submit.already_suggested"));
                     return;
                 }
 
@@ -198,13 +198,13 @@ Template.submit.events({
                 if (!allKeywords[i].enabled) {
                     Meteor.call('addVote', allKeywords[i]._id, stage);
                     setSubmittedKeywords(template);
-                    template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+                    template.toast.show("alert-success", TAPi18n.__("submit.suggestion_saved"));
                     clearAutocomplete(template, false);
                     clearForm(template);
                     return;
                 }
 
-                template.toast.show("alert-danger", "Technology already exists!");
+                template.toast.show("alert-danger", TAPi18n.__("submit.already.exists"));
                 return;
             }
         }
@@ -212,7 +212,7 @@ Template.submit.events({
         Meteor.call('addSuggestion', suggestion, section, stage);
         setSubmittedKeywords(template);
 
-        template.toast.show("alert-success", "Thank you!<br>Your suggestion has been saved.");
+        template.toast.show("alert-success", TAPi18n.__("submit.suggestion_saved"));
         clearAutocomplete(template, false);
         clearForm(template);
         template.showSuggestionForm.set(false);
@@ -232,21 +232,21 @@ Template.submit.events({
         var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
 
-        const stageResult = UserInputVerification.verifyStage(chosenStage);
-        if (!stageResult.ok) {
-            template.toast.show("alert-danger", stageResult.message);
+        const sectionResult = UserInputVerification.verifySection(chosenSection);
+        if (!sectionResult.ok) {
+            template.toast.show("alert-danger", TAPi18n.__(sectionResult.message));
             return;
         }
 
-        const sectionResult = UserInputVerification.verifySection(chosenSection);
-        if (!sectionResult.ok) {
-            template.toast.show("alert-danger", sectionResult.message);
+        const stageResult = UserInputVerification.verifyStage(chosenStage);
+        if (!stageResult.ok) {
+            template.toast.show("alert-danger", TAPi18n.__(stageResult.message));
             return;
         }
 
         const keywordResult = UserInputVerification.verifyKeyword(chosenSection, keywordName);
         if (!keywordResult.ok) {
-            template.toast.show("alert-danger", keywordResult.message);
+            template.toast.show("alert-danger", TAPi18n.__(keywordResult.message));
             return;
         }
 
@@ -259,7 +259,7 @@ Template.submit.events({
 
         const keyword = Keywords.find({name: keywordName, section: chosenSection}).fetch()[0];
         if (!keyword) {
-            template.toast.show("alert-danger", "Invalid keyword!");
+            template.toast.show("alert-danger", TAPi18n.__("submit.invalid_keyword"));
             return;
         }
 
@@ -267,14 +267,14 @@ Template.submit.events({
         const oldVote = keyword.votes.find((vote) => vote.userId === Meteor.userId());
 
         if (oldVote) {
-            template.toast.show("alert-warning", "You have already voted for this option!");
+            template.toast.show("alert-warning", TAPi18n.__("submit.already_voted"));
             return;
         }
 
         Meteor.call('addVote', keyword._id, chosenStage);
         setSubmittedKeywords(template);
 
-        template.toast.show("alert-success", "Thank you!<br>Your opinion has been saved.");
+        template.toast.show("alert-success", TAPi18n.__("submit.opinion_saved"));
     },
 });
 
