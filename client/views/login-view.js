@@ -1,22 +1,6 @@
 import {Template} from 'meteor/templating';
 import '/imports/ui/login-view.css';
 
-function loginOrSignUp() {
-    const user = Meteor.users.findOne();
-    if (user && user.agreesTerms) {
-        Router.go('/submit');
-        return;
-    }
-
-    const profile = user.services.google || user.services.facebook;
-    Session.set('signUpDetails', {
-        email: profile.email,
-        name: profile.name,
-        appId: profile.appId
-    });
-    Router.go('/confirm');
-}
-
 Template.login.events({
     'click #facebookLogin': function (event, template) {
         event.preventDefault();
@@ -28,7 +12,7 @@ Template.login.events({
             if (err) {
                 template.inProgress.set(false);
             } else {
-                loginOrSignUp();
+                Router.go('/confirm');
             }
         });
     },
@@ -43,7 +27,7 @@ Template.login.events({
             if (err) {
                 template.inProgress.set(false);
             } else {
-                loginOrSignUp();
+                Router.go('/confirm');
             }
         });
     },

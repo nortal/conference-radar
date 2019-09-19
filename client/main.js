@@ -32,11 +32,16 @@ Router.route('/login', function () {
 });
 
 Router.route('/confirm', function () {
-    // set in login page
-    if (Session.get('signUpDetails')) {
-        this.render('confirm');
+    const user = Meteor.users.findOne();
+    if (!user) {
+        Router.go('/');
+        return;
+    }
+
+    if (user.agreesTerms) {
+        Router.go('/submit');
     } else {
-        Router.go("/");
+        this.render('confirm');
     }
 });
 

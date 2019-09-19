@@ -2,13 +2,13 @@
     <div class="row pt-4 mb-3">
         <div class="col-md-6 col-12 mt-4">
             <input id="nameText" type="text" name="nameText" class="styled-input {{getClasses 'nameText'}}"
-                   value="{{getDetails 'name'}}" {{isDisabled 'name'}}/>
+                   value="{{getName}}"/>
             <label>{{_ "confirm.name"}}</label>
             <span class="errorMessage">{{_ getInvalidInput}}</span>
         </div>
         <div class="col-md-6 col-12 my-4">
             <input id="emailText" type="text" name="emailText" class="styled-input {{getClasses 'emailText'}}"
-                   value="{{getDetails 'email'}}" {{isDisabled 'email'}}/>
+                   value="{{getEmail}}"/>
             <label>{{_ "confirm.email"}}</label>
             <span class="errorMessage">{{_ getInvalidInput}}</span>
         </div>
