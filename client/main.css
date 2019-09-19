@@ -42,27 +42,35 @@ body {
 
 .main-section {
     max-width: 1200px;
+    padding-bottom: 56px;
 }
 
 .main-section-title {
     border-bottom: 8px solid var(--nortal-green);
-    font-weight: 700;
-    text-transform: uppercase;
-    position: absolute;
     bottom: 0;
+    line-height: 20px;
     font-size: 0.75rem;
+    font-weight: 700;
+    position: absolute;
+    text-transform: uppercase;
 }
 
 @media (min-width: 576px) {
     .main-section-title {
         font-size: 1.5rem;
+        line-height: 32px;
     }
 }
 
 @media (min-width: 304px) and (max-width: 575px) {
     .main-section-title {
         font-size: 1rem;
+        line-height: 24px;
     }
+}
+
+.main-section-title img {
+    padding-bottom: 6px;
 }
 
 .main-section-title span {
