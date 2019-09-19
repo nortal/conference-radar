@@ -18,10 +18,10 @@ Meteor.startup(() => {
     Accounts.onCreateUser((options, user) => {
         if (user.services.google) {
             user.email = user.services.google.email;
-            user.services.google.picture = null;
+            user.services.google.picture = undefined;
         } else if (user.services.facebook) {
             user.email = user.services.facebook.email;
-            user.services.facebook.picture = null;
+            user.services.facebook.picture = undefined;
         }
         user.wantsRecruitment = false;
         user.wantsParticipation = false;
