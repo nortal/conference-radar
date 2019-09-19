@@ -58,7 +58,7 @@ ssh ${remote} << EOF
   docker run -d \
     -e ROOT_URL=http://example.com \
     -e MONGO_URL=mongodb://conferenceRadarMongo:27017/meteor \
-    -e METEOR_SETTINGS="$(cat settings-development.json)" \
+    -e METEOR_SETTINGS="\$(cat settings-development.json)" \
     -p 3000:3000 \
     --link conferenceRadarMongo \
     --name conferenceRadar \
