@@ -35,14 +35,19 @@ echo "RUN DOCKER IMAGE ON REMOTE HOST"
 echo "==========================================="
 ssh ${remote} << EOF
   cd /tmp
-  docker rm -vf conferenceRadar
   docker rmi -f nortal/conference-radar
   docker load < /tmp/conferenceRadar.tar
-  docker run -d \
-    -e ROOT_URL=https://techradar.nortal.com \
-    -e MONGO_URL=mongodb://localhost:27017/meteor \
-    -e METEOR_SETTINGS="$(cat settings-development.json)" \
-    --name conferenceRadar \
-    --network="host" \
-    nortal/conference-radar:latest
+
+  for i in {0..3}
+  do
+    docker rm -vf conferenceRadar\$i
+    docker run -d \
+      -e ROOT_URL=https://techradar.nortal.com \
+      -e MONGO_URL=mongodb://localhost:27017/meteor \
+      -e METEOR_SETTINGS="\$(cat settings-development.json)" \
+      -e PORT=300\$i \
+      --network="host" \
+      --name conferenceRadar\$i \
+      nortal/conference-radar:latest
+  done
 EOF
