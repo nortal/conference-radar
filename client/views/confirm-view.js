@@ -8,8 +8,8 @@ Template.confirm.onCreated(function () {
     const profile = user.services.google || user.services.facebook;
 
     this.profile = profile;
-    this.nameText = new ReactiveVar({text: profile.name, valid: true, message: ''});
-    this.emailText = new ReactiveVar({text: profile.email, valid: true, message: ''});
+    this.nameText = new ReactiveVar({text: profile.name || '', valid: true, message: ''});
+    this.emailText = new ReactiveVar({text: profile.email || '', valid: true, message: ''});
     this.invalidInput = new ReactiveVar();
 });
 
