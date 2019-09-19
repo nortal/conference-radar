@@ -56,11 +56,11 @@
     border: 2px solid var(--light-gray);
     border-top: none;
     height: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 28px;
+    padding-right: 28px;
 }
 
-@media (min-width: 1200px) and (max-width: 1300px) {
+@media (min-width: 1200px) and (max-width: 1350px) {
     .quadrant-svg-wrapper {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
