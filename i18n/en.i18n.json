@@ -22,8 +22,10 @@
   },
   "confirm": {
     "email": "E-mail",
+    "email_missing": "Enter an e-mail",
     "email_invalid": "Invalid e-mail",
     "name": "Name",
+    "name_missing": "Enter a name",
     "name_invalid": "Invalid name",
     "participate": "I want to be notified, when final Technology Radar is published",
     "privacy_policy": "Privacy policy",

@@ -1,5 +1,6 @@
 import {Keywords} from '../../imports/api/keywords.js';
 import {Stages,Sections} from '../../imports/api/constants.js';
+import {UserValidation} from "../../imports/api/constants";
 
 export class Result {
     constructor(ok, message) {
@@ -69,4 +70,22 @@ export const UserInputVerification = {
             return new Result(true);
         }
     },
+    verifyEmail(email) {
+        if (!email) {
+            return new Result(false, 'confirm.email_missing');
+        } else if (!UserValidation.email.test(email.toLowerCase())) {
+            return new Result(false, 'confirm.email_invalid');
+        } else {
+            return new Result(true);
+        }
+    },
+    verifyName(name) {
+        if (!name) {
+            return new Result(false, 'confirm.name_missing');
+        } else if (!UserValidation.name.test(name.toLowerCase())) {
+            return new Result(false, 'confirm.name_invalid');
+        } else {
+            return new Result(true);
+        }
+    }
 };

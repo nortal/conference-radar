@@ -1,5 +1,5 @@
 import {Template} from 'meteor/templating';
-import {UserValidation} from '../../imports/api/constants.js';
+import {UserInputVerification} from "../../imports/api/shared";
 
 Template.confirm.onCreated(function () {
     Session.set('title', 'title.login_and_vote');
@@ -8,18 +8,18 @@ Template.confirm.onCreated(function () {
     const profile = user.services.google || user.services.facebook;
 
     this.profile = profile;
-    this.nameText = new ReactiveVar({text: profile.name, valid: true});
-    this.emailText = new ReactiveVar({text: profile.email, valid: true});
+    this.nameText = new ReactiveVar({text: profile.name, valid: true, message: ''});
+    this.emailText = new ReactiveVar({text: profile.email, valid: true, message: ''});
     this.invalidInput = new ReactiveVar();
 });
 
 Template.confirm.events({
     'keyup #nameText': function (event, template) {
-        template.nameText.set({text: template.$("#nameText").val(), valid: true});
+        template.nameText.set({text: template.$("#nameText").val(), valid: true, message: ''});
         template.$('#nameText').removeClass('error');
     },
     'keyup #emailText': function (event, template) {
-        template.emailText.set({text: template.$("#emailText").val(), valid: true});
+        template.emailText.set({text: template.$("#emailText").val(), valid: true, message: ''});
         template.$('#emailText').removeClass('error');
     },
     'click #nextButton': function (event, template) {
@@ -31,22 +31,15 @@ Template.confirm.events({
         const participateChecked = template.$('#participateCheck').is(':checked');
         const termsChecked = template.$('#termsCheck').is(':checked');
 
-        template.nameText.set(
-            {text: submitName, valid: UserValidation.name.test(submitName)}
-        );
-        template.emailText.set(
-            {text: submitEmail, valid: UserValidation.email.test(submitEmail.toLowerCase())}
-        );
-
-        if (!submitEmail || !UserValidation.email.test(submitEmail.toLowerCase())) {
-            template.invalidInput.set("confirm.email_invalid");
-            $("#toast").toast("show");
+        const emailResult = UserInputVerification.verifyEmail(submitEmail);
+        if (!emailResult.ok) {
+            template.emailText.set({text: submitEmail, valid: false, message: emailResult.message});
             return;
         }
 
-        if (!submitName || !UserValidation.name.test(submitName)) {
-            template.invalidInput.set("confirm.name_invalid");
-            $("#toast").toast("show");
+        const nameResult = UserInputVerification.verifyName(submitName);
+        if (!nameResult.ok) {
+            template.nameText.set({text: submitName, valid: false, message: nameResult.message});
             return;
         }
 
@@ -73,10 +66,12 @@ Template.confirm.helpers({
     getInvalidInput: function () {
         return Template.instance().invalidInput.get();
     },
-    getName: function() {
-        return Template.instance().nameText.get().text;
+    getError: function (inputName) {
+        const input = Template.instance()[inputName].get();
+        return input.message;
     },
-    getEmail: function() {
-        return Template.instance().emailText.get().text;
+    getValue: function(inputName) {
+        const input = Template.instance()[inputName].get();
+        return input.text;
     }
 });
