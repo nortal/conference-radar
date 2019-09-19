@@ -92,7 +92,7 @@ body {
     border-bottom: 2px solid var(--medium-gray);
     display: block;
     caret-color: var(--nortal-green);
-    color: var(--medium-gray);
+    color: var(--dark-gray);
     font-size: 20px;
     padding: 10px;
     transition: 150ms ease-in-out;
@@ -191,7 +191,7 @@ body {
     border-bottom: 2px solid var(--medium-gray);
     display: block;
     caret-color: var(--nortal-green);
-    color: var(--nortal-green);
+    color: var(--dark-gray);
     font-size: 20px;
     overflow: hidden;
     padding: 10px;
@@ -218,20 +218,21 @@ body {
 
 .styled-select:focus {
     border-bottom: 2px solid var(--nortal-green);
+    color: var(--nortal-green);
     outline: none;
 }
 
 .styled-select ~ label {
+    color: var(--medium-gray);
     left: 25px;
     position: absolute;
     pointer-events: none;
-    top: 10px;
     transition: 250ms ease all 100ms;
-}
-
-.styled-select:focus ~ label, .styled-select:not(.empty) ~ label {
     top: -18px;
     font-size: 12px;
+}
+
+.styled-select:focus ~ label {
     color: var(--nortal-green);
 }
 

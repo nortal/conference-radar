@@ -97,7 +97,10 @@ Template.submit.events({
     'keyup #keywordText': _.debounce((event, template) => {
         event.preventDefault();
 
-        template.keywordText.set(template.$("#keywordText").val());
+        const keyword = template.$("#keywordText");
+        keyword.removeClass('error');
+
+        template.keywordText.set(keyword.val());
         template.selectWidth.set(event.target.getBoundingClientRect().width);
         clearAutocomplete(template, true);
 
@@ -180,6 +183,7 @@ Template.submit.events({
 
         const suggestionResult = UserInputVerification.verifySuggestion(suggestion);
         if (!suggestionResult.ok) {
+            template.$("#keywordText").addClass('error');
             template.toast.show("alert-danger", TAPi18n.__(suggestionResult.message));
             return;
         }
@@ -219,6 +223,7 @@ Template.submit.events({
     },
 
     'click #suggestButton'(event, template) {
+        template.$("#keywordText").removeClass('error');
         template.showSuggestionForm.set(true);
     },
 
@@ -231,12 +236,6 @@ Template.submit.events({
         var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
 
-        const sectionResult = UserInputVerification.verifySection(chosenSection);
-        if (!sectionResult.ok) {
-            template.toast.show("alert-danger", TAPi18n.__(sectionResult.message));
-            return;
-        }
-
         const stageResult = UserInputVerification.verifyStage(chosenStage);
         if (!stageResult.ok) {
             template.toast.show("alert-danger", TAPi18n.__(stageResult.message));
@@ -245,6 +244,7 @@ Template.submit.events({
 
         const keywordResult = UserInputVerification.verifyKeyword(chosenSection, keywordName);
         if (!keywordResult.ok) {
+            template.$("#keywordText").addClass('error');
             template.toast.show("alert-danger", TAPi18n.__(keywordResult.message));
             return;
         }
@@ -301,7 +301,7 @@ function clearForm(template) {
     template.$('#keywordText').val("");
     template.keywordText.set();
     if (template.$('#suggestionSectionDropdown').length) {
-        template.$('#suggestionSectionDropdown')[0].selectedIndex = 0;
+        template.$('#suggestionSectionDropdown')[0].selectedIndex = -1;
     }
     template.$("#sectionText").val("0");
     template.selectedStage.set();
