@@ -8,12 +8,6 @@
     </div>
     {{/if}}
 
-    <div class="row pb-3">
-        <div class="col">
-            {{> adminUserList title=(_ "admin.users")}}
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-12 col-md-6 order-1 order-md-0 pb-3">
             {{> adminAddKeyword}}
@@ -89,30 +83,4 @@
                 <li class="list-group-item text-center">{{_ "no_results"}}</li>
             {{/if}}
         </ul>
-</template>
-
-<template name="adminUserList">
-    <h1>{{title}}</h1>
-    <ul class="list-group">
-
-        {{#if showUsers}}
-            {{#each user in getAllUsers}}
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="text-success pr-3">
-                        <span class="font-weight-bold mr-1">{{user.name}}</span>
-                        {{#if (user.admin)}}
-                            <span class="text-black-50">{{_ "admin.role"}}</span>
-                        {{/if}}
-                    </div>
-
-                    <div class="text-black-50">
-                        {{user.email}}
-                    </div>
-                </li>
-            {{/each}}
-        {{else}}
-            <button id="showUsersButton" type="button" class="btn btn-sm btn-outline-danger">{{_ "admin.show_users"}}</button>
-        {{/if}}
-
-    </ul>
 </template>

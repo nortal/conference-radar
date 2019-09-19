@@ -12,25 +12,6 @@ Template.admin.helpers({
     }
 });
 
-Template.adminUserList.onCreated(function () {
-    this.showUsers = new ReactiveVar(false);
-});
-
-Template.adminUserList.helpers({
-    'getAllUsers'() {
-        return Meteor.users.find();
-    },
-    'showUsers'() {
-        return Template.instance().showUsers.get();
-    }
-});
-
-Template.adminUserList.events({
-    'click #showUsersButton'(event, template) {
-        template.showUsers.set(true);
-    }
-});
-
 Template.adminKeywordList.events({
     'click button[data-action]'(event) {
         const target = $(event.target);
