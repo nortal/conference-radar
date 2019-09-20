@@ -4,6 +4,7 @@ import _ from "underscore";
 
 import "./admin.js";
 import "./develop.js"
+import {UserInputVerification} from "../imports/api/shared";
 
 const keywordClassifier = require('/public/keywords.json');
 
@@ -43,6 +44,11 @@ Meteor.publish('keywords', function () {
 
 Meteor.methods({
     updateUser(email, wantsRecruitment, wantsParticipation, agreesTerms) {
+        const emailResult = UserInputVerification.verifyEmail(email);
+        if (!emailResult.ok) {
+            return;
+        }
+
         Meteor.users.update(
             {_id: this.userId},
             {
@@ -65,6 +71,11 @@ Meteor.methods({
             {$pull: {votes: {userId: this.userId, stage: stage}}});
     },
     addVote(id, stage) {
+        const stageResult = UserInputVerification.verifyStage(stage);
+        if (!stageResult.ok) {
+            return;
+        }
+
         Keywords.update(
             {_id: id},
             {
@@ -80,6 +91,21 @@ Meteor.methods({
         );
     },
     addSuggestion(name, section, stage) {
+        const suggestionResult = UserInputVerification.verifySuggestion(name);
+        if (!suggestionResult.ok) {
+            return;
+        }
+
+        const sectionResult = UserInputVerification.verifySection(section);
+        if (!sectionResult.ok) {
+            return;
+        }
+
+        const stageResult = UserInputVerification.verifyStage(stage);
+        if (!stageResult.ok) {
+            return;
+        }
+
         Keywords.insert({
             name: name,
             section: section,
