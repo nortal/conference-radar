@@ -160,14 +160,19 @@ Template.submit.events({
 
     'click #cancelSuggestionButton'(event, template) {
         template.showSuggestionForm.set(false);
-        clearForm(template);
     },
 
     'click #submitSuggestionButton'(event, template) {
         const suggestion = template.$('#keywordText').val();
         const section = template.$('#suggestionSectionDropdown').val();
         const stage = template.selectedStage.get();
-        const user = Meteor.users.findOne();
+
+        const suggestionResult = UserInputVerification.verifySuggestion(suggestion);
+        if (!suggestionResult.ok) {
+            template.$("#keywordText").addClass('error');
+            template.toast.show("alert-danger", TAPi18n.__(suggestionResult.message));
+            return;
+        }
 
         const sectionResult = UserInputVerification.verifySection(section);
         if (!sectionResult.ok) {
@@ -181,12 +186,6 @@ Template.submit.events({
             return;
         }
 
-        const suggestionResult = UserInputVerification.verifySuggestion(suggestion);
-        if (!suggestionResult.ok) {
-            template.$("#keywordText").addClass('error');
-            template.toast.show("alert-danger", TAPi18n.__(suggestionResult.message));
-            return;
-        }
 
         const allKeywords = Keywords.find().fetch();
         for (let i = 0; i < allKeywords.length; i++) {
@@ -231,21 +230,20 @@ Template.submit.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        const user = Meteor.users.findOne();
         var keywordName = template.$("#keywordText").val();
         var chosenStage = template.selectedStage.get();
         var chosenSection = template.$("#sectionText").val();
-
-        const stageResult = UserInputVerification.verifyStage(chosenStage);
-        if (!stageResult.ok) {
-            template.toast.show("alert-danger", TAPi18n.__(stageResult.message));
-            return;
-        }
 
         const keywordResult = UserInputVerification.verifyKeyword(chosenSection, keywordName);
         if (!keywordResult.ok) {
             template.$("#keywordText").addClass('error');
             template.toast.show("alert-danger", TAPi18n.__(keywordResult.message));
+            return;
+        }
+
+        const stageResult = UserInputVerification.verifyStage(chosenStage);
+        if (!stageResult.ok) {
+            template.toast.show("alert-danger", TAPi18n.__(stageResult.message));
             return;
         }
 
