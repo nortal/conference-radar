@@ -41,7 +41,7 @@ Template.submit.helpers({
         return Template.instance().submittedKeywords.get();
     },
     stages: () => {
-        return Stages.reverse();
+        return Stages.slice().reverse();
     },
     sections: () => {
         return Sections
