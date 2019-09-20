@@ -9,6 +9,9 @@ Template.admin.helpers({
     },
     'getDisabledKeywords'() {
         return Keywords.find({enabled: false}).fetch();
+    },
+    'isDevMode'() {
+        return Meteor.settings.public.environment === "development";
     }
 });
 

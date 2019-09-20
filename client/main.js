@@ -60,7 +60,7 @@ Router.route('/radar', function () {
 });
 
 Router.route('/admin', function () {
-    const user = Meteor.users.findOne();;
+    const user = Meteor.users.findOne();
     if (!user) {
         Router.go('/');
         return;
@@ -73,16 +73,16 @@ Router.route('/admin', function () {
     }
 });
 
-Template.registerHelper('isDevMode', function () {
-    return Meteor.settings.public.environment === "development"
+Template.mainLayout.helpers({
+    'isAdmin': function () {
+        const user = Meteor.users.findOne();
+        return user && user.admin;
+    },
+    'getTitle': function () {
+        return Session.get('title');
+    }
 });
-Template.registerHelper('isAdmin', function () {
-    const user = Meteor.users.findOne();
-    return user && user.admin;
-});
-Template.registerHelper('getTitle', function () {
-    return Session.get('title');
-});
+
 Template.registerHelper('getConferenceLogo', function() {
     return Meteor.settings.public.conferenceLogo;
 });
