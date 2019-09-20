@@ -3,22 +3,29 @@ import _ from 'underscore';
 import {Stages} from "./constants";
 
 export class RadarBuilder {
+    /**
+     * Configures the builder instance
+     * @param newSettings
+     */
     constructor(newSettings) {
         this.settings = {
-            // width of current column
+            // Width of current column
             columnWidth: 300,
-            // padding between entries
+            // Horizontal padding between rows
             rowHeightWithPadding: 20,
-            // width of labels, cut from line width
+            // Width of row labels, cut from line width
             labelWidth: 90,
-            // Magic number centers circle on the dotted line
+            // Height of column titles
             headerHeight: 15,
-            headerOffset: 17,
+            // Magic number centers circle on dotted line
             verticalOffset: 3.5,
-            // length of line
-            dottedLineLength: 204,
+            // Length of dotted line
+            dottedLineLength: undefined,
+            // Vertical length of the 5 tickmarks on the dotted line
             lineSeparatorHeight: 6,
+            // Display n top results
             filterTop: 15,
+            // Radius of the circles
             circleRadius: 5,
         };
 
@@ -27,8 +34,15 @@ export class RadarBuilder {
                 this.settings[key] = val;
             }
         });
+
+        // Calculate the dotted line length. Magic number 6 adds spacing
+        this.settings.dottedLineLength = this.settings.columnWidth - this.settings.labelWidth - 6;
     };
 
+    /**
+     * Find circle x-coordinate on dotted line based on graph score
+     * @param score
+     */
     calculateBlipX(score) {
         return d3.scaleLinear()
             .domain([-4, 4])
@@ -36,12 +50,22 @@ export class RadarBuilder {
             (score);
     };
 
+    /**
+     * Find row y-coordinate
+     * @param index Row's index
+     * @returns {number}
+     */
     calculateDataRowY(index) {
         const calculatedY = (index + 1) * this.settings.rowHeightWithPadding;
         const itemIndexInColumn = Math.ceil(calculatedY / this.settings.rowHeightWithPadding);
         return itemIndexInColumn * this.settings.rowHeightWithPadding + this.settings.headerHeight;
     };
 
+    /**
+     * Finds stage a circle belongs to based on its score
+     * @param graphScore
+     * @returns {string}
+     */
     getStage (graphScore) {
         const scorePercentage = this.calculateBlipX(graphScore) / this.settings.dottedLineLength * 100;
 
@@ -56,12 +80,24 @@ export class RadarBuilder {
         }
     };
 
+    /**
+     * Checks if current row is the first of its stage
+     * @param data
+     * @param i
+     * @returns {boolean}
+     */
     isFirstOfStage(data, i) {
         const currentStage = this.getStage(data[i].graphScore);
         const blipsOnCurrentStage = data.filter(d => this.getStage(d.graphScore) === currentStage);
         return blipsOnCurrentStage[0] === data[i];
     };
 
+    /**
+     * Sets classes for row labels
+     * @param data
+     * @param i
+     * @returns {string}
+     */
     labelClass(data, i) {
         let textClass = "radar-row-name";
 
@@ -74,6 +110,12 @@ export class RadarBuilder {
         return textClass;
     };
 
+    /**
+     * Sets classes for row circles
+     * @param data
+     * @param i
+     * @returns {string}
+     */
     circleClass(data, i) {
         let circleClass = "position-marker";
 
@@ -85,6 +127,12 @@ export class RadarBuilder {
         return circleClass;
     };
 
+    /**
+     * Sets classes for row dotted lines
+     * @param data
+     * @param i
+     * @returns {string}
+     */
     dottedLineClass(data, i) {
         let lineClass = 'dotted-line';
 
@@ -95,6 +143,12 @@ export class RadarBuilder {
         return lineClass;
     };
 
+    /**
+     * Sets classes for row dotted line tick marks
+     * @param data
+     * @param i
+     * @returns {string}
+     */
     tickMarkClass(data, i) {
         let lineClass = 'line-separator';
 
@@ -105,6 +159,11 @@ export class RadarBuilder {
         return lineClass;
     };
 
+    /**
+     * Builds logical columns inside the section container
+     * @param selection
+     * @param data
+     */
     buildCols(selection, data) {
         const nodes = selection.selectAll('g.radar-col')
             .data(data.columns, d => d);
@@ -120,6 +179,10 @@ export class RadarBuilder {
         nodes.exit().remove();
     };
 
+    /**
+     * Builds rows inside the logical columns
+     * @param selection
+     */
     buildRows(selection) {
         let data;
         const nodes = selection.selectAll("g.radar-row")
@@ -165,6 +228,10 @@ export class RadarBuilder {
         nodes.exit().remove();
     };
 
+    /**
+     * Appends header and footer title groups to the logical columns
+     * @param selection
+     */
     buildTitles(selection) {
         const nodes = selection.selectAll('g.radar-col-title')
             .data((d) => d.titles, d => d);
@@ -179,6 +246,10 @@ export class RadarBuilder {
         nodes.exit().remove();
     };
 
+    /**
+     * Builds header and footer title texts in their parent groups
+     * @param selection
+     */
     buildTitleTexts(selection) {
         const nodes = selection.selectAll('text.radar-col-title')
             .data((d) => d, d => d.key);
@@ -198,6 +269,11 @@ export class RadarBuilder {
         nodes.exit().remove();
     };
 
+    /**
+     * Constructs a d3-compatible data structure for the radar's functions to use
+     * @param data
+     * @returns {{columns: {titles: [*, *], rows: *}[]}}
+     */
     buildDataStructure(data) {
         // votes descending
         data = _.sortBy(data, 'votes').reverse();
@@ -214,7 +290,7 @@ export class RadarBuilder {
                     titles: [
                         Stages.map(s => ({
                             id: s.id,
-                            yOffset: this.settings.headerOffset,
+                            yOffset: this.settings.headerHeight,
                             key: s + data.length + window.innerWidth
                         })).reverse(),
                         Stages.map(s => ({
@@ -230,6 +306,11 @@ export class RadarBuilder {
     };
 }
 
+
+/**
+ * Calculates scores for keywords based on votes
+ * @param keywords
+ */
 export function initializeEntries(keywords) {
     var mergedBlips = {};
     keywords.forEach(k => mergeBlip(k, mergedBlips));
@@ -282,6 +363,8 @@ export function initializeEntries(keywords) {
 
 /**
  * Merges provided blip into another object
+ * @param blip
+ * @param mergedBlips
  */
 function mergeBlip(blip, mergedBlips) {
     var mergedBlip = mergedBlips[blip.name];
@@ -299,6 +382,11 @@ function mergeBlip(blip, mergedBlips) {
     mergedBlips[blip.name] = mergedBlip;
 }
 
+/**
+ * Finds the numeric quartile a score belongs to
+ * @param score
+ * @returns {number}
+ */
 function getQuartile(score) {
     if (score >= 1) {
         return 0;

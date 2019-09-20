@@ -139,21 +139,13 @@ function resizeSvg(element) {
 
 function initializeSvg(svg, initialData) {
     const settings = {
-        // width of current column
         columnWidth: svg.node().parentNode.getBoundingClientRect().width,
         rowHeightWithPadding: 20,
-        // width of labels, cut from line width
         labelWidth: parseInt(GetQueryParam('labelWidth')) || 90,
-        headerHeight: 15,
-        // Magic number centers circle on the dotted line
-        verticalOffset: 3.5,
-        lineSeparatorHeight: 6,
+        headerHeight: 20,
         filterTop: parseInt(GetQueryParam('filterTop')) || 15,
         circleRadius: 5,
     };
-
-    settings.headerOffset = settings.headerHeight * 1.3; // magic number
-    settings.dottedLineLength = settings.columnWidth - settings.labelWidth - 6; // Magic number adds spacing
 
     const radarBuilder = new RadarBuilder(settings);
     const d3DataStructure = radarBuilder.buildDataStructure(initialData);
