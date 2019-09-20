@@ -62,8 +62,8 @@
 
 @media (min-width: 1200px) and (max-width: 1350px) {
     .quadrant-svg-wrapper {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-left: 15px;
+        padding-right: 15px;
     }
 
     .radar-col-title {
