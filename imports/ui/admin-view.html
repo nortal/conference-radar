@@ -30,7 +30,11 @@
 
     <div class="input-group">
         <input id="addKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" aria-label="Keyword name" class="form-control">
-        <input id="addKeywordSection" type="text" placeholder="{{_ "admin.section"}}" aria-label="Section name" class="form-control">
+        <select id="addKeywordSection" class="form-control">
+            {{#each sections}}
+                <option value='{{id}}'>{{name}}</option>
+            {{/each}}
+        </select>
         <div class="input-group-append">
             <button id="addKeywordButton" type="button" class="btn btn-sm btn-outline-success">{{_ "admin.save"}}</button>
         </div>

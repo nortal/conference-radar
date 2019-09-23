@@ -2,6 +2,7 @@ import {Template} from 'meteor/templating';
 import {Keywords} from "../../imports/api/keywords";
 import {UserInputVerification} from "../../imports/api/shared";
 import {Meteor} from "meteor/meteor";
+import {Sections} from "../../imports/api/constants";
 
 Template.admin.helpers({
     'getEnabledKeywords'() {
@@ -48,8 +49,13 @@ Template.adminAddKeyword.events({
 
         Meteor.call('addKeywordAdmin', name.val(), section.val());
         name.val('');
-        section.val('');
     }
+});
+
+Template.adminAddKeyword.helpers({
+    sections: () => {
+        return Sections
+    },
 });
 
 Template.adminKeywordList.helpers({
