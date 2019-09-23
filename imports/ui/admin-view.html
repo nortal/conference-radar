@@ -120,11 +120,26 @@
                             {{/each}}
                         </select>
                     </div>
+                    <hr>
+                    <div class="pb-3">
+                        <label for="editMoveVote">{{_ "admin.move_votes"}}</label>
+                        <div class="input-group">
+                            <select id="editMoveVote" class="form-control">
+                                {{#each keywords}}
+                                    <option value='{{_id}}'>{{section}} - {{name}}</option>
+                                {{/each}}
+                            </select>
+                            <div class="input-group-append">
+                                <button id="moveVoteButton" type="button" class="btn btn-sm btn-outline-danger">
+                                    {{_ "admin.move"}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button data-action="delete" type="button" class="btn btn-outline-danger">{{_ "admin.delete"}}</button>
                     <div>
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{_ "admin.close"}}</button>
                         <button data-action="save" type="button" class="btn btn-outline-success">{{_ "admin.save"}}</button>
                     </div>
                 </div>

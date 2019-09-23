@@ -105,13 +105,25 @@ Template.adminEditKeyword.events({
 
         Meteor.call('saveKeywordAdmin', id, name, section);
         modal.modal('hide');
+    },
+    'click #moveVoteButton'(event, template) {
+        const modal = template.$('#editModal');
+        const fromId = template.$('#editModal', modal).data('id');
+        const toId = template.$('#editMoveVote').val();
+        Meteor.call('moveVotesAdmin', fromId, toId);
     }
 });
 
 Template.adminKeywordList.helpers({
     'keywordColorClass'(enabled) {
         return enabled ? 'text-success' : 'text-danger';
-    },
+    }
+});
+
+Template.adminEditKeyword.helpers({
+    'keywords'() {
+        return Keywords.find({}, {sort:  {section: 1}}).fetch();
+    }
 });
 
 Template.adminControl.events({
