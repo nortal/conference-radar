@@ -9,7 +9,7 @@ import {UserInputVerification} from "../imports/api/shared";
 const keywordClassifier = require('/public/keywords.json');
 
 Meteor.startup(() => {
-    if (!Keywords.find().fetch().length) {
+    if (!Keywords.find().count()) {
         initialDatabaseConfiguration(keywordClassifier);
     }
 
@@ -43,9 +43,10 @@ Meteor.publish('keywords', function () {
 });
 
 Meteor.methods({
-    updateUser(email, wantsRecruitment, wantsParticipation, agreesTerms) {
+    updateUser(name, email, wantsRecruitment, wantsParticipation, agreesTerms) {
+        const nameResult = UserInputVerification.verifyName(name);
         const emailResult = UserInputVerification.verifyEmail(email);
-        if (!emailResult.ok) {
+        if (!nameResult.ok || !emailResult.ok) {
             return;
         }
 
@@ -53,6 +54,7 @@ Meteor.methods({
             {_id: this.userId},
             {
                 $set: {
+                    name: name,
                     email: email,
                     wantsRecruitment: wantsRecruitment,
                     wantsParticipation: wantsParticipation,
@@ -125,7 +127,7 @@ function initialDatabaseConfiguration(classifiers) {
         throw new Error("No classifiers provided");
     }
 
-    if (Keywords.find().fetch().length) {
+    if (Keywords.find().count()) {
         throw new Error("Database is not empty!");
     }
 

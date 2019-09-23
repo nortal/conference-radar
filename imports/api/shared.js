@@ -1,5 +1,5 @@
 import {Keywords} from '../../imports/api/keywords.js';
-import {Stages,Sections} from '../../imports/api/constants.js';
+import {Sections, Stages} from '../../imports/api/constants.js';
 import {UserValidation} from "../../imports/api/constants";
 
 export class Result {
@@ -22,9 +22,8 @@ export const UserInputVerification = {
         stage = stage.trim().toLowerCase();
         if (Stages.some(s => s.id === stage)) {
             return new Result(true);
-        } else {
-            return new Result(false, 'submit.enter_valid_stage');
         }
+        return new Result(false, 'submit.enter_valid_stage');
     },
     verifySection(section) {
         if (!section) {
@@ -34,9 +33,8 @@ export const UserInputVerification = {
         section = section.trim().toLowerCase();
         if (Sections.some(s => s.id === section)) {
             return new Result(true);
-        } else {
-            return new Result(false, 'submit.enter_valid_section');
         }
+        return new Result(false, 'submit.enter_valid_section');
     },
     verifyKeyword(section, keyword) {
         const sectionResult = this.verifySection(section);
@@ -46,15 +44,10 @@ export const UserInputVerification = {
 
         if (!keyword) {
             return new Result(false, 'submit.enter_keyword');
-        }
-
-        keyword = keyword.trim();
-        const keywords = Keywords.find({ name: keyword, section: section }).fetch();
-        if (keywords.length) {
-            return new Result(true);
-        } else {
+        } else if (!Keywords.find({name: keyword.trim(), section: section}).count()) {
             return new Result(false, 'submit.enter_valid_keyword');
         }
+        return new Result(true);
     },
     verifySuggestion(keyword) {
         if (!keyword) {
@@ -66,36 +59,28 @@ export const UserInputVerification = {
             return new Result(false, 'submit.enter_valid_suggestion');
         } else if (keyword.length > 32) {
             return new Result(false, 'submit.enter_long_suggestion');
-        } else {
-            return new Result(true);
         }
+        return new Result(true);
     },
     verifyEmail(email) {
         if (!email) {
             return new Result(false, 'confirm.email_missing');
         } else if (!UserValidation.email.test(email.toLowerCase())) {
             return new Result(false, 'confirm.email_invalid');
-        } else {
-            return new Result(true);
         }
+        return new Result(true);
     },
     verifyName(name) {
         if (!name) {
             return new Result(false, 'confirm.name_missing');
         } else if (!UserValidation.name.test(name.toLowerCase())) {
             return new Result(false, 'confirm.name_invalid');
-        } else {
-            return new Result(true);
         }
+        return new Result(true);
     },
     verifyKeywordExists(keyword, section) {
-        const allKeywords = Keywords.find().fetch();
-        for (let i = 0; i < allKeywords.length; i++) {
-            if (allKeywords[i].name.toLowerCase() === keyword.toLowerCase() && allKeywords[i].section === section) {
-                return new Result(true);
-            }
-        }
-
-        return new Result(false);
+        return new Result(Keywords.find().fetch().some((kw) => {
+            return kw.name.toLowerCase() === keyword.toLowerCase() && kw.section === section;
+        }));
     }
 };
