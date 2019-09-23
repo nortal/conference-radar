@@ -51,7 +51,7 @@
     "already_suggested": "You have already suggested this!",
     "already_voted": "You have already voted for this option!",
     "cancel": "Cancel",
-    "description": "<p>GeekOut TechRadar 2019</p><p>Items are divided into four groups - tools, languages and frameworks, platforms, techniques.</p><p>Your vote represents a sentiment towards an item - is it one to avoid, assess, trial or adopt?</p><p>Pick up a flyer from Nortal's booth to find out more!</p>",
+    "description": "<p>GeekOut TechRadar 2019</p><p>Items are divided into four groups - tools, languages and frameworks, platforms, techniques.</p><p>Your vote represents a sentiment towards an item - is it one to <span class='color-avoid'>avoid</span>, <span class='color-assess'>assess</span>, <span class='color-trial'>trial</span> or <span class='color-adopt'>adopt</span>?</p><p>Pick up a flyer from Nortal's booth to find out more!</p>",
     "enter_stage": "Please enter a stage!",
     "enter_valid_stage": "Please enter a valid stage!",
     "enter_section": "Please select a section!",
