@@ -16,22 +16,15 @@ Template.admin.helpers({
 });
 
 Template.adminKeywordList.events({
-    'click button[data-action="enable"]'(event) {
+    'click button[data-action="enable"], click button[data-action="disable"]'(event) {
         const target = $(event.target);
         const action = target.data('action');
         const id = target.data('id');
         Meteor.call('updateKeywordAdmin', id, action);
     },
-    'click button[data-action="disable"]'(event) {
-        const target = $(event.target);
-        const action = target.data('action');
-        const id = target.data('id');
-        Meteor.call('updateKeywordAdmin', id, action);
-    },
-    'click button[data-action="edit"]'(event, template) {
+    'click button[data-action="edit"]'(event) {
         const modal = $('#editModal');
-        const target = $(event.target);
-        const id = target.data('id');
+        const id = $(event.target).data('id');
 
         const keyword = Keywords.findOne({_id: id});
 

@@ -6,11 +6,9 @@ import "./admin.js";
 import "./develop.js"
 import {UserInputVerification} from "../imports/api/shared";
 
-const keywordClassifier = require('/public/keywords.json');
-
 Meteor.startup(() => {
     if (!Keywords.find().count()) {
-        initialDatabaseConfiguration(keywordClassifier);
+        initialDatabaseConfiguration(JSON.parse(Assets.getText("keywords.json")));
     }
 
     createServiceConfiguration('facebook', Meteor.settings.private.auth.facebook.appId, Meteor.settings.private.auth.facebook.secret);
