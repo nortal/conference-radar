@@ -2,7 +2,6 @@ import {Template} from 'meteor/templating';
 import {Keywords} from "../../imports/api/keywords";
 import {UserInputVerification} from "../../imports/api/shared";
 import {Meteor} from "meteor/meteor";
-import {Sections} from "../../imports/api/constants";
 
 Template.admin.helpers({
     'getEnabledKeywords'() {
@@ -17,16 +16,29 @@ Template.admin.helpers({
 });
 
 Template.adminKeywordList.events({
-    'click button[data-action]'(event) {
+    'click button[data-action="enable"]'(event) {
         const target = $(event.target);
         const action = target.data('action');
         const id = target.data('id');
+        Meteor.call('updateKeywordAdmin', id, action);
+    },
+    'click button[data-action="disable"]'(event) {
+        const target = $(event.target);
+        const action = target.data('action');
+        const id = target.data('id');
+        Meteor.call('updateKeywordAdmin', id, action);
+    },
+    'click button[data-action="edit"]'(event, template) {
+        const modal = $('#editModal');
+        const target = $(event.target);
+        const id = target.data('id');
 
-        if (action === 'delete') {
-            Meteor.call('removeKeywordAdmin', id);
-        } else {
-            Meteor.call('updateKeywordAdmin', id, action);
-        }
+        const keyword = Keywords.findOne({_id: id});
+
+        modal.data('id', id);
+        $('#editKeywordName', modal).val(keyword.name);
+        $('#editKeywordSection', modal).val(keyword.section);
+        modal.modal('show');
     }
 });
 
@@ -47,15 +59,53 @@ Template.adminAddKeyword.events({
             return;
         }
 
+        const allKeywords = Keywords.find().fetch();
+        for (let i = 0; i < allKeywords.length; i++) {
+            if (allKeywords[i].name.toLowerCase() === name.val().toLowerCase() && allKeywords[i].section === section.val()) {
+                console.log(TAPi18n.__('submit.already_exists'));
+                return;
+            }
+        }
+
         Meteor.call('addKeywordAdmin', name.val(), section.val());
         name.val('');
     }
 });
 
-Template.adminAddKeyword.helpers({
-    sections: () => {
-        return Sections
+Template.adminEditKeyword.events({
+    'click button[data-action="delete"]'(event, template) {
+        const modal = template.$('#editModal');
+        const id = modal.data('id');
+        Meteor.call('removeKeywordAdmin', id);
+        modal.modal('hide');
     },
+    'click button[data-action="save"]'(event, template) {
+        const modal = template.$('#editModal');
+        const id = template.$('#editModal', modal).data('id');
+        const name = template.$('#editKeywordName', modal).val();
+        const section = template.$('#editKeywordSection', modal).val();
+
+        const sectionResult = UserInputVerification.verifySection(section);
+        if (!sectionResult.ok) {
+            console.log(TAPi18n.__(sectionResult.message));
+            return;
+        }
+
+        const suggestionResult = UserInputVerification.verifySuggestion(name);
+        if (!suggestionResult.ok) {
+            console.log(TAPi18n.__(suggestionResult.message));
+            return;
+        }
+
+        const existsResult = UserInputVerification.verifyKeywordExists(name, section);
+        if (existsResult.ok) {
+            console.log(TAPi18n.__('submit.already_exists'));
+            return;
+        }
+
+        Meteor.call('saveKeywordAdmin', id, name, section);
+        modal.modal('hide');
+    }
 });
 
 Template.adminKeywordList.helpers({

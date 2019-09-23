@@ -23,6 +23,8 @@
         </div>
     </div>
 
+    {{> adminEditKeyword}}
+
 </template>
 
 <template name="adminAddKeyword">
@@ -74,10 +76,15 @@
                             </div>
                             <div>
                                 {{#if (keyword.enabled)}}
-                                    <button data-id="{{keyword._id}}" data-action="disable" class="btn btn-outline-danger">{{_ "admin.disable"}}</button>
+                                    <button data-id="{{keyword._id}}" data-action="disable"
+                                            class="btn btn-outline-danger">{{_ "admin.disable"}}</button>
                                 {{else}}
-                                    <button data-id="{{keyword._id}}" data-action="enable" class="btn btn-outline-success">{{_ "admin.enable"}}</button>
-                                    <button data-id="{{keyword._id}}" data-action="delete" class="btn btn-outline-danger">{{_ "admin.delete"}}</button>
+                                    <button data-id="{{keyword._id}}" data-action="edit" data-name="{{keyword.name}}"
+                                            data-section="{{keyword.section}}" class="btn btn-outline-secondary">
+                                        {{_ "admin.edit"}}
+                                    </button>
+                                    <button data-id="{{keyword._id}}" data-action="enable"
+                                            class="btn btn-outline-success">{{_ "admin.enable"}}</button>
                                 {{/if}}
                             </div>
                         </div>
@@ -87,4 +94,41 @@
                 <li class="list-group-item text-center">{{_ "no_results"}}</li>
             {{/if}}
         </ul>
+</template>
+
+
+<template name="adminEditKeyword">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalCenterTitle">{{_ "admin.edit_title"}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="pb-3">
+                        <label for="editKeywordName">{{_ "admin.keyword"}}</label>
+                        <input id="editKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" class="form-control">
+                    </div>
+                    <div class="pb-3">
+                        <label for="editKeywordSection">{{_ "admin.section"}}</label>
+                        <select id="editKeywordSection" class="form-control">
+                            {{#each sections}}
+                                <option value='{{id}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button data-action="delete" type="button" class="btn btn-outline-danger">{{_ "admin.delete"}}</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{_ "admin.close"}}</button>
+                        <button data-action="save" type="button" class="btn btn-outline-success">{{_ "admin.save"}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>

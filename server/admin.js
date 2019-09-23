@@ -21,6 +21,14 @@ Meteor.methods({
                 votes: []
             });
         }
+    },
+    saveKeywordAdmin(id, name, section) {
+        if (isAdmin(this.userId)) {
+            Keywords.update({_id: id}, {$set: {
+                name: name,
+                section: section
+            }})
+        }
     }
 });
 

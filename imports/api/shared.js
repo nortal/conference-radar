@@ -87,5 +87,15 @@ export const UserInputVerification = {
         } else {
             return new Result(true);
         }
+    },
+    verifyKeywordExists(keyword, section) {
+        const allKeywords = Keywords.find().fetch();
+        for (let i = 0; i < allKeywords.length; i++) {
+            if (allKeywords[i].name.toLowerCase() === keyword.toLowerCase() && allKeywords[i].section === section) {
+                return new Result(true);
+            }
+        }
+
+        return new Result(false);
     }
 };

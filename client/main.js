@@ -13,6 +13,7 @@ import './views/admin-view.js';
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
+import {Sections} from "../imports/api/constants";
 
 Tracker.autorun(() => {
     Meteor.subscribe('user');
@@ -85,4 +86,7 @@ Template.mainLayout.helpers({
 
 Template.registerHelper('getConferenceLogo', function() {
     return Meteor.settings.public.conferenceLogo;
+});
+Template.registerHelper('sections', function() {
+    return Sections;
 });
