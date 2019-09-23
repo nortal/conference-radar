@@ -49,7 +49,7 @@ Template.confirm.events({
             return;
         }
 
-        Meteor.call('updateUser', submitEmail, recruitmentChecked, participateChecked, termsChecked);
+        Meteor.call('updateUser', submitName, submitEmail, recruitmentChecked, participateChecked, termsChecked);
         Router.go('/submit');
     }
 });
@@ -57,7 +57,7 @@ Template.confirm.events({
 Template.confirm.helpers({
     getClasses: function (inputName) {
         const input = Template.instance()[inputName].get();
-        return (input.text.length ? '' : 'empty') + (input.valid ? '' : ' error');
+        return (input.text ? '' : 'empty') + (input.valid ? '' : ' error');
     },
     getInvalidInput: function () {
         return Template.instance().invalidInput.get();
