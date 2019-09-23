@@ -50,11 +50,7 @@ Template.confirm.events({
         }
 
         Meteor.call('updateUser', submitEmail, recruitmentChecked, participateChecked, termsChecked);
-
-        // Order is important. If signUpDetails is cleared first, the user will lose
-        // access to the current page and will be redirected back to the front
         Router.go('/submit');
-        Session.set('signUpDetails', undefined);
     }
 });
 
