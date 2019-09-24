@@ -1,7 +1,8 @@
 import {Template} from 'meteor/templating';
-import {Keywords} from "../../imports/api/keywords";
-import {UserInputVerification} from "../../imports/api/shared";
 import {Meteor} from "meteor/meteor";
+
+import {Keywords} from "/imports/api/keywords.js";
+import {UserInputVerification} from "/imports/api/shared.js";
 
 Template.admin.helpers({
     'getEnabledKeywords'() {
@@ -12,6 +13,18 @@ Template.admin.helpers({
     },
     'isDevMode'() {
         return Meteor.settings.public.environment === "development";
+    }
+});
+
+Template.adminKeywordList.helpers({
+    'keywordColorClass'(enabled) {
+        return enabled ? 'text-success' : 'text-danger';
+    }
+});
+
+Template.adminEditKeyword.helpers({
+    'keywords'() {
+        return Keywords.find({}, {sort: {section: 1}}).fetch();
     }
 });
 
@@ -116,18 +129,6 @@ Template.adminEditKeyword.events({
         const fromId = template.$('#editModal', modal).data('id');
         const toId = template.$('#editMoveVote').val();
         Meteor.call('moveVotesAdmin', fromId, toId);
-    }
-});
-
-Template.adminKeywordList.helpers({
-    'keywordColorClass'(enabled) {
-        return enabled ? 'text-success' : 'text-danger';
-    }
-});
-
-Template.adminEditKeyword.helpers({
-    'keywords'() {
-        return Keywords.find({}, {sort:  {section: 1}}).fetch();
     }
 });
 

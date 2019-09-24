@@ -1,6 +1,7 @@
-import {Keywords} from "../imports/api/keywords";
-import {Stages} from "../imports/api/constants";
 import {Meteor} from "meteor/meteor";
+
+import {Keywords} from "../keywords.js";
+import {Stages} from "../constants.js";
 
 Meteor.methods({
     clearDatabaseDev() {

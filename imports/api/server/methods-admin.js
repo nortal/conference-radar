@@ -1,5 +1,6 @@
 import {Meteor} from "meteor/meteor";
-import {Keywords} from "../imports/api/keywords";
+
+import {Keywords} from "../keywords.js";
 
 Meteor.methods({
     removeKeywordAdmin(id) {
@@ -24,10 +25,12 @@ Meteor.methods({
     },
     saveKeywordAdmin(id, name, section) {
         if (isAdmin(this.userId)) {
-            Keywords.update({_id: id}, {$set: {
-                name: name,
-                section: section
-            }})
+            Keywords.update({_id: id}, {
+                $set: {
+                    name: name,
+                    section: section
+                }
+            })
         }
     },
     moveVotesAdmin(fromId, toId) {
@@ -42,13 +45,17 @@ Meteor.methods({
                 .filter((fromVote) => !toVotes.some(toVote => toVote.userId === fromVote.userId))
                 .forEach((fromVote) => toVotes.push(fromVote));
 
-            Keywords.update({_id: toId}, {$set: {
-                votes: toVotes
-            }});
+            Keywords.update({_id: toId}, {
+                $set: {
+                    votes: toVotes
+                }
+            });
 
-            Keywords.update({_id: fromId}, {$set: {
-                votes: []
-            }})
+            Keywords.update({_id: fromId}, {
+                $set: {
+                    votes: []
+                }
+            })
         }
     }
 });

@@ -1,19 +1,19 @@
 import './main.html';
-import '../imports/ui/login-view.html';
-import '../imports/ui/confirm-view.html';
-import '../imports/ui/submit-view.html';
-import '../imports/ui/radar-view.html';
-import '../imports/ui/admin-view.html';
+import '/imports/ui/login/login-view.html';
+import '/imports/ui/confirm/confirm-view.html';
+import '/imports/ui/submit/submit-view.html';
+import '/imports/ui/radar/radar-view.html';
+import '/imports/ui/admin/admin-view.html';
 
-import './views/confirm-view';
-import './views/login-view.js';
-import './views/submit-view.js';
-import './views/radar-view.js';
-import './views/admin-view.js';
+import '/imports/ui/login/login-view.js';
+import '/imports/ui/confirm/confirm-view.js';
+import '/imports/ui/submit/submit-view.js';
+import '/imports/ui/radar/radar-view.js';
+import '/imports/ui/admin/admin-view.js';
+import {Sections} from "/imports/api/constants.js";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
-import {Sections} from "../imports/api/constants";
 
 Tracker.autorun(() => {
     Meteor.subscribe('user');
