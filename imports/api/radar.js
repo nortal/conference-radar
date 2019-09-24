@@ -1,6 +1,7 @@
+import {Stages} from "./constants.js";
+
 import d3 from "d3";
 import _ from 'underscore';
-import {Stages} from "./constants";
 
 export class RadarBuilder {
     /**

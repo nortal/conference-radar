@@ -1,10 +1,12 @@
 import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords} from '../../imports/api/keywords.js';
-import {Sections, Stages} from '../../imports/api/constants.js';
-import {UserInputVerification} from "../../imports/api/shared";
+
+import {Keywords} from '/imports/api/keywords.js';
+import {Sections, Stages} from '/imports/api/constants.js';
+import {UserInputVerification} from "/imports/api/shared.js";
+import './submit-view.css';
+
 import _ from 'underscore';
-import '/imports/ui/submit-view.css';
 
 Template.submit.onCreated(function () {
     Session.set('title', 'title.vote');

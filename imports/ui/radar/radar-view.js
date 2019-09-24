@@ -1,12 +1,14 @@
 ﻿import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
-import {Keywords} from '../../imports/api/keywords.js';
-import {Sections, Stages} from '../../imports/api/constants.js';
-import {GetQueryParam} from '../../imports/api/shared.js';
-import {RadarBuilder, initializeEntries} from '../../imports/api/radar.js';
+
+import {Keywords} from '/imports/api/keywords.js';
+import {Sections, Stages} from '/imports/api/constants.js';
+import {GetQueryParam} from '/imports/api/shared.js';
+import {initializeEntries, RadarBuilder} from '/imports/api/radar.js';
+import './radar-view.css';
+
 import d3 from 'd3';
 import _ from 'underscore';
-import '/imports/ui/radar-view.css';
 
 Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
@@ -53,6 +55,10 @@ Template.radar.onRendered(function () {
     $(window).resize(throttledOnWindowResize);
 });
 
+Template.radar.onDestroyed(function () {
+    $(window).off('resize', throttledOnWindowResize);
+});
+
 Template.radar.helpers({
     currentKeywordIndex: function () {
         return Template.instance().currentKeywordIndex.get();
@@ -97,12 +103,6 @@ Template.radar.helpers({
         return Template.instance().logs.get()[section];
     },
 });
-
-
-Template.radar.onDestroyed(function () {
-    $(window).off('resize', throttledOnWindowResize);
-});
-
 
 function pollDrawing() {
     var len = Keywords.find({enabled: true}).count();

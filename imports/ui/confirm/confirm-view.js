@@ -1,5 +1,6 @@
 import {Template} from 'meteor/templating';
-import {UserInputVerification} from "../../imports/api/shared";
+
+import {UserInputVerification} from "/imports/api/shared.js";
 
 Template.confirm.onCreated(function () {
     Session.set('title', 'title.login_and_vote');
@@ -11,6 +12,24 @@ Template.confirm.onCreated(function () {
     this.nameText = new ReactiveVar({text: profile.name || '', valid: true, message: ''});
     this.emailText = new ReactiveVar({text: profile.email || '', valid: true, message: ''});
     this.invalidInput = new ReactiveVar();
+});
+
+Template.confirm.helpers({
+    getClasses: function (inputName) {
+        const input = Template.instance()[inputName].get();
+        return (input.text ? '' : 'empty') + (input.valid ? '' : ' error');
+    },
+    getInvalidInput: function () {
+        return Template.instance().invalidInput.get();
+    },
+    getError: function (inputName) {
+        const input = Template.instance()[inputName].get();
+        return input.message;
+    },
+    getValue: function (inputName) {
+        const input = Template.instance()[inputName].get();
+        return input.text;
+    }
 });
 
 Template.confirm.events({
@@ -51,23 +70,5 @@ Template.confirm.events({
 
         Meteor.call('updateUser', submitName, submitEmail, recruitmentChecked, participateChecked, termsChecked);
         Router.go('/submit');
-    }
-});
-
-Template.confirm.helpers({
-    getClasses: function (inputName) {
-        const input = Template.instance()[inputName].get();
-        return (input.text ? '' : 'empty') + (input.valid ? '' : ' error');
-    },
-    getInvalidInput: function () {
-        return Template.instance().invalidInput.get();
-    },
-    getError: function (inputName) {
-        const input = Template.instance()[inputName].get();
-        return input.message;
-    },
-    getValue: function(inputName) {
-        const input = Template.instance()[inputName].get();
-        return input.text;
     }
 });

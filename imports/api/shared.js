@@ -1,6 +1,5 @@
-import {Keywords} from '../../imports/api/keywords.js';
-import {Sections, Stages} from '../../imports/api/constants.js';
-import {UserValidation} from "../../imports/api/constants";
+import {Sections, Stages, UserValidation} from './constants.js';
+import {Keywords} from './keywords.js';
 
 export class Result {
     constructor(ok, message) {
