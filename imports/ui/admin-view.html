@@ -99,7 +99,7 @@
 
 <template name="adminEditKeyword">
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalCenterTitle">{{_ "admin.edit_title"}}</h5>
@@ -108,31 +108,36 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="pb-3">
-                        <label for="editKeywordName">{{_ "admin.keyword"}}</label>
-                        <input id="editKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" class="form-control">
-                    </div>
-                    <div class="pb-3">
-                        <label for="editKeywordSection">{{_ "admin.section"}}</label>
-                        <select id="editKeywordSection" class="form-control">
-                            {{#each sections}}
-                                <option value='{{id}}'>{{name}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <hr>
-                    <div class="pb-3">
-                        <label for="editMoveVote">{{_ "admin.move_votes"}}</label>
-                        <div class="input-group">
-                            <select id="editMoveVote" class="form-control">
-                                {{#each keywords}}
-                                    <option value='{{_id}}'>{{section}} - {{name}}</option>
-                                {{/each}}
-                            </select>
-                            <div class="input-group-append">
-                                <button id="moveVoteButton" type="button" class="btn btn-sm btn-outline-danger">
-                                    {{_ "admin.move"}}
-                                </button>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="pb-3">
+                                <label for="editKeywordName">{{_ "admin.keyword"}}</label>
+                                <input id="editKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" class="form-control">
+                            </div>
+                            <div class="pb-3">
+                                <label for="editKeywordSection">{{_ "admin.section"}}</label>
+                                <select id="editKeywordSection" class="form-control">
+                                    {{#each sections}}
+                                        <option value='{{id}}'>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="pb-3">
+                                <label for="editMoveVote">{{_ "admin.move_votes"}}</label>
+                                <div class="input-group">
+                                    <select id="editMoveVote" class="form-control">
+                                        {{#each keywords}}
+                                            <option value='{{_id}}'>{{section}} - {{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button id="moveVoteButton" type="button" class="btn btn-sm btn-outline-danger">
+                                            {{_ "admin.move"}}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
