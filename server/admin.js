@@ -32,6 +32,10 @@ Meteor.methods({
     },
     moveVotesAdmin(fromId, toId) {
         if (isAdmin(this.userId)) {
+            if (fromId === toId) {
+                return;
+            }
+
             const toVotes = Keywords.findOne({_id: toId}).votes;
 
             Keywords.findOne({_id: fromId}).votes
