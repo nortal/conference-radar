@@ -31,36 +31,42 @@ Template.adminKeywordList.events({
         modal.data('id', id);
         $('#editKeywordName', modal).val(keyword.name);
         $('#editKeywordSection', modal).val(keyword.section);
+        $('#editAlert', modal).hide();
         modal.modal('show');
     }
 });
 
 Template.adminAddKeyword.events({
-    'click #addKeywordButton'() {
+    'click #addKeywordButton'(event, template) {
         const name = $('#addKeywordName');
         const section = $('#addKeywordSection');
+        const alert = template.$('#addAlert');
 
         const sectionResult = UserInputVerification.verifySection(section.val());
         if (!sectionResult.ok) {
-            console.log(TAPi18n.__(sectionResult.message));
+            alert.html(TAPi18n.__(sectionResult.message))
+                .show();
             return;
         }
 
         const suggestionResult = UserInputVerification.verifySuggestion(name.val());
         if (!suggestionResult.ok) {
-            console.log(TAPi18n.__(sectionResult.message));
+            alert.html(TAPi18n.__(suggestionResult.message))
+                .show();
             return;
         }
 
         const allKeywords = Keywords.find().fetch();
         for (let i = 0; i < allKeywords.length; i++) {
             if (allKeywords[i].name.toLowerCase() === name.val().toLowerCase() && allKeywords[i].section === section.val()) {
-                console.log(TAPi18n.__('submit.already_exists'));
+                alert.html(TAPi18n.__('submit.already_exists'))
+                    .show();
                 return;
             }
         }
 
         Meteor.call('addKeywordAdmin', name.val(), section.val());
+        alert.hide();
         name.val('');
     }
 });
@@ -80,19 +86,25 @@ Template.adminEditKeyword.events({
 
         const sectionResult = UserInputVerification.verifySection(section);
         if (!sectionResult.ok) {
-            console.log(TAPi18n.__(sectionResult.message));
+            $('#editAlert')
+                .html(TAPi18n.__(sectionResult.message))
+                .show();
             return;
         }
 
         const suggestionResult = UserInputVerification.verifySuggestion(name);
         if (!suggestionResult.ok) {
-            console.log(TAPi18n.__(suggestionResult.message));
+            $('#editAlert')
+                .html(TAPi18n.__(suggestionResult.message))
+                .show();
             return;
         }
 
         const existsResult = UserInputVerification.verifyKeywordExists(name, section);
         if (existsResult.ok) {
-            console.log(TAPi18n.__('submit.already_exists'));
+            $('#editAlert')
+                .html(TAPi18n.__('submit.already_exists'))
+                .show();
             return;
         }
 
