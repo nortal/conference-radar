@@ -57,7 +57,7 @@ export const UserInputVerification = {
         keyword = keyword.trim();
         if (!keyword) {
             return new Result(false, 'submit.enter_valid_suggestion');
-        } else if (keyword.length > 32) {
+        } else if (keyword.length > UserValidation.suggestionMaxLen) {
             return new Result(false, 'submit.enter_long_suggestion');
         }
         return new Result(true);

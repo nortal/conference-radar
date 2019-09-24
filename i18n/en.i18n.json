@@ -60,7 +60,7 @@
     "enter_valid_section": "Please select a valid section!",
     "enter_suggestion": "Please enter a suggestion!",
     "enter_valid_suggestion": "Please enter a valid suggestion!",
-    "enter_long_suggestion": "Please enter 32 characters at maximum",
+    "enter_long_suggestion": "Please enter a shorter suggestion",
     "enter_keyword": "Please enter a keyword!",
     "enter_valid_keyword": "Please enter a valid keyword!",
     "group": "Group of candidate",
