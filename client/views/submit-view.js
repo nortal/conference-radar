@@ -139,13 +139,13 @@ Template.submit.events({
         template.$("#sectionText").val(data.section);
     },
 
-    'focusout #keywordText'(event, template) {
-        // is user clicked on a link that opens the suggestion modal
-        if (event.relatedTarget && event.relatedTarget.dataset.toggle === "modal") {
-            event.preventDefault();
-            return;
-        }
+    'click .typeahead-no-matches'(event, template) {
+        template.$("#keywordText").removeClass('error');
+        template.showSuggestionForm.set(true);
+    },
 
+
+    'focusout #keywordText'(event, template) {
         clearAutocomplete(template, false);
     },
 
