@@ -1,0 +1,29 @@
+<template name="keywordSearch">
+    {{#if hasInputLabel}}
+        <label for="{{inputId}}">{{_ inputLabel}}</label>
+    {{/if}}
+    <input id="{{inputId}}" name="keywordInput" class="form-control" type="text" placeholder="{{_ inputPlaceholder}}"/>
+
+    <div class="typeahead" style="width:{{typeaheadWidth}}px;">
+        <div class="typeahead-results">
+            {{#if showAutoComplete}}
+                {{#if noResults}}
+                    {{#unless hideNoResults}}
+                    <div class="typeahead-no-matches d-flex justify-content-between align-items-center">
+                        <div>{{_ "no_results"}}</div>
+                        <a class="styled-link text-black-50">{{_ "submit.suggest_this"}}</a>
+                    </div>
+                    {{/unless}}
+                {{else}}
+                    {{#each match in matches}}
+                        <div class="typeahead-result" data-id="{{match._id}}" data-name="{{match.name}}"
+                             data-section="{{match.section}}">
+                            <span class="{{matchColorClass (match.enabled)}}">{{match.name}}</span>
+                            <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
+                        </div>
+                    {{/each}}
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+</template>

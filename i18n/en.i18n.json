@@ -1,6 +1,7 @@
 {
   "admin": {
     "add_new_keyword": "Add a new keyword",
+    "add_keyword": "Add keyword",
     "edit_title": "Edit keyword",
     "close": "Close",
     "move_votes": "Move votes to",

@@ -1,6 +1,8 @@
 import {Template} from 'meteor/templating';
 import {Meteor} from "meteor/meteor";
 
+import './../../components/keywordSearch/keywordSearch.js'
+
 import {Keywords} from "/imports/api/keywords.js";
 import {UserInputVerification} from "/imports/api/shared.js";
 
@@ -22,12 +24,6 @@ Template.adminKeywordList.helpers({
     }
 });
 
-Template.adminEditKeyword.helpers({
-    'keywords'() {
-        return Keywords.find({}, {sort: {section: 1}}).fetch();
-    }
-});
-
 Template.adminKeywordList.events({
     'click button[data-action="enable"], click button[data-action="disable"]'(event) {
         const target = $(event.target);
@@ -38,11 +34,10 @@ Template.adminKeywordList.events({
     'click button[data-action="edit"]'(event) {
         const modal = $('#editModal');
         const id = $(event.target).data('id');
-
         const keyword = Keywords.findOne({_id: id});
 
         modal.data('id', id);
-        $('#editKeywordName', modal).val(keyword.name);
+        $('#keywordInput', modal).val(keyword.name);
         $('#editKeywordSection', modal).val(keyword.section);
         $('#editAlert', modal).hide();
         modal.modal('show');
@@ -84,6 +79,7 @@ Template.adminAddKeyword.events({
     }
 });
 
+
 Template.adminEditKeyword.events({
     'click button[data-action="delete"]'(event, template) {
         const modal = template.$('#editModal');
@@ -94,7 +90,7 @@ Template.adminEditKeyword.events({
     'click button[data-action="save"]'(event, template) {
         const modal = template.$('#editModal');
         const id = template.$('#editModal', modal).data('id');
-        const name = template.$('#editKeywordName', modal).val();
+        const name = template.$('#keywordInput', modal).val();
         const section = template.$('#editKeywordSection', modal).val();
 
         const sectionResult = UserInputVerification.verifySection(section);
@@ -131,6 +127,14 @@ Template.adminEditKeyword.events({
         Meteor.call('moveVotesAdmin', fromId, toId);
     }
 });
+
+Template.adminEditKeyword.helpers({
+    'keywords'() {
+        return Keywords.find({}, {sort: {section: 1}}).fetch();
+    }
+});
+
+
 
 Template.adminControl.events({
     'click #randomGenButton'() {

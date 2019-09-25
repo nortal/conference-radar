@@ -31,15 +31,21 @@
     <h1>{{_ "admin.add_new_keyword"}}</h1>
     <div id="addAlert" class="alert alert-warning" role="alert" style="display:none;"></div>
 
-    <div class="input-group">
-        <input id="addKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" aria-label="Keyword name" class="form-control">
-        <select id="addKeywordSection" class="form-control">
-            {{#each sections}}
-                <option value='{{id}}'>{{name}}</option>
-            {{/each}}
-        </select>
-        <div class="input-group-append">
-            <button id="addKeywordButton" type="button" class="btn btn-sm btn-outline-success">{{_ "admin.save"}}</button>
+    <div class="row">
+        <div class="col-12 col-md-6 mb-2">
+            {{> keywordSearch showDisabled=true hideNoResults=true label=null placeholder="submit.your_vote" id="addKeywordName"}}
+        </div>
+        <div class="col-12 col-md-6 mb-2">
+            <select id="addKeywordSection" class="form-control">
+                {{#each sections}}
+                    <option value='{{id}}'>{{name}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="col-12">
+            <button id="addKeywordButton" type="button" class="btn btn-block btn-outline-success">
+                {{_ "admin.add_keyword"}}
+            </button>
         </div>
     </div>
 </template>
@@ -113,8 +119,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <div class="pb-3">
-                                <label for="editKeywordName">{{_ "admin.keyword"}}</label>
-                                <input id="editKeywordName" type="text" placeholder="{{_ "admin.keyword"}}" class="form-control">
+                                {{> keywordSearch showDisabled=true hideNoResults=true label="admin.keyword" id="keywordInput"}}
                             </div>
                             <div class="pb-3">
                                 <label for="editKeywordSection">{{_ "admin.section"}}</label>
