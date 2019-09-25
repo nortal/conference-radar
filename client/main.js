@@ -1,15 +1,18 @@
 import './main.html';
-import '/imports/ui/login/login-view.html';
-import '/imports/ui/confirm/confirm-view.html';
-import '/imports/ui/submit/submit-view.html';
-import '/imports/ui/radar/radar-view.html';
-import '/imports/ui/admin/admin-view.html';
+import '/imports/ui/pages/login/login-view.html';
+import '/imports/ui/pages/confirm/confirm-view.html';
+import '/imports/ui/pages/submit/submit-view.html';
+import '/imports/ui/pages/radar/radar-view.html';
+import '/imports/ui/pages/admin/admin-view.html';
+import '/imports/ui/pages/login/login-view.js';
+import '/imports/ui/pages/confirm/confirm-view.js';
+import '/imports/ui/pages/submit/submit-view.js';
+import '/imports/ui/pages/radar/radar-view.js';
+import '/imports/ui/pages/admin/admin-view.js';
 
-import '/imports/ui/login/login-view.js';
-import '/imports/ui/confirm/confirm-view.js';
-import '/imports/ui/submit/submit-view.js';
-import '/imports/ui/radar/radar-view.js';
-import '/imports/ui/admin/admin-view.js';
+import '/imports/ui/layouts/main-layout.html';
+import '/imports/ui/layouts/radar-layout.html';
+
 import {Sections} from "/imports/api/constants.js";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -74,19 +77,16 @@ Router.route('/admin', function () {
     }
 });
 
-Template.mainLayout.helpers({
-    'isAdmin': function () {
-        const user = Meteor.users.findOne();
-        return user && user.admin;
-    },
-    'getTitle': function () {
-        return Session.get('title');
-    }
-});
-
 Template.registerHelper('getConferenceLogo', function() {
     return Meteor.settings.public.conferenceLogo;
 });
 Template.registerHelper('sections', function() {
     return Sections;
+});
+Template.registerHelper('getTitle', function() {
+    return Session.get('title');
+});
+Template.registerHelper('isAdmin', function() {
+    const user = Meteor.users.findOne();
+    return user && user.admin;
 });
