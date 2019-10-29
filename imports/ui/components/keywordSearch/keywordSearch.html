@@ -19,6 +19,7 @@
                         <div class="typeahead-result" data-id="{{match._id}}" data-name="{{match.name}}"
                              data-section="{{match.section}}">
                             <span class="{{matchColorClass (match.enabled)}}">{{match.name}}</span>
+                            <span class="text-black-50" style="font-size: 12px">({{formatVotes match.votes.length}})</span>
                             <span class="text-black-50 float-right" style="font-size: 12px">({{match.section}})</span>
                         </div>
                     {{/each}}

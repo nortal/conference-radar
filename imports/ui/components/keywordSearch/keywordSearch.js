@@ -49,6 +49,9 @@ Template.keywordSearch.helpers({
     },
     matchColorClass(enabled) {
         return enabled ? 'text-success' : 'text-danger';
+    },
+    formatVotes(count) {
+        return count + (count === 1 ? ' vote' : ' votes');
     }
 });
 
