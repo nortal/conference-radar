@@ -21,6 +21,8 @@
     "keyword": "Keyword",
     "panel": "Admin panel",
     "pending_keywords": "Pending keywords",
+    "exception": "An exception occurred",
+    "votes_moved": "Votes moved successfully",
     "role": "(Admin)",
     "save": "Save",
     "section": "Section",

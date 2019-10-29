@@ -124,8 +124,17 @@ Template.adminEditKeyword.events({
     'click #moveVoteButton'(event, template) {
         const modal = template.$('#editModal');
         const fromId = template.$('#editModal', modal).data('id');
-        const toId = template.$('#editMoveVote').val();
-        Meteor.call('moveVotesAdmin', fromId, toId);
+        const toId = template.$('#editMoveVote').data('id');
+        const alert = $('#editAlert');
+
+        Meteor.call('moveVotesAdmin', fromId, toId, (error, response) => {
+            if (error) {
+                alert.html(TAPi18n.__("admin.exception")).show();
+                return;
+            }
+
+            alert.html(TAPi18n.__("admin.votes_moved")).show();
+        });
     }
 });
 

@@ -132,19 +132,10 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="pb-3">
-                                <label for="editMoveVote">{{_ "admin.move_votes"}}</label>
-                                <div class="input-group">
-                                    <select id="editMoveVote" class="form-control">
-                                        {{#each keywords}}
-                                            <option value='{{_id}}'>{{section}} - {{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button id="moveVoteButton" type="button" class="btn btn-sm btn-outline-danger">
-                                            {{_ "admin.move"}}
-                                        </button>
-                                    </div>
-                                </div>
+                                {{> keywordSearch showDisabled=true hideNoResults=true label="admin.move_votes" placeholder="admin.your_vote" id="editMoveVote"}}
+                                <button id="moveVoteButton" type="button" class="btn btn-sm btn-outline-danger float-right mt-2">
+                                    {{_ "admin.move"}}
+                                </button>
                             </div>
                         </div>
                     </div>
