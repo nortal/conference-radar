@@ -80,6 +80,9 @@ Router.route('/admin', function () {
 Template.registerHelper('getConferenceLogo', function() {
     return Meteor.settings.public.conferenceLogo;
 });
+Template.registerHelper('getConferenceName', function() {
+    return Meteor.settings.public.conferenceName;
+});
 Template.registerHelper('sections', function() {
     return Sections;
 });

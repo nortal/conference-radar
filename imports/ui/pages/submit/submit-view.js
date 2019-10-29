@@ -7,6 +7,7 @@ import {UserInputVerification} from "/imports/api/shared.js";
 import './submit-view.css';
 
 import _ from 'underscore';
+import {Meteor} from "meteor/meteor";
 
 Template.submit.onCreated(function () {
     Session.set('title', 'title.vote');
@@ -69,6 +70,9 @@ Template.submit.helpers({
     },
     showSuggestionForm: () => {
         return Template.instance().showSuggestionForm.get();
+    },
+    getYear: () => {
+        return Meteor.settings.public.conferenceYear;
     }
 });
 
