@@ -281,7 +281,7 @@ export class RadarBuilder {
         // score descending
         data = _.sortBy(data, 'graphScore').reverse();
         // add key for binding
-        _.each(data, (d, i) => (d.key = d.name + i + d.graphScore + window.innerWidth));
+        _.each(data, (d, i) => (d.key = d.name + i + d.graphScore + window.innerWidth + this.isFirstOfStage(data, i)));
 
         return {
             columns: [
