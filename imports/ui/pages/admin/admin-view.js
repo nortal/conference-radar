@@ -5,6 +5,7 @@ import './../../components/keywordSearch/keywordSearch.js'
 
 import {Keywords} from "/imports/api/keywords.js";
 import {UserInputVerification} from "/imports/api/shared.js";
+import {FindMatchingKeywords} from "../../../api/shared";
 
 Template.admin.helpers({
     'getEnabledKeywords'() {
@@ -109,8 +110,8 @@ Template.adminEditKeyword.events({
             return;
         }
 
-        const existsResult = UserInputVerification.verifyKeywordExists(name, section);
-        if (existsResult.ok) {
+        const results = FindMatchingKeywords(id, name, section);
+        if (results.length) {
             $('#editAlert')
                 .html(TAPi18n.__('submit.already_exists'))
                 .show();
@@ -133,7 +134,6 @@ Template.adminEditKeyword.helpers({
         return Keywords.find({}, {sort: {section: 1}}).fetch();
     }
 });
-
 
 
 Template.adminControl.events({

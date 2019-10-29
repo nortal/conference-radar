@@ -83,3 +83,18 @@ export const UserInputVerification = {
         }));
     }
 };
+
+export const FindMatchingKeywords = function (id, keyword, section) {
+    return Keywords.find().fetch().filter(kw => {
+        if (kw._id === id) {
+            return false;
+        }
+
+        const kwMatch = kw.name.toLowerCase() === keyword.toLowerCase();
+        if (section === undefined) {
+            return kwMatch;
+        } else {
+            return kwMatch && kw.section === section;
+        }
+    })
+};
