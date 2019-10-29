@@ -68,15 +68,13 @@ export class RadarBuilder {
      * @returns {string}
      */
     getStage (graphScore) {
-        const scorePercentage = this.calculateBlipX(graphScore) / this.settings.dottedLineLength * 100;
-
-        if (scorePercentage > 75) {
-            return "adopt";
-        } else if (scorePercentage > 50) {
+        if (graphScore >= 2) {
+            return 'adopt';
+        } else if (graphScore < 2 && graphScore >= 0) {
             return "trial";
-        } else if (scorePercentage > 25) {
+        } else if (graphScore < 0 && graphScore >= -2) {
             return "assess";
-        } else {
+        } else if (graphScore < -2) {
             return "avoid";
         }
     };
