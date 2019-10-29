@@ -74,7 +74,16 @@ Template.adminAddKeyword.events({
             }
         }
 
-        Meteor.call('addKeywordAdmin', name.val(), section.val());
+        Meteor.call('addKeywordAdmin', name.val(), section.val(), (error, response) => {
+            if (error) {
+                alert.html(TAPi18n.__('admin.exception'))
+                    .show();
+                return;
+            }
+
+            alert.html(TAPi18n.__('admin.keyword_added'))
+                .show();
+        });
         alert.hide();
         name.val('');
     }
