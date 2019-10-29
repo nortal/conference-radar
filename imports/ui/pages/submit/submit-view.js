@@ -122,8 +122,9 @@ Template.submit.events({
         const value = event.target.value.toLowerCase();
 
         template.autocomplete.get().matches = Keywords
-            .find({enabled: true, name: {$regex: value, $options: 'i'}})
+            .find({enabled: true})
             .fetch()
+            .filter(kw => kw.name.toLowerCase().indexOf(value) !== -1)
             .filter(kw => !kw.votes.some(vote => vote.userId === Meteor.userId()))
             .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
             .slice(0, 11);
