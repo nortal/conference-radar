@@ -16,6 +16,7 @@ Template.radar.onCreated(function () {
     this.logs = new ReactiveVar({frameworks: [], platforms: [], techniques: [], tools: []});
     this.voteCounts = {};
     this.layout = getLayoutParams();
+    this.logSize = parseInt(GetQueryParam('logSize')) || 3;
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
@@ -35,15 +36,24 @@ Template.radar.onRendered(function () {
         changed: function (id, data) {
             // when a new vote gets registered on an existing blip, re-draw
             draw();
-            appendLog(self, id, data);
-        },
-        added: function (id, data) {
-            // added keywords
-            self.voteCounts[id] = data.votes.length;
-            appendLog(self, id, data);
-        },
-        removed: function (id, data) {
-            // removed keywords
+            updateLog(self, id, data);
+        }
+    });
+
+    // get initial log entries
+    Meteor.call('getLastVotes', 3, (error, response) => {
+        if (error) {
+            return;
+        }
+
+        for (let i = 0; i < response.length; i++) {
+            const section = response[i]._id;
+            const votes = response[i].docs;
+
+            for (let j = 0; j < votes.length; j++) {
+                const vote = votes[j];
+                addLogEntry(self, section, vote.keyword, vote.stage, vote.time);
+            }
         }
     });
 
@@ -157,7 +167,7 @@ const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
 
-function appendLog(template, id, data) {
+function updateLog(template, id, data) {
     const keyword = Keywords.findOne({_id: id});
     const lastVoteCount = template.voteCounts[id];
     template.voteCounts[id] = keyword.votes.length;
@@ -167,8 +177,13 @@ function appendLog(template, id, data) {
         return;
     }
 
-    const makeTimestamp = function (lastVote) {
-        const now = new Date(lastVote.time);
+    const lastVote = keyword.votes[keyword.votes.length - 1];
+    addLogEntry(template, keyword.section, keyword.name, lastVote.stage, lastVote.time);
+}
+
+function addLogEntry(template, section, keyword, stage, time) {
+    const formatTimestamp = function (time) {
+        const now = new Date(time);
         return ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
     };
 
@@ -177,25 +192,22 @@ function appendLog(template, id, data) {
     };
 
     const logs = template.logs.get();
-    const sectionLogs = logs[keyword.section];
+    const sectionLogs = logs[section];
     const nextLogIndex = sectionLogs.length
         ? parseInt(sectionLogs[sectionLogs.length - 1].index) + 1
         : 0;
-    const lastVote = keyword.votes[keyword.votes.length - 1];
 
-    logs[keyword.section].push({
+    sectionLogs.push({
         index: transformIndex(nextLogIndex),
-        timestamp: makeTimestamp(lastVote),
-        technology: keyword.name,
-        stage: lastVote.stage,
+        timestamp: formatTimestamp(time),
+        technology: keyword,
+        stage: stage,
         conference: Meteor.settings.public.conferenceName
     });
 
-    const logSize = parseInt(GetQueryParam('logSize')) || 3;
-
     // trim to last n entries
-    if (logs[keyword.section].length > logSize) {
-        logs[keyword.section] = logs[keyword.section].slice(1, logSize + 1);
+    if (logs[section].length > template.logSize) {
+        logs[section] = logs[section].slice(1, template.logSize + 1);
     }
 
     template.logs.set(logs);

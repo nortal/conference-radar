@@ -23,3 +23,4 @@ service-configuration
 accounts-facebook
 accounts-google
 tap:i18n
+meteorhacks:aggregate

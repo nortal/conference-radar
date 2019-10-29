@@ -82,5 +82,39 @@ Meteor.methods({
                 conference: Meteor.settings.public.conferenceName
             }]
         });
+    },
+    getLastVotes: function () {
+        return Keywords.rawCollection().aggregate(
+            {
+                $unwind: "$votes"
+            }, {
+                $addFields: {
+                    "votes.keywordId": "$_id",
+                    "votes.keyword": "$name",
+                    "votes.section": "$section"
+                }
+            }, {
+                $replaceRoot: {newRoot: "$votes"}
+            }, {
+                $sort: {time: 1}
+            }, {
+                $group: {
+                    _id: "$section",
+                    docs: {
+                        $push: {
+                            keyword: "$keyword",
+                            time: "$time",
+                            stage: "$stage",
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    docs: {
+                        $slice: ['docs', 3]
+                    }
+                }
+            }
+        ).toArray();
     }
 });
