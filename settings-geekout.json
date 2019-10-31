@@ -1,0 +1,20 @@
+{
+  "public": {
+    "environment": "production",
+    "conferenceLogo": "logo_geekout.png",
+    "conferenceName": "GeekOut",
+    "conferenceYear": 2019
+  },
+  "private": {
+    "auth": {
+      "google": {
+        "clientId": "",
+        "secret": ""
+      },
+      "facebook": {
+        "appId": "",
+        "secret": ""
+      }
+    }
+  }
+}
