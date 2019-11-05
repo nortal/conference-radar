@@ -84,7 +84,8 @@
     "your_votes": "YOUR VOTES:"
   },
   "radar": {
-    "vote": "Share your votes:"
+    "vote": "Share your votes:",
+    "results": "%s %s results"
   },
   "title": {
     "login_and_vote": "Login & Vote!",

@@ -3,7 +3,8 @@
     "environment": "development",
     "conferenceLogo": "logo_buildstuff.png",
     "conferenceName": "BuildStuff",
-    "conferenceYear": 2019
+    "conferenceYear": 2019,
+    "conferenceFinished": false
   },
   "private": {
     "auth": {

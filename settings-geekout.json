@@ -3,7 +3,8 @@
     "environment": "production",
     "conferenceLogo": "logo_geekout.png",
     "conferenceName": "GeekOut",
-    "conferenceYear": 2019
+    "conferenceYear": 2019,
+    "conferenceFinished": true
   },
   "private": {
     "auth": {
