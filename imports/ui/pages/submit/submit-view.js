@@ -70,9 +70,6 @@ Template.submit.helpers({
     },
     showSuggestionForm: () => {
         return Template.instance().showSuggestionForm.get();
-    },
-    getYear: () => {
-        return Meteor.settings.public.conferenceYear;
     }
 });
 

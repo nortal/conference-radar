@@ -1,10 +1,10 @@
 {
   "public": {
-    "environment": "development",
-    "conferenceLogo": "logo_buildstuff.png",
-    "conferenceName": "BuildStuff",
+    "environment": "production",
+    "conferenceLogo": "logo_geekout.png",
+    "conferenceName": "GeekOut",
     "conferenceYear": 2019,
-    "conferenceFinished": false
+    "conferenceFinished": true
   },
   "private": {
     "auth": {

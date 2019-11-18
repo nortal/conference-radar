@@ -9,14 +9,14 @@ remote=$1
 echo "============================="
 echo "REMOVE OLD ARCHIVES"
 echo "============================="
-rm conferenceRadar.tar conferenceRadarMongo.tar
+rm dist/techradar-development.tar dist/mongo-techradar.tar
 
 
 echo "============================="
 echo "REMOVE OLD DOCKER IMAGES"
 echo "============================="
-docker rm -vf conferenceRadar conferenceRadarMongo
-docker rmi -f nortal/conference-radar mongo
+docker rm -vf techradar-development mongo-techradar
+docker rmi -f nortal/techradar-development mongo
 
 
 echo "========================================"
@@ -24,22 +24,22 @@ echo "CREATE METEOR AND MONGO DOCKER IMAGES"
 echo "========================================"
 docker build \
   --build-arg NODE_VERSION=8.9.0 \
-  -t nortal/conference-radar:latest .
-docker run -d --name conferenceRadarMongo mongo:latest
-docker stop conferenceRadarMongo
+  -t nortal/techradar-development:latest .
+docker run -d --name mongo-techradar mongo:latest
+docker stop mongo-techradar
 
 
 echo "========================================"
 echo "CREATE DOCKER NEW IMAGE ARCHIVES"
 echo "========================================"
-docker save nortal/conference-radar:latest > conferenceRadar.tar
-docker save mongo:latest > conferenceRadarMongo.tar
+docker save nortal/techradar-development:latest > dist/techradar-development.tar
+docker save mongo:latest > dist/mongo-techradar.tar
 
 
 echo "========================================"
 echo "COPY ARCHIVES TO REMOTE"
 echo "========================================"
-scp -r conferenceRadar.tar conferenceRadarMongo.tar settings-development.json ${remote}:/tmp/
+scp -r dist/techradar-development.tar dist/mongo-techradar.tar settings-development.json ${remote}:/tmp/
 
 
 echo "========================================"
@@ -47,20 +47,20 @@ echo "RUN DOCKER IMAGES IN REMOTE"
 echo "========================================"
 ssh ${remote} << EOF
   cd /tmp
-  docker rm -vf conferenceRadar conferenceRadarMongo
-  docker rmi -f nortal/conference-radar mongo
+  docker rm -vf techradar-development mongo-techradar
+  docker rmi -f nortal/techradar-development mongo
 
-  docker load < /tmp/conferenceRadar.tar
-  docker load < /tmp/conferenceRadarMongo.tar
+  docker load < /tmp/techradar-development.tar
+  docker load < /tmp/mongo-techradar.tar
 
-  docker run -d --name conferenceRadarMongo mongo:latest
+  docker run -d --name mongo-techradar mongo:latest
   sleep 5
   docker run -d \
     -e ROOT_URL=http://example.com \
-    -e MONGO_URL=mongodb://conferenceRadarMongo:27017/meteor \
+    -e MONGO_URL=mongodb://mongo-techradar:27017/techradar \
     -e METEOR_SETTINGS="\$(cat settings-development.json)" \
     -p 3000:3000 \
-    --link conferenceRadarMongo \
-    --name conferenceRadar \
-    nortal/conference-radar:latest
+    --link mongo-techradar \
+    --name techradar-development \
+    nortal/techradar-development:latest
 EOF

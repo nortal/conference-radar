@@ -17,6 +17,7 @@ import {Sections} from "/imports/api/constants.js";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
+import {Meteor} from "meteor/meteor";
 
 Tracker.autorun(() => {
     Meteor.subscribe('user');
@@ -82,6 +83,12 @@ Template.registerHelper('getConferenceLogo', function() {
 });
 Template.registerHelper('getConferenceName', function() {
     return Meteor.settings.public.conferenceName;
+});
+Template.registerHelper('getConferenceFinished', function() {
+    return Meteor.settings.public.conferenceFinished;
+});
+Template.registerHelper('getConferenceYear', function() {
+    return Meteor.settings.public.conferenceYear;
 });
 Template.registerHelper('sections', function() {
     return Sections;

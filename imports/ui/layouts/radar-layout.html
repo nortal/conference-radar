@@ -15,8 +15,14 @@
             </div>
 
             <div class="col-12 d-flex justify-content-md-center flex-column flex-md-row p-0 pb-4 pb-md-5">
+            {{#unless getConferenceFinished}}
                 <div class="radar-candidates-vote text-center">{{_ "radar.vote"}}</div>
                 <div class="radar-candidates-vote-link text-center">techradar.nortal.com</div>
+            {{else}}
+                <div class="radar-candidates-vote text-center">
+                    {{_ "radar.results" getConferenceName getConferenceYear}}
+                </div>
+            {{/unless}}
             </div>
 
             <div class="col-12 px-0">

@@ -1,6 +1,6 @@
 {
   "public": {
-    "environment": "development",
+    "environment": "production",
     "conferenceLogo": "logo_buildstuff.png",
     "conferenceName": "BuildStuff",
     "conferenceYear": 2019,
