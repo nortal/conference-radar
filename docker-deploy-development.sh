@@ -62,5 +62,6 @@ ssh ${remote} << EOF
     -p 3000:3000 \
     --link mongo-techradar \
     --name techradar-development \
+    --restart always \
     nortal/techradar-development:latest
 EOF

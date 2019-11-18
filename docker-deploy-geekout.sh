@@ -49,6 +49,7 @@ ssh ${remote} << EOF
       -e PORT=301\$i \
       --network="host" \
       --name techradar-geekout-\$i \
+      --restart always \
       nortal/techradar-geekout:latest
   done
 EOF

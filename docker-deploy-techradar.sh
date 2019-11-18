@@ -49,6 +49,7 @@ ssh ${remote} << EOF
       -e PORT=300\$i \
       --network="host" \
       --name techradar-\$i \
+      --restart always \
       nortal/techradar:latest
   done
 EOF
