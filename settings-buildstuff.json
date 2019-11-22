@@ -1,0 +1,21 @@
+{
+  "public": {
+    "environment": "production",
+    "conferenceLogo": "logo_buildstuff.png",
+    "conferenceName": "BuildStuff",
+    "conferenceYear": 2019,
+    "conferenceFinished": true
+  },
+  "private": {
+    "auth": {
+      "google": {
+        "clientId": "",
+        "secret": ""
+      },
+      "facebook": {
+        "appId": "",
+        "secret": ""
+      }
+    }
+  }
+}
