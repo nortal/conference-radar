@@ -6,11 +6,11 @@ Template.confirm.onCreated(function () {
     Session.set('title', 'title.login_and_vote');
 
     const user = Meteor.users.findOne();
-    const profile = user.services.google || user.services.facebook;
+    const profile = user.services?.google || user.services?.facebook;
 
     this.profile = profile;
-    this.nameText = new ReactiveVar({text: profile.name || '', valid: true, message: ''});
-    this.emailText = new ReactiveVar({text: profile.email || '', valid: true, message: ''});
+    this.nameText = new ReactiveVar({text: profile?.name || '', valid: true, message: ''});
+    this.emailText = new ReactiveVar({text: profile?.email || '', valid: true, message: ''});
     this.invalidInput = new ReactiveVar();
 });
 
