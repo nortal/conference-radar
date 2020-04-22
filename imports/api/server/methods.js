@@ -24,9 +24,9 @@ Meteor.methods({
                 $set: {
                     name: name,
                     email: email,
-                    wantsRecruitment: wantsRecruitment,
-                    wantsParticipation: wantsParticipation,
-                    agreesTerms: agreesTerms,
+                    wantsRecruitment: !!wantsRecruitment,
+                    wantsParticipation: !!wantsParticipation,
+                    agreesTerms: !!agreesTerms,
                     conference: Meteor.settings.public.conferenceName
                 }
             }
