@@ -280,7 +280,7 @@ Template.submit.events({
 });
 
 function getStage(votes) {
-    return _.find(votes, (vote) => vote.userId === Meteor.userId()).stage;
+    return _.find(votes, (vote) => vote.userId === Meteor.userId())?.stage;
 }
 
 function setSubmittedKeywords(template) {

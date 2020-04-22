@@ -90,6 +90,7 @@
   },
   "title": {
     "login_and_vote": "Login & Vote!",
-    "vote": "Vote!"
+    "vote": "Vote!",
+    "log_out": "Log out"
   }
 }

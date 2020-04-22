@@ -100,3 +100,6 @@ Template.registerHelper('isAdmin', function() {
     const user = Meteor.users.findOne();
     return user && user.admin;
 });
+Template.registerHelper('getUser', function() {
+    return Meteor.users.findOne();
+});
