@@ -1,7 +1,6 @@
 ﻿import {Template} from 'meteor/templating';
 import {ReactiveVar} from 'meteor/reactive-var'
 
-import {Keywords} from '/imports/api/keywords.js';
 import {Sections, Stages} from '/imports/api/constants.js';
 import {GetQueryParam} from '/imports/api/shared.js';
 import {RadarBuilder} from '/imports/api/radar.js';
@@ -14,52 +13,21 @@ Template.radar.onCreated(function () {
     this.blips = new ReactiveVar();
     this.selectedQuadrant = Sections.find(s => s.id === this.data);
     this.logs = new ReactiveVar({frameworks: [], platforms: [], techniques: [], tools: []});
-    this.voteCounts = {};
     this.layout = getLayoutParams();
     this.logSize = parseInt(GetQueryParam('logSize')) || 3;
 
     // init highlight session variables
     Session.set("currentKeywordIndex", 0);
     Session.set("currentQuadrant", 0);
-    // init conditional re-draw variable
-    Session.set("lastEntryCount", 0);
-
-    // cycle highlight every 5 seconds
-    //setInterval(highlightBlips, 5000);
+    Session.set("voteCount", 0);
 });
 
 Template.radar.onRendered(function () {
-    let query = Keywords.find({enabled: true});
     const self = this;
 
-    let handle = query.observeChanges({
-        changed: function (id, data) {
-            // when a new vote gets registered on an existing blip, re-draw
-            draw();
-            updateLog(self, id, data);
-        }
-    });
-
-    // get initial log entries
-    Meteor.call('getLastVotes', 3, (error, response) => {
-        if (error) {
-            return;
-        }
-
-        for (let i = 0; i < response.length; i++) {
-            const section = response[i]._id;
-            const votes = response[i].docs;
-
-            for (let j = 0; j < votes.length; j++) {
-                const vote = votes[j];
-                addLogEntry(self, section, vote.keyword, vote.stage, vote.time);
-            }
-        }
-    });
-
     //check every 3 seconds for update
-    setTimeout(pollDrawing, 500);
-    setInterval(pollDrawing, 3000);
+    setTimeout(() => pollDrawing(self), 500);
+    setInterval(() => pollDrawing(self), 3000);
 
     // render on resize
     $(window).resize(throttledOnWindowResize);
@@ -114,15 +82,20 @@ Template.radar.helpers({
     },
 });
 
-function pollDrawing() {
-    var len = Keywords.find({enabled: true}).count();
-    if (Session.get("lastEntryCount") !== len) {
-        draw();
-        Session.set("lastEntryCount", len);
-    }
+function pollDrawing(self) {
+    Meteor.call('getVoteCount', null, (error, response) => {
+        if (error) {
+            return;
+        }
+
+        if (Session.get("voteCount") !== response) {
+            draw(self);
+            Session.set("voteCount", response);
+        }
+    });
 }
 
-function draw() {
+function draw(self) {
     Meteor.call('getResults', null, (error, response) => {
         if (error) {
             return;
@@ -139,6 +112,23 @@ function draw() {
             initializeSvg(svg, response[section.id]);
             resizeSvg(svg);
         });
+    });
+
+    // get initial log entries
+    Meteor.call('getLastVotes', null, (error, response) => {
+        if (error) {
+            return;
+        }
+
+        for (let i = 0; i < response.length; i++) {
+            const section = response[i].section;
+            const votes = response[i].votes;
+
+            for (let j = 0; j < votes.length; j++) {
+                const vote = votes[j];
+                addLogEntry(self, section, vote.keyword, vote.stage, vote.time, vote.index);
+            }
+        }
     });
 }
 
@@ -170,21 +160,7 @@ const throttledOnWindowResize = _.throttle(draw, 500, {
     leading: false
 });
 
-function updateLog(template, id, data) {
-    const keyword = Keywords.findOne({_id: id});
-    const lastVoteCount = template.voteCounts[id];
-    template.voteCounts[id] = keyword.votes.length;
-
-    if (!data.votes.length || lastVoteCount > keyword.votes.length) {
-        // don't log vote removals
-        return;
-    }
-
-    const lastVote = keyword.votes[keyword.votes.length - 1];
-    addLogEntry(template, keyword.section, keyword.name, lastVote.stage, lastVote.time);
-}
-
-function addLogEntry(template, section, keyword, stage, time) {
+function addLogEntry(template, section, keyword, stage, time, index) {
     const formatTimestamp = function (time) {
         const now = new Date(time);
         return ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
@@ -196,12 +172,9 @@ function addLogEntry(template, section, keyword, stage, time) {
 
     const logs = template.logs.get();
     const sectionLogs = logs[section];
-    const nextLogIndex = sectionLogs.length
-        ? parseInt(sectionLogs[sectionLogs.length - 1].index) + 1
-        : 0;
 
     sectionLogs.push({
-        index: transformIndex(nextLogIndex),
+        index: transformIndex(index),
         timestamp: formatTimestamp(time),
         technology: keyword,
         stage: stage,

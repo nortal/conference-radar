@@ -5,6 +5,8 @@ import {Keywords} from "../keywords.js";
 import "./methods-admin.js";
 import "./methods-develop.js"
 import {initializeEntries} from "./results";
+import {Sections} from "../constants";
+import _ from 'underscore';
 
 Meteor.methods({
     updateUser(name, email, wantsRecruitment, wantsParticipation, agreesTerms) {
@@ -99,42 +101,45 @@ Meteor.methods({
             }]
         });
     },
-    getLastVotes: function () {
-        return Keywords.rawCollection().aggregate(
-            {
-                $unwind: "$votes"
-            }, {
-                $addFields: {
-                    "votes.keywordId": "$_id",
-                    "votes.keyword": "$name",
-                    "votes.section": "$section"
-                }
-            }, {
-                $replaceRoot: {newRoot: "$votes"}
-            }, {
-                $sort: {time: 1}
-            }, {
-                $group: {
-                    _id: "$section",
-                    docs: {
-                        $push: {
-                            keyword: "$keyword",
-                            time: "$time",
-                            stage: "$stage",
-                        }
-                    }
-                }
-            }, {
-                $project: {
-                    docs: {
-                        $slice: ['docs', 3]
-                    }
-                }
-            }
-        ).toArray();
-    },
     getResults: function () {
         const keywords = Keywords.find({enabled: true}).fetch();
         return initializeEntries(keywords);
+    },
+    getLastVotes: function () {
+        const keywords = Keywords.find({enabled: true}).fetch();
+
+        const output = [];
+        _.each(Sections, section => {
+            const voteData = keywords.filter(kw => kw.section === section.id)
+              .filter(kw => kw.votes.length)
+              .map(kw => {
+                  return kw.votes.map(vote => {
+                      return {
+                          time: vote.time,
+                          stage: vote.stage,
+                          keyword: kw.name
+                      }
+                  });
+              });
+
+            const votes = [].concat(...voteData)
+              .sort((a,b) => (a.time > b.time) ? -1 : ((b.time > a.time) ? 1 : 0));
+
+            for (let i = 0; i < votes.length; i++) {
+                votes[i].index = votes.length - i;
+            }
+
+            output.push({
+                section: section.id,
+                votes: votes.slice(0, 5).reverse()
+            });
+        });
+
+        return output;
+    },
+    getVoteCount: function () {
+        const votes = Keywords.find().fetch()
+          .map(kw => kw.votes);
+        return [].concat(...votes).length;
     }
 });
