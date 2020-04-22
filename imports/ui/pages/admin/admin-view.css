@@ -1,0 +1,12 @@
+.admin-log-container {
+    background-color: rgb(243, 243, 243);
+    font-size: 0.75rem;
+    overflow-y: scroll;
+    overflow-wrap: break-word;
+    max-height: 10rem;
+}
+
+.admin-log-user,
+.admin-log-action {
+    color: #b76262;
+}

@@ -2,10 +2,12 @@ import {Template} from 'meteor/templating';
 import {Meteor} from "meteor/meteor";
 
 import './../../components/keywordSearch/keywordSearch.js'
+import './admin-view.css';
 
 import {Keywords} from "/imports/api/keywords.js";
 import {UserInputVerification} from "/imports/api/shared.js";
 import {FindMatchingKeywords} from "../../../api/shared";
+import {Logs} from "../../../api/logs";
 
 Template.admin.helpers({
     'getEnabledKeywords'() {
@@ -23,6 +25,35 @@ Template.adminKeywordList.helpers({
     'keywordColorClass'(enabled) {
         return enabled ? 'text-success' : 'text-danger';
     }
+});
+
+Template.adminLogs.helpers({
+    'getLogs'() {
+        return Logs.find({}).fetch();
+    },
+    formatLog(log) {
+        const now = new Date(log.time);
+        const timestamp = ('0' + now.getHours()).slice(-2)
+          + ':' + ('0' + now.getMinutes()).slice(-2)
+          + ':' + ('0' + now.getSeconds()).slice(-2);
+        const time = '[' + timestamp + ']';
+        return `<span class="admin-log-time">${time} </span>
+                <span class="admin-log-user">${log.user}</span>
+                <span> executed action: </span>
+                <span class="admin-log-action">${log.action}</span>`;
+
+    }
+});
+
+Template.adminLogs.onRendered(function () {
+    const $container =  $('.admin-log-container');
+    $container.scrollTop($container[0].scrollHeight);
+
+    Logs.find().observeChanges({
+        added: function (id, data) {
+            $container.scrollTop($container[0].scrollHeight);
+        }
+    });
 });
 
 Template.adminKeywordList.events({

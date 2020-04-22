@@ -22,6 +22,9 @@ import {Meteor} from "meteor/meteor";
 Tracker.autorun(() => {
     Meteor.subscribe('user');
     Meteor.subscribe('keywords');
+    if (Meteor.user()?.admin) {
+        Meteor.subscribe('logs');
+    }
 });
 
 Router.configure({
