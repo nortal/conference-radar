@@ -6,6 +6,9 @@ export class Result {
         this.ok = ok;
         this.message = message;
     }
+    translate() {
+        return TAPi18n.__(this.message);
+    }
 }
 
 export const GetQueryParam = function (key) {
@@ -13,6 +16,17 @@ export const GetQueryParam = function (key) {
 };
 
 export const UserInputVerification = {
+    verifyId(id) {
+        if (!id) {
+            return new Result(false, 'submit.invalid_call');
+        }
+
+        if (typeof id !== 'string' && !(id instanceof String)) {
+            return new Result(false, 'submit.invalid_call');
+        }
+
+        return new Result(true);
+    },
     verifyStage(stage) {
         if (!stage) {
             return new Result(false, 'submit.enter_stage');

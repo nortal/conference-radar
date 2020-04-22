@@ -31,14 +31,29 @@ Meteor.methods({
         return Keywords.find({votes: {$elemMatch: {userId: this.userId}}}).fetch();
     },
     removeVote(id, stage) {
+        const idResult = UserInputVerification.verifyId(id);
+        if (!idResult.ok) {
+            throw new Meteor.Error(idResult.message, idResult.translate());
+        }
+
+        const stageResult = UserInputVerification.verifyStage(stage);
+        if (!stageResult.ok) {
+            throw new Meteor.Error(stageResult.message, stageResult.translate());
+        }
+
         Keywords.update(
             {_id: id},
             {$pull: {votes: {userId: this.userId, stage: stage}}});
     },
     addVote(id, stage) {
+        const idResult = UserInputVerification.verifyId(id);
+        if (!idResult.ok) {
+            throw new Meteor.Error(idResult.message, idResult.translate());
+        }
+
         const stageResult = UserInputVerification.verifyStage(stage);
         if (!stageResult.ok) {
-            return;
+            throw new Meteor.Error(stageResult.message, stageResult.translate());
         }
 
         Keywords.update(
