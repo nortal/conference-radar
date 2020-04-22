@@ -4,7 +4,7 @@ import {ReactiveVar} from 'meteor/reactive-var'
 import {Keywords} from '/imports/api/keywords.js';
 import {Sections, Stages} from '/imports/api/constants.js';
 import {GetQueryParam} from '/imports/api/shared.js';
-import {initializeEntries, RadarBuilder} from '/imports/api/radar.js';
+import {RadarBuilder} from '/imports/api/radar.js';
 import './radar-view.css';
 
 import d3 from 'd3';
@@ -123,19 +123,22 @@ function pollDrawing() {
 }
 
 function draw() {
-    var keywords = Keywords.find({enabled: true}).fetch();
-    var data = initializeEntries(keywords);
-
-    _.each(Sections, function (section) {
-        const svg = d3.select("svg#" + section.id);
-
-        // single view
-        if (!svg.node()) {
+    Meteor.call('getResults', null, (error, response) => {
+        if (error) {
             return;
         }
 
-        initializeSvg(svg, data[section.id]);
-        resizeSvg(svg);
+        _.each(Sections, function (section) {
+            const svg = d3.select("svg#" + section.id);
+
+            // single view
+            if (!svg.node()) {
+                return;
+            }
+
+            initializeSvg(svg, response[section.id]);
+            resizeSvg(svg);
+        });
     });
 }
 

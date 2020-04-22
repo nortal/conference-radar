@@ -4,6 +4,7 @@ import {UserInputVerification} from "../shared.js";
 import {Keywords} from "../keywords.js";
 import "./methods-admin.js";
 import "./methods-develop.js"
+import {initializeEntries} from "./results";
 
 Meteor.methods({
     updateUser(name, email, wantsRecruitment, wantsParticipation, agreesTerms) {
@@ -131,5 +132,9 @@ Meteor.methods({
                 }
             }
         ).toArray();
+    },
+    getResults: function () {
+        const keywords = Keywords.find({enabled: true}).fetch();
+        return initializeEntries(keywords);
     }
 });
