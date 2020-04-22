@@ -10,6 +10,8 @@ import _ from 'underscore';
 
 Meteor.methods({
     updateUser(name, email, wantsRecruitment, wantsParticipation, agreesTerms) {
+        authorizeUser();
+
         const nameResult = UserInputVerification.verifyName(name);
         const emailResult = UserInputVerification.verifyEmail(email);
         if (!nameResult.ok || !emailResult.ok) {
@@ -31,9 +33,12 @@ Meteor.methods({
         )
     },
     getSubmittedKeywords() {
+        authorizeUser();
         return Keywords.find({votes: {$elemMatch: {userId: this.userId}}}).fetch();
     },
     removeVote(id, stage) {
+        authorizeUser();
+
         const idResult = UserInputVerification.verifyId(id);
         if (!idResult.ok) {
             throw new Meteor.Error(idResult.message, idResult.translate());
@@ -49,6 +54,8 @@ Meteor.methods({
             {$pull: {votes: {userId: this.userId, stage: stage}}});
     },
     addVote(id, stage) {
+        authorizeUser();
+
         const idResult = UserInputVerification.verifyId(id);
         if (!idResult.ok) {
             throw new Meteor.Error(idResult.message, idResult.translate());
@@ -74,6 +81,8 @@ Meteor.methods({
         );
     },
     addSuggestion(name, section, stage) {
+        authorizeUser();
+
         const suggestionResult = UserInputVerification.verifySuggestion(name);
         if (!suggestionResult.ok) {
             return;
@@ -143,3 +152,9 @@ Meteor.methods({
         return [].concat(...votes).length;
     }
 });
+
+function authorizeUser() {
+    if (!this.userId) {
+        throw new Meteor.Error('error.unauthorized');
+    }
+}

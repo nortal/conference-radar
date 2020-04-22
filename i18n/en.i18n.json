@@ -62,7 +62,6 @@
     "enter_stage": "Please enter a stage!",
     "enter_valid_stage": "Please enter a valid stage!",
     "enter_section": "Please select a section!",
-    "invalid_call": "Invalid call",
     "enter_valid_section": "Please select a valid section!",
     "enter_suggestion": "Please enter a suggestion!",
     "enter_valid_suggestion": "Please enter a valid suggestion!",
@@ -92,5 +91,9 @@
     "login_and_vote": "Login & Vote!",
     "vote": "Vote!",
     "log_out": "Log out"
+  },
+  "error": {
+    "invalid_call": "Invalid call",
+    "unauthorized": "Unauthorized request"
   }
 }

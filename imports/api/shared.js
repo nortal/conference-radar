@@ -18,11 +18,11 @@ export const GetQueryParam = function (key) {
 export const UserInputVerification = {
     verifyId(id) {
         if (!id) {
-            return new Result(false, 'submit.invalid_call');
+            return new Result(false, 'error.invalid_call');
         }
 
         if (typeof id !== 'string' && !(id instanceof String)) {
-            return new Result(false, 'submit.invalid_call');
+            return new Result(false, 'error.invalid_call');
         }
 
         return new Result(true);
