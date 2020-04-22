@@ -33,30 +33,35 @@ Router.route('/', function () {
 });
 
 Router.route('/login', function () {
+    if (Meteor.user()) {
+        Router.go('/confirm');
+        return;
+    }
     this.render('login');
 });
 
 Router.route('/confirm', function () {
-    const user = Meteor.users.findOne();
+    const user = Meteor.user();
     if (!user) {
-        Router.go('/');
+        Router.go('/login');
         return;
     }
 
-    if (user.agreesTerms) {
+    if (user && user.agreesTerms) {
         Router.go('/submit');
-    } else {
-        this.render('confirm');
+        return;
     }
+
+    this.render('confirm');
 });
 
 Router.route('/submit', function () {
-    // set in login or confirm page
-    if (Meteor.userId()) {
-        this.render('submit');
-    } else {
-        Router.go('/');
+    if (!Meteor.user()) {
+        Router.go('/login');
+        return;
     }
+
+    this.render('submit');
 });
 
 Router.route('/radar', function () {
@@ -65,17 +70,13 @@ Router.route('/radar', function () {
 });
 
 Router.route('/admin', function () {
-    const user = Meteor.users.findOne();
-    if (!user) {
-        Router.go('/');
+    const user = Meteor.user();
+    if (!user || !user.admin) {
+        Router.go('/login');
         return;
     }
 
-    if (user.admin) {
-        this.render('admin');
-    } else {
-        Router.go('/');
-    }
+    this.render('admin');
 });
 
 Template.registerHelper('getConferenceLogo', function() {
