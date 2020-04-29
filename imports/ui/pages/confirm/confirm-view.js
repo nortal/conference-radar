@@ -64,7 +64,8 @@ Template.confirm.events({
 
         if (!termsChecked) {
             template.invalidInput.set("confirm.terms_invalid");
-            $("#toast").toast("show");
+            // todo: fixme
+            // $("#toast").toast("show");
             return;
         }
 

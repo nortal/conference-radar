@@ -29,11 +29,13 @@ Template.submit.onRendered(function () {
                 .attr("class", "toast-body " + styleClass)
                 .html(content);
 
-            this.element.toast("show");
+            // todo: fixme
+            // this.element.toast("show");
             return this;
         },
         hide() {
-            this.element.toast("hide");
+            // todo: fixme
+            // this.element.toast("hide");
             return this;
         }
     };
@@ -85,7 +87,9 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.userId === Meteor.userId());
+        const oldVote = template.submittedKeywords.get()
+          .find(skw => skw._id === keyword._id).votes
+          .find(vote => vote.userId === Meteor.userId());
 
         // user has not voted for that
         if (!oldVote) {
@@ -126,7 +130,7 @@ Template.submit.events({
             .find({enabled: true})
             .fetch()
             .filter(kw => kw.name.toLowerCase().indexOf(value) !== -1)
-            .filter(kw => !kw.votes.some(vote => vote.userId === Meteor.userId()))
+            .filter(kw => !template.submittedKeywords.get().some(skw => skw._id === kw._id))
             .sort((kw1, kw2) => nameComparator(kw1.name.toLowerCase(), kw2.name.toLowerCase(), value))
             .slice(0, 11);
     }, 100),
@@ -196,7 +200,7 @@ Template.submit.events({
             if (allKeywords[i].name.toLowerCase() === suggestion.toLowerCase() && allKeywords[i].section === section) {
 
                 // Already suggested
-                if (allKeywords[i].votes.find((votes) => votes.userId === Meteor.userId())) {
+                if (template.submittedKeywords.get().some(skw => skw._id === allKeywords[i]._id)) {
                     template.toast.show("alert-danger", TAPi18n.__("submit.already_suggested"));
                     return;
                 }
@@ -265,7 +269,7 @@ Template.submit.events({
         }
 
         // find stage user has voted for, if any
-        const oldVote = keyword.votes.find((vote) => vote.userId === Meteor.userId());
+        const oldVote = template.submittedKeywords.get().some(skw => skw._id === keyword._id);
 
         if (oldVote) {
             template.toast.show("alert-warning", TAPi18n.__("submit.already_voted"));
