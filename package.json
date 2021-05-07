@@ -15,7 +15,7 @@
     "jquery": "^3.4.1",
     "meteor-node-stubs": "^0.4.1",
     "popper.js": "^1.14.7",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   },
   "meteor": {
     "mainModule": {
